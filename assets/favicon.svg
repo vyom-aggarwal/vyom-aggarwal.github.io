@@ -1,6 +1,23 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" fill="#08090a"/>
-  <path d="M12 16 L32 50 L52 16" fill="none" stroke="#ff5c2b" stroke-width="7"
-        stroke-linecap="square" stroke-linejoin="miter"/>
-  <rect x="27" y="6" width="10" height="6" fill="#ff5c2b"/>
+  <!-- VA lettermark — V and A set side by side, square caps and mitred
+       joins to match Archivo 800. Tab-icon lockup; the bare mark is used
+       in the page itself. -->
+  <style>
+    .tile { fill: #0d0f11; }
+    .mark { stroke: #ff5c2b; }
+    @media (prefers-color-scheme: light) {
+      .tile { fill: #f5f3ef; }
+      .mark { stroke: #e2431a; }
+    }
+  </style>
+
+  <rect class="tile" width="64" height="64" rx="14"/>
+
+  <svg x="10" y="10" width="44" height="44" viewBox="0 0 64 64">
+    <g class="mark" fill="none" stroke-width="9" stroke-linejoin="miter" stroke-miterlimit="6">
+      <path d="M6 18 L18 46 L30 18" stroke-linecap="square"/>
+      <path d="M34 46 L46 18 L58 46" stroke-linecap="square"/>
+      <path d="M38.5 35.5 H53.5" stroke-linecap="butt"/>
+    </g>
+  </svg>
 </svg>

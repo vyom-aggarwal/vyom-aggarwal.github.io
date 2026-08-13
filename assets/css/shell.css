@@ -22,9 +22,10 @@
   border: 1px solid var(--line-2); border-radius: var(--radius);
   transition: border-color var(--dur) var(--ease), background var(--dur) var(--ease);
 }
-.ident__mark svg { width: 18px; height: 18px; }
-.ident__mark path { fill: none; stroke: var(--accent); stroke-width: 7; }
-.ident__mark rect { fill: var(--accent); }
+/* The lettermark is much wider than it is tall inside its square viewBox,
+   so the box has to be larger than a centred glyph would need. */
+.ident__mark svg { width: 21px; height: 21px; }
+.ident__mark g { stroke: var(--accent); }
 .ident:hover .ident__mark { border-color: var(--accent); background: var(--accent-soft); }
 
 .ident__text { display: grid; gap: 3px; min-width: 0; }
