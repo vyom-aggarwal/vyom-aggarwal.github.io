@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>404 — Vyom Aggarwal</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400..900&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/tokens.css">
+<link rel="stylesheet" href="/assets/css/base.css">
+<link rel="stylesheet" href="/assets/css/shell.css">
+<script>
+  (function () {
+    var r = document.documentElement;
+    r.classList.add('js');
+    try {
+      var saved = localStorage.getItem('va-theme');
+      r.dataset.theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    } catch (e) {}
+  })();
+</script>
+<style>
+  .lost { min-height: 100svh; display: grid; place-content: center; text-align: center; gap: 22px; padding: var(--gutter); }
+  .lost__code {
+    font-family: var(--font-display); font-weight: 800; line-height: 0.85;
+    font-size: clamp(5rem, 22vw, 15rem); letter-spacing: -0.05em;
+    color: transparent; -webkit-text-stroke: 1.5px var(--line-2);
+  }
+  .lost__msg { color: var(--ink-2); max-width: 38ch; margin-inline: auto; }
+  .lost__msg b { color: var(--ink); }
+  .lost .btn { justify-self: center; }
+</style>
+</head>
+<body>
+  <div class="grain" aria-hidden="true"></div>
+  <main class="lost">
+    <p class="lost__code">404</p>
+    <p class="lost__msg"><b>Nothing here.</b> That URL doesn't resolve to anything on this site.</p>
+    <a class="btn" href="/">Back to the portfolio</a>
+  </main>
+</body>
+</html>

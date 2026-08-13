@@ -1,0 +1,207 @@
+/* ═══════════════════════════════════════════════════════════
+   SHELL — the console sidebar, the mobile top bar it collapses
+   into, and the scrolling canvas beside it.
+   ═══════════════════════════════════════════════════════════ */
+
+/* ═══ CONSOLE (desktop sidebar) ════════════════════════════ */
+.console {
+  position: fixed; top: 0; left: 0; bottom: 0; z-index: 700;
+  width: var(--console);
+  display: flex; flex-direction: column; gap: 30px;
+  padding: 32px 26px 30px;
+  background: var(--bg);
+  border-right: 1px solid var(--line);
+  transition: background var(--dur) var(--ease), border-color var(--dur) var(--ease);
+}
+
+/* identity */
+.ident { display: flex; align-items: center; gap: 12px; }
+.ident__mark {
+  width: 34px; height: 34px; flex-shrink: 0;
+  display: grid; place-items: center;
+  border: 1px solid var(--line-2); border-radius: var(--radius);
+  transition: border-color var(--dur) var(--ease), background var(--dur) var(--ease);
+}
+.ident__mark svg { width: 18px; height: 18px; }
+.ident__mark path { fill: none; stroke: var(--accent); stroke-width: 7; }
+.ident__mark rect { fill: var(--accent); }
+.ident:hover .ident__mark { border-color: var(--accent); background: var(--accent-soft); }
+
+.ident__text { display: grid; gap: 3px; min-width: 0; }
+.ident__text b {
+  font-family: var(--font-display); font-weight: 700; font-size: 0.98rem;
+  letter-spacing: -0.025em; line-height: 1.1;
+}
+.ident__text i {
+  font: 500 var(--fs-micro)/1.2 var(--font-mono); font-style: normal;
+  letter-spacing: 0.06em; color: var(--ink-3);
+}
+
+/* status block */
+.console__status {
+  display: grid; gap: 8px;
+  padding: 14px 0; border-block: 1px solid var(--line);
+}
+.console__clock {
+  font: 500 var(--fs-mono)/1 var(--font-mono);
+  letter-spacing: 0.04em; color: var(--ink-3);
+}
+.console__clock b { color: var(--ink-2); font-weight: 500; font-variant-numeric: tabular-nums; }
+
+/* section index — the primary nav */
+.index { display: grid; gap: 1px; flex: 1; align-content: start; }
+.index a {
+  position: relative; display: flex; align-items: baseline; gap: 12px;
+  padding: 9px 12px; border-radius: var(--radius);
+  color: var(--ink-3);
+  transition: color var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease);
+}
+.index a em {
+  font: 500 var(--fs-micro)/1 var(--font-mono); font-style: normal;
+  letter-spacing: 0.08em; color: var(--ink-3);
+  transition: color var(--dur-fast) var(--ease);
+}
+.index a span {
+  font-family: var(--font-display); font-weight: 600; font-size: 1rem;
+  letter-spacing: -0.02em;
+}
+.index a:hover { color: var(--ink); background: var(--bg-2); }
+.index a.is-current { color: var(--ink); background: var(--bg-2); }
+.index a.is-current em { color: var(--accent); }
+/* accent bar marking the section you're in */
+.index a.is-current::before {
+  content: ''; position: absolute; left: 0; top: 8px; bottom: 8px;
+  width: 2px; border-radius: 2px; background: var(--accent);
+}
+
+/* footer of the console */
+.console__foot { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+.console__links { display: grid; gap: 5px; }
+.console__links a {
+  font: 500 var(--fs-mono)/1 var(--font-mono);
+  letter-spacing: 0.06em; color: var(--ink-3);
+  transition: color var(--dur-fast) var(--ease);
+}
+.console__links a:hover { color: var(--accent); }
+
+/* reading progress, riding the sidebar's edge */
+.console__progress {
+  position: absolute; top: 0; right: -1px; bottom: 0; width: 2px;
+  background: transparent; pointer-events: none;
+}
+.console__progress i {
+  display: block; width: 100%; height: 100%;
+  background: linear-gradient(to bottom, var(--accent), var(--accent-2));
+  transform: scaleY(var(--p, 0)); transform-origin: top;
+}
+
+.burger { display: none; }
+
+/* ═══ CANVAS ═══════════════════════════════════════════════ */
+.canvas {
+  margin-left: var(--console);
+  max-width: calc(var(--canvas) + var(--gutter) * 2);
+  padding: var(--gutter) var(--gutter) 0;
+}
+
+/* ═══ MOBILE: console becomes a top bar ════════════════════ */
+@media (max-width: 1100px) {
+  .console {
+    inset: 0 0 auto 0; bottom: auto;
+    width: auto; height: var(--bar-h);
+    flex-direction: row; align-items: center; justify-content: space-between;
+    gap: 16px; padding: 0 var(--gutter);
+    border-right: 0; border-bottom: 1px solid var(--line);
+    background: color-mix(in srgb, var(--bg) 82%, transparent);
+    backdrop-filter: blur(16px) saturate(150%);
+    -webkit-backdrop-filter: blur(16px) saturate(150%);
+  }
+  .console { justify-content: flex-start; }
+  .console__status,
+  .index,
+  .console__links { display: none; }
+  /* the foot survives so the theme toggle stays reachable */
+  .console__foot { margin-left: auto; }
+
+  .burger { display: block; position: relative; width: 36px; height: 36px; }
+  .burger i {
+    position: absolute; inset: 0; margin: auto;
+    width: 18px; height: 1.5px; background: var(--ink);
+    transition: transform var(--dur) var(--ease);
+  }
+  .burger i:first-child { transform: translateY(-3px); }
+  .burger i:last-child  { transform: translateY(3px); }
+  .burger[aria-expanded='true'] i:first-child { transform: rotate(45deg); }
+  .burger[aria-expanded='true'] i:last-child  { transform: rotate(-45deg); }
+
+  .console__progress {
+    inset: auto 0 -1px 0; top: auto; width: auto; height: 2px;
+  }
+  .console__progress i {
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    transform: scaleX(var(--p, 0)); transform-origin: left;
+  }
+
+  .canvas {
+    margin-left: 0; margin-inline: auto;
+    padding-top: calc(var(--bar-h) + var(--gutter));
+  }
+  /* anchor jumps must clear the fixed bar */
+  html { scroll-padding-top: calc(var(--bar-h) + 20px); }
+}
+
+/* ═══ MOBILE MENU ══════════════════════════════════════════ */
+.menu {
+  position: fixed; inset: 0; z-index: 690;
+  background: var(--bg-1);
+  padding: calc(var(--bar-h) + 36px) var(--gutter) 36px;
+  display: flex; flex-direction: column; justify-content: space-between;
+  clip-path: inset(0 0 100% 0);
+  transition: clip-path 0.6s var(--ease);
+}
+.menu[hidden] { display: none; }
+.menu.is-open { clip-path: inset(0 0 0 0); }
+
+.menu__list { display: grid; gap: 2px; }
+.menu__list a {
+  display: flex; align-items: baseline; gap: 16px;
+  padding: 13px 0; border-bottom: 1px solid var(--line);
+  font-family: var(--font-display); font-weight: 700;
+  font-size: clamp(1.7rem, 8.5vw, 2.8rem);
+  text-transform: uppercase; letter-spacing: -0.03em; line-height: 1;
+  opacity: 0; transform: translateY(24px);
+  transition: opacity 0.5s var(--ease), transform 0.5s var(--ease), color var(--dur-fast) var(--ease);
+}
+.menu.is-open .menu__list a { opacity: 1; transform: none; }
+.menu__list a em {
+  font: 500 var(--fs-mono)/1 var(--font-mono); font-style: normal;
+  color: var(--accent); letter-spacing: 0.08em;
+}
+.menu__list a:active { color: var(--accent); }
+
+.menu__foot {
+  display: flex; flex-wrap: wrap; gap: 8px 20px;
+  font: 500 var(--fs-mono)/1.6 var(--font-mono); color: var(--ink-3);
+}
+
+/* ═══ FOOTER ═══════════════════════════════════════════════ */
+.foot {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+  gap: 12px; margin-top: calc(var(--gap) * 2);
+  padding: 26px 4px 40px; border-top: 1px solid var(--line);
+  font: 500 var(--fs-mono)/1.6 var(--font-mono);
+  letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3);
+}
+.foot button {
+  display: inline-flex; align-items: center; gap: 9px;
+  font: inherit; letter-spacing: inherit; text-transform: inherit; color: var(--ink-2);
+  transition: color var(--dur-fast) var(--ease);
+}
+.foot button i {
+  width: 8px; height: 8px;
+  border-top: 1.4px solid currentColor; border-right: 1.4px solid currentColor;
+  transform: rotate(-45deg); transition: transform var(--dur) var(--ease);
+}
+.foot button:hover { color: var(--accent); }
+.foot button:hover i { transform: rotate(-45deg) translate(3px, -3px); }
+@media (max-width: 680px) { .foot span:nth-child(2) { display: none; } }

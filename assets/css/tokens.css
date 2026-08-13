@@ -1,0 +1,96 @@
+/* ═══════════════════════════════════════════════════════════
+   TOKENS — colour, type, space, motion
+   Every colour is defined on bare :root first, then overridden
+   per-theme, so nothing depends on a media query to exist.
+   ═══════════════════════════════════════════════════════════ */
+
+:root {
+  /* ── palette: dark (default) ───────────────────────────── */
+  --bg:          #08090a;
+  --bg-1:        #0d0f11;
+  --bg-2:        #14171a;
+  --bg-3:        #1c2024;
+
+  --ink:         #f4f3f0;
+  --ink-2:       #9ea2a7;
+  --ink-3:       #61666b;
+
+  --line:        rgb(244 243 240 / 0.09);
+  --line-2:      rgb(244 243 240 / 0.17);
+
+  --accent:      #ff5c2b;
+  --accent-ink:  #0b0b0c;   /* text on accent fill */
+  --accent-2:    #4d7cff;
+  --accent-soft: rgb(255 92 43 / 0.12);
+  --accent-glow: rgb(255 92 43 / 0.30);
+
+  --grain:       0.030;
+  --veil:        radial-gradient(120% 78% at 50% 8%, rgb(255 92 43 / 0.13), transparent 62%),
+                 radial-gradient(90% 60% at 82% 42%, rgb(77 124 255 / 0.10), transparent 66%);
+
+  color-scheme: dark;
+
+  /* ── type ──────────────────────────────────────────────── */
+  --font-display: 'Archivo', 'Helvetica Neue', Arial, sans-serif;
+  --font-body:    'Inter', system-ui, -apple-system, Segoe UI, sans-serif;
+  --font-mono:    'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-serif:   'Instrument Serif', Georgia, serif;
+
+  --fs-micro:  0.6875rem;                                    /* 11px  labels  */
+  --fs-mono:   0.75rem;                                      /* 12px  meta    */
+  --fs-sm:     0.875rem;
+  --fs-body:   clamp(1rem, 0.97rem + 0.15vw, 1.0625rem);
+  --fs-lede:   clamp(1.06rem, 0.98rem + 0.42vw, 1.35rem);
+  --fs-h3:     clamp(1.15rem, 1.02rem + 0.6vw, 1.5rem);
+  --fs-h2:     clamp(2.1rem, 1.3rem + 3.4vw, 4.4rem);
+  --fs-h1:     clamp(3rem, 1.1rem + 9.6vw, 11rem);
+  --fs-mega:   clamp(2.6rem, 0.9rem + 8.2vw, 9rem);
+
+  --tracking-tight: -0.03em;
+  --tracking-wide:  0.14em;
+
+  /* ── layout ────────────────────────────────────────────── */
+  --console:  clamp(240px, 21vw, 306px);  /* fixed sidebar width */
+  --bar-h:    62px;                       /* mobile top bar      */
+  --canvas:   1180px;                     /* max content width   */
+  --gutter:   clamp(18px, 3.4vw, 46px);
+  --gap:      clamp(10px, 1vw, 16px);     /* gap between tiles   */
+
+  /* ── motion ────────────────────────────────────────────── */
+  --ease:      cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast:  0.22s;
+  --dur:       0.42s;
+  --dur-slow:  0.9s;
+
+  --radius:    10px;   /* chips, buttons  */
+  --radius-lg: 16px;   /* tiles           */
+  --radius-xl: 22px;   /* the hero panel  */
+}
+
+/* ── palette: light ──────────────────────────────────────── */
+:root[data-theme='light'] {
+  --bg:          #f5f3ef;
+  --bg-1:        #ffffff;
+  --bg-2:        #ece9e3;
+  --bg-3:        #e0dcd4;
+
+  --ink:         #111213;
+  --ink-2:       #55585c;
+  --ink-3:       #8a8e93;
+
+  --line:        rgb(17 18 19 / 0.11);
+  --line-2:      rgb(17 18 19 / 0.22);
+
+  --accent:      #e2431a;
+  --accent-ink:  #fffaf7;
+  --accent-2:    #2f5ce0;
+  --accent-soft: rgb(226 67 26 / 0.09);
+  --accent-glow: rgb(226 67 26 / 0.22);
+
+  --grain:       0.022;
+  --veil:        radial-gradient(120% 78% at 50% 6%, rgb(226 67 26 / 0.10), transparent 60%),
+                 radial-gradient(90% 60% at 82% 40%, rgb(47 92 224 / 0.08), transparent 64%);
+
+  color-scheme: light;
+}
