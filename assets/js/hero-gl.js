@@ -506,6 +506,27 @@ export function initHero(canvas, { reducedMotion = false } = {}) {
     raf = 0;
   }
 
+  /* Geometry decides whether to animate, not a single observer reading.
+     An IntersectionObserver batch arrives oldest-first, so acting on
+     entries[0] can stop a canvas that is already back on screen — and
+     nothing would restart it until the next threshold crossing. */
+  function shouldRun() {
+    if (reducedMotion || document.hidden) return false;
+    const r = canvas.getBoundingClientRect();
+    if (!r.width || !r.height) return false;
+    const margin = 240;
+    return r.bottom > -margin && r.top < window.innerHeight + margin;
+  }
+
+  let syncedAt = 0;
+  function sync(force) {
+    const t = performance.now();
+    if (!force && t - syncedAt < 100) return;   /* one layout read per 100ms */
+    syncedAt = t;
+    visible = shouldRun();
+    visible ? start() : stop();
+  }
+
   resize();
   render();
   canvas.classList.add('is-ready');
@@ -513,17 +534,14 @@ export function initHero(canvas, { reducedMotion = false } = {}) {
   if (reducedMotion) {
     /* one static frame, no loop */
   } else {
-    new IntersectionObserver((entries) => {
-      visible = entries[0].isIntersecting;
-      visible ? start() : stop();
-    }, { threshold: 0 }).observe(canvas);
-    document.addEventListener('visibilitychange', () => {
-      document.hidden || !visible ? stop() : start();
-    });
-    start();
+    new IntersectionObserver(() => sync(true), { threshold: 0 }).observe(canvas);
+    window.addEventListener('scroll', () => sync(false), { passive: true });
+    window.addEventListener('resize', () => sync(true));
+    document.addEventListener('visibilitychange', () => sync(true));
+    sync(true);
   }
 
-  const ro = new ResizeObserver(() => { resize(); if (!raf) render(); });
+  const ro = new ResizeObserver(() => { resize(); if (!raf) render(); sync(true); });
   ro.observe(canvas);
 
   canvas.addEventListener('webglcontextlost', (e) => { e.preventDefault(); stop(); });

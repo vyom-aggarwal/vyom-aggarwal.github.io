@@ -452,21 +452,45 @@ export function initResearchRig(canvas, { reducedMotion = false } = {}) {
   };
   const stop = () => { cancelAnimationFrame(raf); raf = 0; };
 
+  /* The loop used to be started *only* by an IntersectionObserver, which
+     made a single bad reading fatal: once stopped, nothing restarted it
+     until the next threshold crossing, so the gait froze for as long as
+     you sat there reading. Geometry is the source of truth instead, and
+     every plausible trigger re-checks it. */
+  function shouldRun() {
+    if (reducedMotion || document.hidden) return false;
+    const r = canvas.getBoundingClientRect();
+    if (!r.width || !r.height) return false;
+    const margin = 240;
+    return r.bottom > -margin && r.top < window.innerHeight + margin;
+  }
+
+  let syncedAt = 0;
+  function sync(force) {
+    /* cheap guard: one layout read per 100 ms of scrolling */
+    const t = performance.now();
+    if (!force && t - syncedAt < 100) return;
+    syncedAt = t;
+    visible = shouldRun();
+    visible ? start() : stop();
+  }
+
   resize();
   render();
   canvas.classList.add('is-ready');
 
   if (!reducedMotion) {
-    new IntersectionObserver((entries) => {
-      visible = entries[0].isIntersecting;
-      visible ? start() : stop();
-    }, { threshold: 0 }).observe(canvas);
-    document.addEventListener('visibilitychange', () => {
-      document.hidden || !visible ? stop() : start();
-    });
+    /* Kept purely as an optimisation hint. Note entries[entries.length-1]:
+       a batch arrives oldest-first, so reading entries[0] can act on a
+       stale record and stop a canvas that is already back on screen. */
+    new IntersectionObserver(() => sync(true), { threshold: 0 }).observe(canvas);
+    window.addEventListener('scroll', () => sync(false), { passive: true });
+    window.addEventListener('resize', () => sync(true));
+    document.addEventListener('visibilitychange', () => sync(true));
+    sync(true);
   }
 
-  new ResizeObserver(() => { resize(); if (!raf) render(); }).observe(canvas);
+  new ResizeObserver(() => { resize(); if (!raf) render(); sync(true); }).observe(canvas);
   canvas.addEventListener('webglcontextlost', (e) => { e.preventDefault(); stop(); });
 
   return {
@@ -478,5 +502,9 @@ export function initResearchRig(canvas, { reducedMotion = false } = {}) {
       render();
     },
     get state() { return state; },
+    /* exposed for diagnostics — is the gait actually advancing? */
+    get gaitPhase() { return gaitPhase; },
+    get running() { return raf !== 0; },
+    get visible() { return visible; },
   };
 }
