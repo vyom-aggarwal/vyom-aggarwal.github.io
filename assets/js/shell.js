@@ -3,7 +3,7 @@
    theme switch, mobile menu, and the clock.
    ═══════════════════════════════════════════════════════════ */
 
-const SECTIONS = ['overview', 'work', 'education', 'skills', 'awards', 'contact'];
+const SECTIONS = ['overview', 'research', 'work', 'education', 'awards', 'contact'];
 
 /* ── reading progress ────────────────────────────────────── */
 function initProgress() {

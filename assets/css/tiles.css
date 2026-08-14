@@ -5,7 +5,7 @@
    · .grid  12 columns, spans authored per tile (.s12 … .s3)
             used where the asymmetry is deliberate
    · .deck  auto-filling equal columns, used for uniform sets
-            (roles, capabilities) so they reflow on their own
+            (roles, schools) so they reflow on their own
    ═══════════════════════════════════════════════════════════ */
 
 .block { margin-bottom: clamp(56px, 7vw, 104px); scroll-margin-top: 24px; }
@@ -260,14 +260,6 @@
   font-family: var(--font-display); font-weight: 700; font-size: 1.05rem;
   letter-spacing: -0.02em;
 }
-
-/* ═══ CAPABILITY TILES ═════════════════════════════════════ */
-.tile--cap { gap: 9px; }
-.cap__no {
-  font: 500 var(--fs-micro)/1 var(--font-mono);
-  letter-spacing: 0.1em; color: var(--accent);
-}
-.tile--cap .prose { font-size: var(--fs-sm); }
 
 /* ═══ AWARD TILES ══════════════════════════════════════════ */
 /* Bottom-aligned so tiles sharing a row share a baseline. Once

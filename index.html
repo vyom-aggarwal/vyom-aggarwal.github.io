@@ -28,6 +28,7 @@
 <link rel="stylesheet" href="assets/css/base.css">
 <link rel="stylesheet" href="assets/css/shell.css">
 <link rel="stylesheet" href="assets/css/tiles.css">
+<link rel="stylesheet" href="assets/css/research.css">
 
 <script>
   /* Set theme + js flag before first paint to avoid a flash. */
@@ -92,9 +93,9 @@
 
   <nav class="index" aria-label="Sections">
     <a href="#overview"><em>01</em><span data-scramble>Overview</span></a>
-    <a href="#work"><em>02</em><span data-scramble>Work</span></a>
-    <a href="#education"><em>03</em><span data-scramble>Education</span></a>
-    <a href="#skills"><em>04</em><span data-scramble>Capabilities</span></a>
+    <a href="#research"><em>02</em><span data-scramble>Research</span></a>
+    <a href="#work"><em>03</em><span data-scramble>Work</span></a>
+    <a href="#education"><em>04</em><span data-scramble>Education</span></a>
     <a href="#awards"><em>05</em><span data-scramble>Awards</span></a>
     <a href="#contact"><em>06</em><span data-scramble>Contact</span></a>
   </nav>
@@ -119,9 +120,9 @@
 <div class="menu" id="menu" hidden>
   <nav class="menu__list" aria-label="Sections">
     <a href="#overview"><em>01</em> Overview</a>
-    <a href="#work"><em>02</em> Work</a>
-    <a href="#education"><em>03</em> Education</a>
-    <a href="#skills"><em>04</em> Capabilities</a>
+    <a href="#research"><em>02</em> Research</a>
+    <a href="#work"><em>03</em> Work</a>
+    <a href="#education"><em>04</em> Education</a>
     <a href="#awards"><em>05</em> Awards</a>
     <a href="#contact"><em>06</em> Contact</a>
   </nav>
@@ -218,10 +219,139 @@
     </div>
   </section>
 
-  <!-- ─────────── 02 · WORK ─────────── -->
+  <!-- ─────────── 02 · RESEARCH ─────────── -->
+  <section class="block" id="research">
+    <header class="block__head" data-reveal>
+      <p class="tag">02 · Current research · UC Santa Cruz AIEA Lab</p>
+      <h2 class="block__title" data-split="words">Teaching a broken robot <em>to keep walking</em>.</h2>
+      <p class="block__lede">Fault Recovery in RL Locomotion Through Online Residual Adaptation —
+        can a small correction module, updated <em class="serif">during</em> execution, restore a
+        quadruped's gait after a hardware fault without retraining the policy underneath?</p>
+    </header>
+
+    <!-- scroll-driven stage: the scroll position is the experiment timeline -->
+    <div class="stage" id="rigStage">
+      <div class="stage__pin">
+        <canvas class="stage__canvas" id="rig" aria-hidden="true"></canvas>
+        <div class="stage__veil" aria-hidden="true"></div>
+
+        <div class="stage__hud" data-tone="ok" aria-hidden="true">
+          <div class="hud__status"><i></i><span data-hud="status">Nominal gait</span></div>
+          <div class="hud__detail" data-hud="detail">base policy · healthy</div>
+          <div class="hud__sep"></div>
+          <div class="hud__row"><span class="hud__k">Fwd vel</span><span class="hud__v"><b data-hud="vel">0.50</b> m/s</span></div>
+          <div class="hud__row"><span class="hud__k">Step</span><span class="hud__v" data-hud="step">000</span></div>
+          <div class="hud__row"><span class="hud__k">Control</span><span class="hud__v">60 Hz</span></div>
+        </div>
+
+        <div class="stage__beats">
+
+          <article class="beat is-active">
+            <p class="beat__no">01 — Premise</p>
+            <h3 class="beat__title">Policies are trained on robots that <em>never break</em>.</h3>
+            <p class="beat__body">In the real world motors weaken, joints seize, and sensors start
+              reporting values that aren't true. A locomotion policy trained only under ideal
+              conditions has never once been shown what failure feels like — so it has no response
+              to it.</p>
+          </article>
+
+          <article class="beat">
+            <p class="beat__no">02 — Apparatus</p>
+            <h3 class="beat__title">A quadruped you can break <em>on purpose</em>.</h3>
+            <p class="beat__body">Twelve revolute joints in PyBullet, physics at 240&nbsp;Hz stepped
+              down to 60&nbsp;Hz control. A PPO policy trained across five seeds, each gated on a
+              numerical gait check before it's allowed into the experiment.</p>
+            <div class="beat__meta">
+              <span>34-dim observation</span><span>12-dim action</span><span>0.5 m/s target</span><span>CPU only</span>
+            </div>
+          </article>
+
+          <article class="beat">
+            <p class="beat__no">03 — Injection</p>
+            <h3 class="beat__title">At step 200, <em>something fails</em>.</h3>
+            <p class="beat__body">Five fault families, injected mid-rollout on a matched seed set so
+              every fault type is compared against identical initial conditions. Simulation makes it
+              possible to test failures that would be reckless to induce on real hardware.</p>
+            <div class="beat__meta">
+              <span>torque_limit</span><span>joint_lock</span><span>actuation_delay</span><span>sensor_dropout</span><span>sensor_noise</span>
+            </div>
+          </article>
+
+          <article class="beat">
+            <p class="beat__no">04 — Method</p>
+            <h3 class="beat__title">Correct <em>around</em> the fault, don't retrain through it.</h3>
+            <p class="beat__body">A small residual module sits between the frozen base policy and the
+              actuators, updating online. The seized joint stays seized — the correction redistributes
+              the gait around it. Measured against two bounds: no adaptation, and full retraining.</p>
+            <p class="beat__note">In progress — the residual module is the current build target.</p>
+          </article>
+
+          <article class="beat">
+            <p class="beat__no">05 — Finding</p>
+            <h3 class="beat__title">The first real result was about <em>the measurement</em>.</h3>
+            <p class="beat__body">The unadapted baseline "recovers" in <b>100% of trials on all five
+              faults</b> — a ceiling, not a success. With no headroom, no adaptation method could
+              demonstrate an improvement. <b>torque_limit</b> scores 100% recovery and a 36.5% fall
+              rate at the same time, which is only possible because recovery was scored as a momentary
+              velocity crossing rather than a sustained return to gait.</p>
+            <p class="beat__note">Fixing the metric before scaling the experiment.</p>
+          </article>
+
+        </div>
+
+        <div class="stage__track" aria-hidden="true"><i></i></div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <article class="tile s8" data-reveal>
+        <div class="rtable__wrap">
+          <table class="rtable">
+            <caption>Baseline A · no adaptation · n = 4 seeds · ± is spread across seeds</caption>
+            <thead>
+              <tr><th scope="col">Fault</th><th scope="col">Recovery</th><th scope="col">Falls</th><th scope="col">Post-fault dist.</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>torque_limit 0.2×</td><td>100%</td><td class="is-flag">36.5% ± 11.7</td><td>1.78 m</td></tr>
+              <tr><td>joint_lock</td><td>100%</td><td>0%</td><td>2.27 m</td></tr>
+              <tr><td>actuation_delay 10</td><td>100%</td><td>0%</td><td>1.64 m</td></tr>
+              <tr><td>sensor_dropout</td><td>100%</td><td>0%</td><td>2.96 m</td></tr>
+              <tr><td>sensor_noise σ 0.3</td><td>100%</td><td>0%</td><td>3.04 m</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="prose" style="font-size:var(--fs-sm)">A uniform 100% is the finding: the recovery
+          criterion fires on transient velocity noise within 2–10 control steps, so it credits
+          recoveries that never happened. Severities go up and the criterion gets a sustained window
+          before this baseline can mean anything.</p>
+      </article>
+
+      <article class="tile s4" data-reveal data-reveal-delay="100">
+        <p class="tag">Build status</p>
+        <ul class="checklist">
+          <li data-state="done"><i></i>Fault-injectable environment</li>
+          <li data-state="done"><i></i>PPO base policy · 5 seeds</li>
+          <li data-state="done"><i></i>Baseline A evaluation</li>
+          <li data-state="done"><i></i>Across-seed aggregation</li>
+          <li data-state="todo"><i></i>Residual adaptation module</li>
+          <li data-state="todo"><i></i>Baseline B · full retraining</li>
+          <li data-state="todo"><i></i>Held-out fault test (H3)</li>
+        </ul>
+      </article>
+
+      <a class="tile tile--link s12" href="https://github.com/vyom-aggarwal/fault-recovery-quadruped-rl"
+         target="_blank" rel="noopener" data-reveal data-cursor="open">
+        <span class="link__k">Repository · reproducible from a clean clone</span>
+        <span class="link__v">github.com/vyom-aggarwal/fault-recovery-quadruped-rl</span>
+        <i aria-hidden="true"></i>
+      </a>
+    </div>
+  </section>
+
+  <!-- ─────────── 03 · WORK ─────────── -->
   <section class="block" id="work">
     <header class="block__head" data-reveal>
-      <p class="tag">02 · Experience</p>
+      <p class="tag">03 · Experience</p>
       <h2 class="block__title" data-split="words">Ten roles, <em>running at once</em>.</h2>
       <div class="filters" role="group" aria-label="Filter experience">
         <button class="filter is-active" type="button" data-filter="all" aria-pressed="true">All <em>10</em></button>
@@ -328,10 +458,10 @@
     <p class="deck__empty" id="jobsEmpty" hidden>No entries in this discipline.</p>
   </section>
 
-  <!-- ─────────── 03 · EDUCATION ─────────── -->
+  <!-- ─────────── 04 · EDUCATION ─────────── -->
   <section class="block" id="education">
     <header class="block__head" data-reveal>
-      <p class="tag">03 · Education</p>
+      <p class="tag">04 · Education</p>
       <h2 class="block__title" data-split="words">Two transcripts, <em>one track</em>.</h2>
     </header>
 
@@ -357,46 +487,6 @@
           <div><dt>GPA</dt><dd>4.0 UW</dd></div>
           <div><dt>Track</dt><dd>Early College</dd></div>
         </dl>
-      </article>
-    </div>
-  </section>
-
-  <!-- ─────────── 04 · CAPABILITIES ─────────── -->
-  <section class="block" id="skills">
-    <header class="block__head" data-reveal>
-      <p class="tag">04 · Capabilities</p>
-      <h2 class="block__title" data-split="words">What I actually <em>do</em>.</h2>
-    </header>
-
-    <div class="deck" data-reveal data-stagger>
-      <article class="tile tile--cap">
-        <span class="cap__no">/01</span>
-        <h3 class="tile__title">Mathematics</h3>
-        <p class="prose">AIME qualifier · <b>MATHCOUNTS</b> 1st place · BMT &amp; SMT honours · USACO Silver.</p>
-      </article>
-      <article class="tile tile--cap">
-        <span class="cap__no">/02</span>
-        <h3 class="tile__title">Robotics</h3>
-        <p class="prose">Treasurer and head of programming &amp; CAD for <b>VEX Team 95330Z</b>;
-          captain of <b>FTC Team 36541</b>.</p>
-      </article>
-      <article class="tile tile--cap">
-        <span class="cap__no">/03</span>
-        <h3 class="tile__title">Machine learning</h3>
-        <p class="prose">Student researcher across ML labs at <b>MIT</b>,
-          <b>UC Santa Cruz</b>, and <b>Lumiere Education</b>.</p>
-      </article>
-      <article class="tile tile--cap">
-        <span class="cap__no">/04</span>
-        <h3 class="tile__title">Modeling &amp; CAD</h3>
-        <p class="prose">CAD design for competition robots, built alongside the programming
-          for VEX Robotics.</p>
-      </article>
-      <article class="tile tile--cap">
-        <span class="cap__no">/05</span>
-        <h3 class="tile__title">Leadership</h3>
-        <p class="prose">President of RIHS Math Club · founder of Apex STEM · Troop Guide,
-          Boy Scouts of America · Congressional App Challenge winner for <b>LifeLine</b>.</p>
       </article>
     </div>
   </section>

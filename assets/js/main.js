@@ -11,6 +11,7 @@ import { initReveal } from './reveal.js';
 import { initShell } from './shell.js';
 import { initWork } from './work.js';
 import { initInteractions } from './interact.js';
+import { initScrolly } from './scrolly.js';
 
 const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
 const opts = { reducedMotion: motionQuery.matches };
@@ -21,6 +22,7 @@ initWork(opts);
 initCursor(document.getElementById('cursor'), opts);
 initInteractions(opts);
 initHero(document.getElementById('gl'), opts);
+initScrolly(opts);
 
 /* Hold the entrance animations until the preloader curtain starts
    lifting, otherwise the hero performs to nobody. A deep link skips
