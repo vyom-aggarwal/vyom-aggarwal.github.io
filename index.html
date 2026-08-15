@@ -224,7 +224,7 @@
     <header class="block__head" data-reveal>
       <p class="tag">02 · Current research · UC Santa Cruz AIEA Lab</p>
       <h2 class="block__title" data-split="words">Teaching a broken robot <em>to keep walking</em>.</h2>
-      <p class="block__lede">Fault Recovery in RL Locomotion Through Online Residual Adaptation —
+      <p class="block__lede"><b>Fault Recovery in RL Locomotion Through Online Residual Adaptation</b> —
         can a small correction module, updated <em class="serif">during</em> execution, restore a
         quadruped's gait after a hardware fault without retraining the policy underneath?</p>
     </header>
@@ -250,8 +250,8 @@
             <p class="beat__no">01 — Premise</p>
             <h3 class="beat__title">Policies are trained on robots that <em>never break</em>.</h3>
             <p class="beat__body">In the real world motors weaken, joints seize, and sensors start
-              reporting values that aren't true. A locomotion policy trained only under ideal
-              conditions has never once been shown what failure feels like — so it has no response
+              reporting values that aren't true. Since a locomotion policy trained only under ideal
+              conditions has never once been shown what failure feels like, it has no response
               to it.</p>
           </article>
 
@@ -259,7 +259,7 @@
             <p class="beat__no">02 — Apparatus</p>
             <h3 class="beat__title">A quadruped you can break <em>on purpose</em>.</h3>
             <p class="beat__body">Twelve revolute joints in PyBullet, physics at 240&nbsp;Hz stepped
-              down to 60&nbsp;Hz control. A PPO policy trained across five seeds, each gated on a
+              down to 60&nbsp;Hz control. A PPO policy trained across five seeds. Each seed is tested on a
               numerical gait check before it's allowed into the experiment.</p>
             <div class="beat__meta">
               <span>34-dim observation</span><span>12-dim action</span><span>0.5 m/s target</span><span>CPU only</span>
@@ -269,7 +269,7 @@
           <article class="beat">
             <p class="beat__no">03 — Injection</p>
             <h3 class="beat__title">At step 200, <em>something fails</em>.</h3>
-            <p class="beat__body">Five fault families, injected mid-rollout on a matched seed set so
+            <p class="beat__body">Five different fault types were injected mid-rollout on a matched seed set so
               every fault type is compared against identical initial conditions. Simulation makes it
               possible to test failures that would be reckless to induce on real hardware.</p>
             <div class="beat__meta">
@@ -281,8 +281,8 @@
             <p class="beat__no">04 — Method</p>
             <h3 class="beat__title">Correct <em>around</em> the fault, don't retrain through it.</h3>
             <p class="beat__body">A small residual module sits between the frozen base policy and the
-              actuators, updating online. The seized joint stays seized — the correction redistributes
-              the gait around it. Measured against two bounds: no adaptation, and full retraining.</p>
+              actuators, updating online. The seized joint stays seized, while the correction redistributes
+              the gait around it. This is measured against two bounds: no adaptation, and full retraining.</p>
             <p class="beat__note">In progress — the residual module is the current build target.</p>
           </article>
 
