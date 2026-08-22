@@ -43,15 +43,19 @@ assets/
 
 Section 02 is a scrollytelling block: `.stage` is a tall scroll track whose
 `.stage__pin` child sticks for the duration. Scroll position through it
-becomes a 0→1 value that cross-fades the five `.beat` panels, updates the
+becomes a 0→1 value that cross-fades the six `.beat` panels, updates the
 telemetry readout, and drives the quadruped.
 
-The rig is not decoration — the scroll *is* the experiment timeline. A healthy
-trot runs until ~34%, where the front-left leg seizes (`joint_lock`) and the
-body lists toward the dead corner. From ~56% the other three legs lengthen
-their strides and the body levels out, but **the locked leg stays locked** and
-forward speed only partly returns. That is the actual claim of the project:
-the residual corrects *around* a fault, it does not repair it.
+The rig is not decoration — the scroll *is* one Baseline A trial, mapped to
+its 500 control steps. A healthy trot runs until p = 0.40, i.e. **step 200**,
+where a leg seizes (`joint_lock`) and the body lists toward the dead corner.
+Recovery completes at p = 0.66 — step 330, **2.17 s post-fault**, against the
+measured `joint_lock` recovery time of 2.222 s. The velocity readout drops by
+`joint_lock`'s measured 44.9% and returns to within 15% of baseline, which is
+exactly what the scoring criterion calls *recovered*.
+
+**The locked leg stays locked** throughout. That is the claim: the residual
+corrects *around* a fault, it does not repair it.
 
 The readout on the stage is a schematic of the mechanism. The measured
 numbers live in the tiles underneath it.

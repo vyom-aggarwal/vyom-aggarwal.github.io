@@ -225,14 +225,14 @@
   <!-- ─────────── 02 · RESEARCH ─────────── -->
   <section class="block" id="research">
     <header class="block__head" data-reveal>
-      <p class="tag">02 · Current research · UC Santa Cruz AIEA Lab</p>
+      <p class="tag">02 &middot; Current research &middot; UC Santa Cruz AIEA Lab</p>
       <h2 class="block__title" data-split="words">Teaching a broken robot <em>to keep walking</em>.</h2>
-      <p class="block__lede"><b>Fault Recovery in RL Locomotion Through Online Residual Adaptation</b> —
+      <p class="block__lede">Fault Recovery in RL Locomotion Through Online Residual Adaptation &mdash;
         can a small correction module, updated <em class="serif">during</em> execution, restore a
-        quadruped's gait after a hardware fault without retraining the policy underneath?</p>
+        quadruped&rsquo;s gait after a hardware fault without retraining the policy underneath?</p>
     </header>
 
-    <!-- scroll-driven stage: the scroll position is the experiment timeline -->
+    <!-- scroll-driven stage: scroll position is the trial timeline, steps 0-500 -->
     <div class="stage" id="rigStage">
       <div class="stage__pin">
         <canvas class="stage__canvas" id="rig" aria-hidden="true"></canvas>
@@ -240,64 +240,79 @@
 
         <div class="stage__hud" data-tone="ok" aria-hidden="true">
           <div class="hud__status"><i></i><span data-hud="status">Nominal gait</span></div>
-          <div class="hud__detail" data-hud="detail">base policy · healthy</div>
+          <div class="hud__detail" data-hud="detail">base policy &middot; healthy</div>
           <div class="hud__sep"></div>
           <div class="hud__row"><span class="hud__k">Fwd vel</span><span class="hud__v"><b data-hud="vel">0.50</b> m/s</span></div>
           <div class="hud__row"><span class="hud__k">Step</span><span class="hud__v" data-hud="step">000</span></div>
           <div class="hud__row"><span class="hud__k">Control</span><span class="hud__v">60 Hz</span></div>
+          <div class="hud__row"><span class="hud__k">Mode</span><span class="hud__v">Schematic</span></div>
         </div>
 
         <div class="stage__beats">
 
           <article class="beat is-active">
-            <p class="beat__no">01 — Premise</p>
+            <p class="beat__no">01 &mdash; Premise</p>
             <h3 class="beat__title">Policies are trained on robots that <em>never break</em>.</h3>
             <p class="beat__body">In the real world motors weaken, joints seize, and sensors start
-              reporting values that aren't true. Since a locomotion policy trained only under ideal
-              conditions has never once been shown what failure feels like, it has no response
-              to it.</p>
+              reporting values that aren&rsquo;t true. A locomotion policy trained only under ideal
+              conditions has never once been shown what failure feels like &mdash; so it has no
+              response to it.</p>
           </article>
 
           <article class="beat">
-            <p class="beat__no">02 — Apparatus</p>
+            <p class="beat__no">02 &mdash; Apparatus</p>
             <h3 class="beat__title">A quadruped you can break <em>on purpose</em>.</h3>
             <p class="beat__body">Twelve revolute joints in PyBullet, physics at 240&nbsp;Hz stepped
-              down to 60&nbsp;Hz control. A PPO policy trained across five seeds. Each seed is tested on a
-              numerical gait check before it's allowed into the experiment.</p>
+              down to 60&nbsp;Hz control. PPO trained across <b>ten seeds at 1.5M timesteps</b> &mdash;
+              six converged to a usable gait, and only those six are allowed into the experiment.</p>
             <div class="beat__meta">
-              <span>34-dim observation</span><span>12-dim action</span><span>0.5 m/s target</span><span>CPU only</span>
+              <span>34-dim observation</span><span>12-dim action</span><span>0.5 m/s target</span><span>~18.6 h laptop CPU</span>
             </div>
           </article>
 
           <article class="beat">
-            <p class="beat__no">03 — Injection</p>
+            <p class="beat__no">03 &mdash; Injection</p>
             <h3 class="beat__title">At step 200, <em>something fails</em>.</h3>
-            <p class="beat__body">Five different fault types were injected mid-rollout on a matched seed set so
-              every fault type is compared against identical initial conditions. Simulation makes it
-              possible to test failures that would be reckless to induce on real hardware.</p>
+            <p class="beat__body">Five fault families on a matched seed set, so every fault type is
+              compared against identical initial conditions. Three corrupt the <b>physics</b> &mdash;
+              what the robot can do. Two corrupt the <b>observations</b> &mdash; what the robot
+              knows.</p>
             <div class="beat__meta">
               <span>torque_limit</span><span>joint_lock</span><span>actuation_delay</span><span>sensor_dropout</span><span>sensor_noise</span>
             </div>
           </article>
 
           <article class="beat">
-            <p class="beat__no">04 — Method</p>
-            <h3 class="beat__title">Correct <em>around</em> the fault, don't retrain through it.</h3>
+            <p class="beat__no">04 &mdash; Method</p>
+            <h3 class="beat__title">Correct <em>around</em> the fault, don&rsquo;t retrain through it.</h3>
             <p class="beat__body">A small residual module sits between the frozen base policy and the
-              actuators, updating online. The seized joint stays seized, while the correction redistributes
-              the gait around it. This is measured against two bounds: no adaptation, and full retraining.</p>
-            <p class="beat__note">In progress — the residual module is the current build target.</p>
+              actuators, updating online. The seized joint stays seized &mdash; the correction
+              redistributes the gait around it. Measured against two bounds: no adaptation, and full
+              retraining.</p>
+            <p class="beat__note">Not built yet &mdash; this is the hypothesis the apparatus exists to test.</p>
           </article>
 
           <article class="beat">
-            <p class="beat__no">05 — Finding</p>
-            <h3 class="beat__title">The first real result was about <em>the measurement</em>.</h3>
-            <p class="beat__body">The unadapted baseline "recovers" in <b>100% of trials on all five
-              faults</b> — a ceiling, not a success. With no headroom, no adaptation method could
-              demonstrate an improvement. <b>torque_limit</b> scores 100% recovery and a 36.5% fall
-              rate at the same time, which is only possible because recovery was scored as a momentary
-              velocity crossing rather than a sustained return to gait.</p>
-            <p class="beat__note">Fixing the metric before scaling the experiment.</p>
+            <p class="beat__no">05 &mdash; Measurement</p>
+            <h3 class="beat__title">First, build an instrument <em>you can trust</em>.</h3>
+            <p class="beat__body">The original recovery criterion latched onto the first instantaneous
+              velocity crossing and scored ~100% recovery on every fault &mdash; including 100%
+              recovery alongside a 36.5% fall rate, which cannot both be true. It was rebuilt:
+              velocity smoothed over a 30-step causal window, <b>degradation has to be observed before
+              recovery can be</b>, the speed must hold for 30 consecutive steps, and a trial that falls
+              is never scored as recovered.</p>
+            <p class="beat__note">Every recovery number predating that change was discarded.</p>
+          </article>
+
+          <article class="beat">
+            <p class="beat__no">06 &mdash; Finding</p>
+            <h3 class="beat__title">The faults <em>separate cleanly</em>.</h3>
+            <p class="beat__body">Unadapted recovery runs from <b>0% on actuation_delay</b> to
+              <b>86.7% on sensor_noise</b>. Every actuation-side fault is less recoverable than both
+              sensor-side faults, with no overlap &mdash; which makes the physics/sensor distinction a
+              measured property of the system rather than a labelling convention, and a defensible
+              axis for the H3 generalization split.</p>
+            <p class="beat__note">Real headroom for an adaptation method to demonstrate an effect.</p>
           </article>
 
         </div>
@@ -307,44 +322,83 @@
     </div>
 
     <div class="grid">
-      <article class="tile s8" data-reveal>
+
+      <article class="tile s12" data-reveal>
         <div class="rtable__wrap">
           <table class="rtable">
-            <caption>Baseline A · no adaptation · n = 4 seeds · ± is spread across seeds</caption>
+            <caption>Baseline A &middot; no adaptation &middot; 6 converged seeds &times; 100 trials &middot; &plusmn; is spread across seeds</caption>
             <thead>
-              <tr><th scope="col">Fault</th><th scope="col">Recovery</th><th scope="col">Falls</th><th scope="col">Post-fault dist.</th></tr>
+              <tr>
+                <th scope="col">Fault (severity)</th>
+                <th scope="col">Degraded</th>
+                <th scope="col">Vel. drop</th>
+                <th scope="col">Recovery</th>
+                <th scope="col">Falls</th>
+                <th scope="col">Recovery time</th>
+              </tr>
             </thead>
             <tbody>
-              <tr><td>torque_limit 0.2×</td><td>100%</td><td class="is-flag">36.5% ± 11.7</td><td>1.78 m</td></tr>
-              <tr><td>joint_lock</td><td>100%</td><td>0%</td><td>2.27 m</td></tr>
-              <tr><td>actuation_delay 10</td><td>100%</td><td>0%</td><td>1.64 m</td></tr>
-              <tr><td>sensor_dropout</td><td>100%</td><td>0%</td><td>2.96 m</td></tr>
-              <tr><td>sensor_noise σ 0.3</td><td>100%</td><td>0%</td><td>3.04 m</td></tr>
+              <tr><td>actuation_delay (10 steps)</td><td>100.0% &plusmn; 0.0</td><td>85.9% &plusmn; 12.7</td><td class="is-flag">0.0% &plusmn; 0.0</td><td>0.0%</td><td>&mdash;</td></tr>
+              <tr><td>torque_limit (0.2&times;)</td><td>95.2% &plusmn; 5.3</td><td>55.1% &plusmn; 7.7</td><td class="is-flag">41.2% &plusmn; 3.0</td><td><b>33.2% &plusmn; 10.3</b></td><td>1.864 s &plusmn; 0.618</td></tr>
+              <tr><td>joint_lock</td><td>91.2% &plusmn; 2.6</td><td>44.9% &plusmn; 4.2</td><td class="is-flag">54.9% &plusmn; 18.6</td><td>0.0%</td><td>2.222 s &plusmn; 0.628</td></tr>
+              <tr><td>sensor_dropout</td><td>95.7% &plusmn; 5.0</td><td>28.3% &plusmn; 3.2</td><td class="is-flag">81.4% &plusmn; 14.3</td><td>0.0%</td><td>2.077 s &plusmn; 0.940</td></tr>
+              <tr><td>sensor_noise (&sigma; 0.3)</td><td>83.2% &plusmn; 14.9</td><td>23.7% &plusmn; 3.6</td><td class="is-flag">86.7% &plusmn; 5.6</td><td>0.0%</td><td>2.227 s &plusmn; 0.451</td></tr>
             </tbody>
           </table>
         </div>
-        <p class="prose" style="font-size:var(--fs-sm)">A uniform 100% is the finding: the recovery
-          criterion fires on transient velocity noise within 2–10 control steps, so it credits
-          recoveries that never happened. Severities go up and the criterion gets a sustained window
-          before this baseline can mean anything.</p>
+        <p class="rtable__note">Recovery is <b>conditional on degradation</b> &mdash; of the trials
+          where the fault measurably slowed the robot, the fraction that returned to pre-fault speed
+          and held it. Trials the fault never affected are counted under Degraded rather than scored
+          as recoveries. <b>torque_limit</b> is the highest-power test case: moderate headroom, very
+          low between-seed variance, and the only fault that topples the robot.</p>
       </article>
 
-      <article class="tile s4" data-reveal data-reveal-delay="100">
+      <article class="tile s4" data-reveal data-reveal-delay="60">
+        <p class="tag">Training reliability</p>
+        <dl class="spec">
+          <div><dt>Seeds attempted</dt><dd>10 @ 1.5M</dd></div>
+          <div><dt>Converged</dt><dd>6 / 10 &middot; 60%</dd></div>
+          <div><dt>Excluded</dt><dd>1, 3, 5, 9</dd></div>
+          <div><dt>Forward speed</dt><dd>0.585 &plusmn; 0.053 m/s</dd></div>
+          <div><dt>Commanded</dt><dd>0.500 m/s</dd></div>
+          <div><dt>Wall clock</dt><dd>~18.6 h</dd></div>
+        </dl>
+        <p class="rtable__note">A 60% convergence rate is a reported result, not a defect to hide
+          &mdash; it characterises how reliably this setup produces a usable policy.</p>
+      </article>
+
+      <article class="tile s4" data-reveal data-reveal-delay="120">
+        <p class="tag">Per-seed recovery range</p>
+        <dl class="spec">
+          <div><dt>actuation_delay</dt><dd>0 &ndash; 0%</dd></div>
+          <div><dt>torque_limit</dt><dd>39 &ndash; 45%</dd></div>
+          <div><dt>joint_lock</dt><dd>24 &ndash; 76%</dd></div>
+          <div><dt>sensor_dropout</dt><dd>55 &ndash; 93%</dd></div>
+          <div><dt>sensor_noise</dt><dd>78 &ndash; 95%</dd></div>
+        </dl>
+        <p class="rtable__note"><b>joint_lock</b> varies genuinely across seeds &mdash; some learned
+          gaits tolerate a frozen joint, others don&rsquo;t. Flagged automatically when the spread
+          exceeds 40 points.</p>
+      </article>
+
+      <article class="tile s4 is-fill" data-reveal data-reveal-delay="180">
         <p class="tag">Build status</p>
         <ul class="checklist">
           <li data-state="done"><i></i>Fault-injectable environment</li>
-          <li data-state="done"><i></i>PPO base policy · 5 seeds</li>
+          <li data-state="done"><i></i>PPO base policy &middot; 10 seeds</li>
+          <li data-state="done"><i></i>Recovery criterion rebuilt</li>
           <li data-state="done"><i></i>Baseline A evaluation</li>
           <li data-state="done"><i></i>Across-seed aggregation</li>
+          <li data-state="partial"><i></i>Severity sweep &middot; built, not run</li>
+          <li data-state="todo"><i></i>H3 held-out fault split</li>
           <li data-state="todo"><i></i>Residual adaptation module</li>
-          <li data-state="todo"><i></i>Baseline B · full retraining</li>
-          <li data-state="todo"><i></i>Held-out fault test (H3)</li>
+          <li data-state="todo"><i></i>Baseline B &middot; full retraining</li>
         </ul>
       </article>
 
       <a class="tile tile--link s12" href="https://github.com/vyom-aggarwal/fault-recovery-quadruped-rl"
          target="_blank" rel="noopener" data-reveal data-cursor="open">
-        <span class="link__k">Repository · reproducible from a clean clone</span>
+        <span class="link__k">Repository &middot; reproducible from a clean clone</span>
         <span class="link__v">github.com/vyom-aggarwal/fault-recovery-quadruped-rl</span>
         <i aria-hidden="true"></i>
       </a>

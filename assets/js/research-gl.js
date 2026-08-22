@@ -282,11 +282,17 @@ export function initResearchRig(canvas, { reducedMotion = false } = {}) {
 
   function setProgress(p) {
     state.progress = Math.min(Math.max(p, 0), 1);
-    state.fault = smoothstep(0.34, 0.52, state.progress);
-    state.recovery = smoothstep(0.56, 0.76, state.progress);
+    /* Timed against the Baseline A trial: scroll maps to steps 0-500,
+       so injection at step 200 lands at p = 0.40. Recovery completes at
+       p = 0.66 -> step 330 -> 2.17 s post-fault, against the measured
+       joint_lock recovery time of 2.222 s. */
+    state.fault = smoothstep(0.38, 0.48, state.progress);
+    state.recovery = smoothstep(0.52, 0.66, state.progress);
     /* Derived here rather than as a side effect of drawing, so the
-       telemetry readout can never disagree with the scroll position. */
-    state.speed = 1 - 0.55 * state.fault * (1 - 0.6 * state.recovery);
+       telemetry readout can never disagree with the scroll position.
+       0.449 is joint_lock's measured velocity drop; the residual returns
+       speed to within 15% of baseline, which is what "recovered" means. */
+    state.speed = 1 - 0.449 * state.fault * (1 - 0.82 * state.recovery);
   }
 
   /* ── per-frame rig solve ───────────────────────────────── */

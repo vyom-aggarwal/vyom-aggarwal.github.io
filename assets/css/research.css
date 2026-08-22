@@ -14,7 +14,7 @@
 
 .stage {
   position: relative;
-  height: 480vh;                 /* five beats' worth of scroll */
+  height: 576vh;                 /* six beats' worth of scroll */
   margin-top: var(--gap);
 }
 
@@ -48,7 +48,7 @@
 }
 
 /* ── beats ─────────────────────────────────────────────────
-   All five stack in the same cell; only one is visible. */
+   All six stack in the same cell; only one is visible. */
 .stage__beats {
   grid-area: 1 / 1;
   display: grid;
@@ -143,7 +143,7 @@
 
 /* ── narrow screens ────────────────────────────────────── */
 @media (max-width: 900px) {
-  .stage { height: 440vh; }
+  .stage { height: 528vh; }
   .stage__beats {
     align-content: end;
     padding: clamp(22px, 5vw, 34px);
@@ -196,6 +196,10 @@
 .rtable td { color: var(--ink-2); font-variant-numeric: tabular-nums; }
 .rtable .is-flag { color: var(--accent); font-weight: 600; }
 .rtable__wrap { overflow-x: auto; }
+.rtable__note {
+  font-size: var(--fs-sm); color: var(--ink-2); text-wrap: pretty;
+}
+.rtable__note b { color: var(--ink); }
 
 .checklist { display: grid; gap: 1px; }
 .checklist li {
@@ -209,4 +213,19 @@
   background: var(--accent); transform: translateY(-1px);
 }
 .checklist li[data-state='todo'] i { background: none; border: 1px solid var(--line-2); }
+/* built but not yet run across seeds — half-filled */
+/* Three status tiles run 3-up on wide screens. Once they drop to 2-up
+   the third would sit alone in a half-width row, so it takes the whole
+   row instead and splits its list into two columns. */
+@media (max-width: 1060px) {
+  .tile.is-fill { grid-column: span 12; }
+}
+@media (max-width: 1060px) and (min-width: 621px) {
+  .tile.is-fill .checklist { grid-template-columns: 1fr 1fr; column-gap: 30px; }
+}
+
+.checklist li[data-state='partial'] i {
+  background: linear-gradient(90deg, var(--accent) 50%, transparent 50%);
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
 .checklist li[data-state='done'] { color: var(--ink); }

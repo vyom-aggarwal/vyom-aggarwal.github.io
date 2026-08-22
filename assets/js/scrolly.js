@@ -20,9 +20,9 @@ import { initResearchRig } from './research-gl.js';
    the mechanism, and the real numbers live in the tiles below. */
 const PHASES = [
   { at: 0.00, status: 'Nominal gait', detail: 'base policy · healthy', tone: 'ok' },
-  { at: 0.34, status: 'Fault injected', detail: 'joint_lock · front-left', tone: 'bad' },
-  { at: 0.56, status: 'Residual engaged', detail: 'correcting around the fault', tone: 'warn' },
-  { at: 0.80, status: 'Partial recovery', detail: 'locked joint remains locked', tone: 'warn' },
+  { at: 0.38, status: 'Fault injected', detail: 'joint_lock · random joint', tone: 'bad' },
+  { at: 0.52, status: 'Residual engaged', detail: 'correcting around the fault', tone: 'warn' },
+  { at: 0.68, status: 'Speed held 30 steps', detail: 'scored: recovered', tone: 'ok' },
 ];
 
 export function initScrolly({ reducedMotion = false } = {}) {
