@@ -308,7 +308,7 @@
             <p class="beat__no">06 &mdash; Finding</p>
             <h3 class="beat__title">The faults <em>separate cleanly</em>.</h3>
             <p class="beat__body">Unadapted recovery runs from <b>0% on actuation_delay</b> to
-              <b>86.7% on sensor_noise</b>. Every actuation-side fault is less recoverable than both
+              <b>86.8% on sensor_noise</b>. Every actuation-side fault is less recoverable than both
               sensor-side faults, with no overlap &mdash; which makes the physics/sensor distinction a
               measured property of the system rather than a labelling convention, and a defensible
               axis for the H3 generalization split.</p>
@@ -326,7 +326,7 @@
       <article class="tile s12" data-reveal>
         <div class="rtable__wrap">
           <table class="rtable">
-            <caption>Baseline A &middot; no adaptation &middot; 6 converged seeds &times; 100 trials &middot; &plusmn; is spread across seeds</caption>
+            <caption>Baseline A &middot; no adaptation &middot; 6 converged seeds &times; 100 trials &middot; &plusmn; is spread across seeds, shown where the aggregation reports one</caption>
             <thead>
               <tr>
                 <th scope="col">Fault (severity)</th>
@@ -338,11 +338,11 @@
               </tr>
             </thead>
             <tbody>
-              <tr><td>actuation_delay (10 steps)</td><td>100.0% &plusmn; 0.0</td><td>85.9% &plusmn; 12.7</td><td class="is-flag">0.0% &plusmn; 0.0</td><td>0.0%</td><td>&mdash;</td></tr>
-              <tr><td>torque_limit (0.2&times;)</td><td>95.2% &plusmn; 5.3</td><td>55.1% &plusmn; 7.7</td><td class="is-flag">41.2% &plusmn; 3.0</td><td><b>33.2% &plusmn; 10.3</b></td><td>1.864 s &plusmn; 0.618</td></tr>
-              <tr><td>joint_lock</td><td>91.2% &plusmn; 2.6</td><td>44.9% &plusmn; 4.2</td><td class="is-flag">54.9% &plusmn; 18.6</td><td>0.0%</td><td>2.222 s &plusmn; 0.628</td></tr>
-              <tr><td>sensor_dropout</td><td>95.7% &plusmn; 5.0</td><td>28.3% &plusmn; 3.2</td><td class="is-flag">81.4% &plusmn; 14.3</td><td>0.0%</td><td>2.077 s &plusmn; 0.940</td></tr>
-              <tr><td>sensor_noise (&sigma; 0.3)</td><td>83.2% &plusmn; 14.9</td><td>23.7% &plusmn; 3.6</td><td class="is-flag">86.7% &plusmn; 5.6</td><td>0.0%</td><td>2.227 s &plusmn; 0.451</td></tr>
+              <tr><td>actuation_delay (10 steps)</td><td>100.0%</td><td>85.9%</td><td class="is-flag">0.0% &plusmn; 0.0</td><td>0.0% &plusmn; 0.0</td><td>&mdash;</td></tr>
+              <tr><td>torque_limit (0.2&times;)</td><td>95.2%</td><td>55.1%</td><td class="is-flag">41.2% &plusmn; 3.0</td><td><b>33.2% &plusmn; 10.3</b></td><td>1.864 s &plusmn; 0.618</td></tr>
+              <tr><td>joint_lock</td><td>91.2%</td><td>44.9%</td><td class="is-flag">54.9% &plusmn; 18.6</td><td>0.0% &plusmn; 0.0</td><td>2.222 s &plusmn; 0.628</td></tr>
+              <tr><td>sensor_dropout</td><td>95.7%</td><td>28.3%</td><td class="is-flag">81.4% &plusmn; 14.4</td><td>0.0% &plusmn; 0.0</td><td>2.077 s &plusmn; 0.940</td></tr>
+              <tr><td>sensor_noise (&sigma; 0.3)</td><td>83.2%</td><td>23.7%</td><td class="is-flag">86.8% &plusmn; 5.6</td><td>0.0% &plusmn; 0.0</td><td>2.227 s &plusmn; 0.451</td></tr>
             </tbody>
           </table>
         </div>
