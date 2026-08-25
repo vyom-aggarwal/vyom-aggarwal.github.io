@@ -63,6 +63,9 @@
   --dur:       0.42s;
   --dur-slow:  0.9s;
 
+  --cursor-dur:  260ms;
+  --cursor-ease: cubic-bezier(0.33, 1, 0.68, 1);
+
   --radius:    10px;   /* chips, buttons  */
   --radius-lg: 16px;   /* tiles           */
   --radius-xl: 22px;   /* the hero panel  */

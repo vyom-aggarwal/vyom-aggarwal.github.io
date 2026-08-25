@@ -153,58 +153,90 @@ em.serif,
 @keyframes preload-out  { to { opacity: 0; visibility: hidden; transform: translateY(-100%); } }
 html:not(.js) .preloader { display: none; }
 
-/* ═══ CUSTOM CURSOR ════════════════════════════════════════ */
-.cursor { display: none; }
+/* ═══ CUSTOM CURSOR ══════════════════════════════ */
+/* A point that tracks exactly and a square ring that lags behind it.
+   The lag is the whole effect — a ring arriving a moment late is what
+   gives the pointer mass. The point never lags, because that is where
+   the click lands.
 
-@media (hover: hover) and (pointer: fine) {
-  html.cursor-on,
-  html.cursor-on * { cursor: none !important; }
+   Both elements are created by cursor.js and appended to <body>, and
+   the native cursor is only hidden once that has run, so a script
+   failure leaves the page with a working pointer. */
 
-  .cursor {
-    display: block; position: fixed; inset: 0; z-index: 9700; pointer-events: none;
-    transition: opacity var(--dur) var(--ease);
-  }
+.cursor,
+.cursor-ring {
+  position: fixed; top: 0; left: 0; z-index: 9999;
+  pointer-events: none; will-change: transform;
+  opacity: 0;
+  transition: opacity var(--cursor-dur) var(--cursor-ease);
+}
 
-  .cursor__dot, .cursor__ring {
-    position: absolute; top: 0; left: 0; border-radius: 50%; will-change: transform;
-  }
+.has-cursor,
+.has-cursor * { cursor: none; }
+.has-cursor .cursor,
+.has-cursor .cursor-ring { opacity: 1; }
 
-  .cursor__dot {
-    width: 6px; height: 6px; margin: -3px 0 0 -3px;
-    background: var(--accent);
-    transition: opacity var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease);
-  }
+/* the point */
+.cursor {
+  width: 6px; height: 6px;
+  background: var(--ink);
+  border-radius: 1px;
+  translate: -50% -50%;
+}
 
-  .cursor__ring {
-    width: 36px; height: 36px; margin: -18px 0 0 -18px;
-    border: 1px solid var(--line-2);
-    display: grid; place-items: center;
-    transition: width var(--dur) var(--ease), height var(--dur) var(--ease),
-                margin var(--dur) var(--ease), border-color var(--dur) var(--ease),
-                background-color var(--dur) var(--ease), opacity var(--dur-fast) var(--ease);
-  }
+/* The anchor carries the position and nothing else. The visible square
+   lives in a child so a state that rotates it cannot rotate where it
+   is standing. */
+.cursor-ring { width: 0; height: 0; }
 
-  .cursor__label {
-    font: 500 9px/1 var(--font-mono);
-    letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent-ink);
-    opacity: 0; transform: scale(0.7); white-space: nowrap;
-    transition: opacity var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease);
-  }
+.cursor-ring__box {
+  position: absolute; top: 0; left: 0;
+  width: 34px; height: 34px;
+  border: 1px solid color-mix(in srgb, var(--ink) 45%, transparent);
+  border-radius: 4px;
+  translate: -50% -50%;
+  transition: width var(--cursor-dur) var(--cursor-ease),
+              height var(--cursor-dur) var(--cursor-ease),
+              border-color var(--cursor-dur) var(--cursor-ease),
+              border-radius var(--cursor-dur) var(--cursor-ease),
+              rotate var(--cursor-dur) var(--cursor-ease),
+              background-color var(--cursor-dur) var(--cursor-ease);
+}
 
-  .cursor.is-hot .cursor__ring {
-    width: 62px; height: 62px; margin: -31px 0 0 -31px;
-    border-color: transparent; background: var(--accent);
-  }
-  .cursor.is-hot .cursor__dot { opacity: 0; transform: scale(0.3); }
-  .cursor.is-hot .cursor__label { opacity: 1; transform: none; }
+/* over anything interactive — grows and turns on its corner */
+.cursor-ring.is-hot .cursor-ring__box {
+  width: 52px; height: 52px;
+  border-color: var(--accent);
+  border-radius: 6px;
+  rotate: 45deg;
+}
 
-  .cursor.is-soft .cursor__ring {
-    width: 50px; height: 50px; margin: -25px 0 0 -25px;
-    border-color: var(--accent); background: var(--accent-soft);
-  }
+/* reserved for machine-generated output, via [data-machine] */
+.cursor-ring.is-cold .cursor-ring__box { border-color: var(--accent-2); }
 
-  .cursor.is-down .cursor__ring { transform: scale(0.82); }
-  .cursor.is-idle { opacity: 0; }
+/* pressed */
+.cursor-ring.is-down .cursor-ring__box { width: 26px; height: 26px; }
+
+/* over running text — collapses into a caret and the point steps aside */
+.cursor-ring.is-text .cursor-ring__box {
+  width: 2px; height: 26px;
+  border-radius: 1px;
+  border-color: var(--accent);
+  background: var(--accent);
+  rotate: 0deg;
+}
+.cursor-ring.is-text + .cursor,
+.cursor.is-hidden { opacity: 0; }
+
+/* pointer left the window: hide rather than freeze at the edge */
+.cursor.is-out,
+.cursor-ring.is-out { opacity: 0; }
+
+@media (hover: none), (prefers-reduced-motion: reduce) {
+  .has-cursor,
+  .has-cursor * { cursor: auto; }
+  .cursor,
+  .cursor-ring { display: none; }
 }
 
 /* ═══ REVEAL / SPLIT TEXT ══════════════════════════════════ */
@@ -294,6 +326,4 @@ html.js [data-stagger].is-in > * { opacity: 1; transform: none; }
   .split .char, .split .word > .inner { transform: none !important; }
   .split .word { overflow: visible; }
   .grain { animation: none; }
-  .cursor { display: none !important; }
-  html.cursor-on, html.cursor-on * { cursor: auto !important; }
 }
