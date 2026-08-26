@@ -19,7 +19,7 @@ const opts = { reducedMotion: motionQuery.matches };
 /* keep the console usable immediately */
 initShell(opts);
 initWork(opts);
-initCursor(null, opts);          /* builds its own elements */
+initCursor(document.getElementById('cursor'), opts);
 initInteractions(opts);
 initHero(document.getElementById('gl'), opts);
 initScrolly(opts);

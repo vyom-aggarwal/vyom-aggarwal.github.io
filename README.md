@@ -32,7 +32,7 @@ assets/
     hero-gl.js          the hero object (raw WebGL2, no library)
     research-gl.js      the quadruped rig (raw WebGL2, no library)
     scrolly.js          drives the research stage from scroll position
-    cursor.js           custom cursor (exact point + lagging square ring)
+    cursor.js           custom cursor
     reveal.js           split-text + scroll entrances
     shell.js            progress, section index, theme, menu, clock
     work.js             role filter
@@ -101,12 +101,6 @@ Then visit `http://localhost:4173`.
 - **The 3D object** is a noise-displaced icosphere drawn as a wireframe plus
   a point cloud, written directly against WebGL2. If the context is
   unavailable it falls back to the CSS gradient behind it.
-- **The cursor** is a 6px point that tracks the pointer exactly plus a 34px
-  square ring that lerps toward it at 0.18 per frame — the lag is the effect.
-  It grows to 52px and turns 45° over anything interactive, shrinks to 26px
-  while pressed, and collapses into a 2×26px caret over running text. The
-  native cursor is hidden only after `cursor.js` runs, so a script failure
-  leaves a working pointer.
 - **Reduced motion** is honoured throughout: no preloader, no cursor, no
   entrance animations, and the object renders a single static frame.
 - **Theme** follows the OS until the toggle is used, after which the choice

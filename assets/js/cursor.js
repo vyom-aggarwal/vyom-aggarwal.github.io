@@ -1,103 +1,82 @@
 /* ═══════════════════════════════════════════════════════════
-   cursor.js — the custom cursor.
+   cursor.js — a two-part cursor: a hard dot that tracks the
+   pointer exactly, and a ring that trails behind it and morphs
+   into a labelled disc over anything interactive.
 
-   A point that tracks the pointer exactly and a square ring that
-   lags behind it. The lag is the effect: a ring arriving a moment
-   late is what gives the pointer mass. The point never lags,
-   because that is where the click lands and an eased hit target
-   is a broken one.
-
-   Opt-in at runtime. Nothing is applied on a touch device or for
-   anyone who has asked for reduced motion, and the native cursor
-   is hidden only after this has successfully run — so a throw, a
-   failed load, or a browser that chokes on any of it leaves the
-   page with a working pointer.
+   Only runs for fine pointers with motion allowed; touch and
+   reduced-motion users keep the native cursor.
    ═══════════════════════════════════════════════════════════ */
 
-/* State is read from whatever is under the pointer rather than bound
-   to each element, so anything added to the page later is covered
-   without having to be registered. */
-const HOT = "a, button, summary, [role='tab'], [data-magnetic], input, select, textarea";
-const COLD = '[data-machine]';
-const TEXT = 'p, li, td, h1, h2, h3, blockquote';
+const SOFT = 'a, button, [role="button"], input, select, textarea, summary';
 
-/* how hard the ring chases the point, per frame */
-const EASE = 0.18;
+export function initCursor(el, { reducedMotion = false } = {}) {
+  if (!el) return;
+  if (reducedMotion) return;
+  if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
 
-export function initCursor(_unused, { reducedMotion = false } = {}) {
-  const canHover = window.matchMedia('(hover: hover)').matches;
-  if (!canHover || reducedMotion) return;
+  const dot = el.querySelector('.cursor__dot');
+  const ring = el.querySelector('.cursor__ring');
+  const label = el.querySelector('.cursor__label');
+  if (!dot || !ring || !label) return;
 
-  const point = document.createElement('div');
-  point.className = 'cursor';
-  const ring = document.createElement('div');
-  ring.className = 'cursor-ring';
-  /* The visible square lives in a child. The anchor carries the
-     position and nothing else, so the state that rotates the square
-     cannot rotate where it is standing. */
-  const ringBox = document.createElement('div');
-  ringBox.className = 'cursor-ring__box';
-  ring.append(ringBox);
-  document.body.append(ring, point);
+  document.documentElement.classList.add('cursor-on');
 
-  let px = window.innerWidth / 2;
-  let py = window.innerHeight / 2;
-  let rx = px;
-  let ry = py;
-  let running = false;
+  let mx = window.innerWidth / 2, my = window.innerHeight / 2;
+  let rx = mx, ry = my;
+  let raf = 0;
 
-  function step() {
-    rx += (px - rx) * EASE;
-    ry += (py - ry) * EASE;
-    ring.style.transform = `translate(${rx}px, ${ry}px)`;
+  const loop = () => {
+    /* the ring eases toward the pointer — the lag is the effect */
+    rx += (mx - rx) * 0.16;
+    ry += (my - ry) * 0.16;
+    dot.style.transform = `translate3d(${mx}px, ${my}px, 0)`;
+    ring.style.transform = `translate3d(${rx}px, ${ry}px, 0)`;
+    raf = requestAnimationFrame(loop);
+  };
+  raf = requestAnimationFrame(loop);
 
-    if (Math.abs(px - rx) > 0.1 || Math.abs(py - ry) > 0.1) {
-      requestAnimationFrame(step);
-    } else {
-      running = false;
-    }
-  }
-
-  window.addEventListener('pointermove', (event) => {
-    px = event.clientX;
-    py = event.clientY;
-    /* Written immediately: the point must never trail the pointer. */
-    point.style.transform = `translate(${px}px, ${py}px)`;
-    /* First real position. Only now does the substitute know where to
-       stand, so only now is the native one hidden — adding the class at
-       load paints both squares at the origin until the pointer first
-       moves, and takes the cursor away from anyone who never moves it. */
-    document.documentElement.classList.add('has-cursor');
-    if (!running) {
-      running = true;
-      requestAnimationFrame(step);
-    }
+  window.addEventListener('pointermove', (e) => {
+    if (e.pointerType !== 'mouse') return;
+    mx = e.clientX; my = e.clientY;
+    el.classList.remove('is-idle');
   }, { passive: true });
 
-  window.addEventListener('pointerover', (event) => {
-    const el = event.target;
-    if (!(el instanceof Element)) return;
+  document.addEventListener('pointerleave', () => el.classList.add('is-idle'));
+  document.addEventListener('pointerenter', () => el.classList.remove('is-idle'));
+  window.addEventListener('blur', () => el.classList.add('is-idle'));
 
-    const hot = el.closest(HOT);
-    const cold = el.closest(COLD);
-    const text = !hot && el.closest(TEXT);
+  window.addEventListener('pointerdown', () => el.classList.add('is-down'));
+  window.addEventListener('pointerup', () => el.classList.remove('is-down'));
 
-    ring.classList.toggle('is-hot', Boolean(hot));
-    ring.classList.toggle('is-cold', Boolean(cold));
-    ring.classList.toggle('is-text', Boolean(text));
-    point.classList.toggle('is-hidden', Boolean(text));
-  }, { passive: true });
-
-  window.addEventListener('pointerdown', () => ring.classList.add('is-down'), { passive: true });
-  window.addEventListener('pointerup', () => ring.classList.remove('is-down'), { passive: true });
-
-  /* Leaving the window entirely: hide rather than freeze at the edge. */
-  document.addEventListener('pointerleave', () => {
-    point.classList.add('is-out');
-    ring.classList.add('is-out');
+  /* Delegated hover state so filtered/added elements just work. */
+  document.addEventListener('pointerover', (e) => {
+    const labelled = e.target.closest?.('[data-cursor]');
+    if (labelled) {
+      label.textContent = labelled.dataset.cursor;
+      el.classList.add('is-hot');
+      el.classList.remove('is-soft');
+      return;
+    }
+    if (e.target.closest?.(SOFT)) {
+      el.classList.add('is-soft');
+      el.classList.remove('is-hot');
+    }
   });
-  document.addEventListener('pointerenter', () => {
-    point.classList.remove('is-out');
-    ring.classList.remove('is-out');
+
+  document.addEventListener('pointerout', (e) => {
+    const next = e.relatedTarget;
+    if (next && next.closest?.('[data-cursor]')) return;
+    if (next && next.closest?.(SOFT)) {
+      el.classList.add('is-soft');
+      el.classList.remove('is-hot');
+      return;
+    }
+    el.classList.remove('is-hot', 'is-soft');
+  });
+
+  /* Native cursor comes back if the tab is hidden for a while. */
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) cancelAnimationFrame(raf);
+    else raf = requestAnimationFrame(loop);
   });
 }

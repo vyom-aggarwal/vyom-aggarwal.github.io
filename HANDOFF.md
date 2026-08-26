@@ -1,7 +1,9 @@
 # HANDOFF
 
-Written 2026-08-13. Verified against the repo at commit `44c71c5`, working tree clean,
-`main` in sync with `origin/main`, live site serving HTTP 200.
+Written 2026-08-13. Verified against the repo at commit `44c71c5` plus **one uncommitted
+change in the working tree**: a full revert of `44c71c5` (the cursor replacement), applied
+at the user's request. `main` is in sync with `origin/main`; the live site is still serving
+the reverted-away cursor until that revert is committed and pushed.
 
 ---
 
@@ -43,7 +45,9 @@ with github pages."*
 6. Fixed a real bug: WebGL animation loops silently stalling.
 7. Updated the research section twice — first from an updated project README, then
    corrected again from the authoritative CSV.
-8. Replaced the custom cursor with a copy of the one at <https://adeia.xyz/>.
+8. Replaced the custom cursor with a copy of the one at <https://adeia.xyz/> — then
+   **reverted it** when the user said they preferred the original. The original
+   dot-ring-and-label cursor is what is in the tree now.
 
 **Explicitly out of scope / deliberately not done:**
 
@@ -67,8 +71,10 @@ with github pages."*
 - Hero WebGL object (noise-displaced icosphere, point cloud + wireframe).
 - Research scrollytelling stage: 6 beats, telemetry readout, quadruped rig whose gait,
   fault, and recovery are quantitatively tied to the measured `joint_lock` data.
-- Custom cursor (point + lagging square ring) — copied from adeia.xyz, all 5 states
-  verified against the reference.
+- Custom cursor: a hard accent dot tracking the pointer exactly, plus a ring easing
+  behind it at 0.16/frame that swells into a filled accent disc with an uppercase mono
+  label over `[data-cursor]` elements, and into a soft outlined ring over other
+  interactive elements. States: `is-hot`, `is-soft`, `is-down`, `is-idle`.
 - Light/dark theming across every component including both WebGL canvases.
 - Role filter on the work deck (counts verified: all 10 / research 3 / robotics 2 /
   math 2 / leadership 5).
@@ -76,14 +82,9 @@ with github pages."*
 - Deployed and live — `curl` confirms `index.html`, `main.js`, and `cursor.js` all
   return 200, and the deployed `cursor.js` contains the new implementation.
 
-**Half-built / inert:**
-
-- The cursor's `is-cold` state exists and is styled, but **nothing triggers it**. Its
-  hook is `[data-machine]`, which appears nowhere in the markup. (In the reference site
-  it flags machine-generated content.)
-- `data-cursor="email|open|call|scroll"` attributes remain on 10 elements in
-  `index.html` but are now **dead** — the old cursor used them for text labels; the new
-  one does not. Harmless, but misleading to a reader.
+**Half-built / inert:** nothing. (The cursor revert removed the two items that were
+listed here — an untriggered `is-cold` state and 10 dead `data-cursor` attributes. Under
+the restored cursor those attributes are load-bearing again: they supply the label text.)
 
 **Known imperfect, not broken:**
 
@@ -116,7 +117,7 @@ from the sticky stage's bounding rect and pushes it into `research-gl.js`.
 | `assets/js/research-gl.js` | Quadruped rig, raw WebGL2, 516 lines | Most complex file. Gait IK, fault simulation, camera. Timing constants are tied to real measured data. |
 | `assets/js/scrolly.js` | Drives the research stage from scroll | Maps scroll → progress → rig state + beat panels + telemetry. |
 | `assets/js/hero-gl.js` | Hero icosphere, raw WebGL2, 548 lines | Largest file; shares the `shouldRun()`/`sync()` loop pattern with research-gl. |
-| `assets/js/cursor.js` | Custom cursor, 103 lines | Builds its own DOM. Copied behaviour from adeia.xyz. |
+| `assets/js/cursor.js` | Custom cursor, 82 lines | Drives the `.cursor` markup in `index.html`; reads `data-cursor` for label text. |
 | `assets/js/shell.js` | Progress, section index, theme, menu, clock | `SECTIONS` array must stay in sync with section ids in `index.html`. |
 | `assets/css/tokens.css` | All design tokens + the light theme | Every colour/size/timing is defined here first. Change colours here, nowhere else. |
 | `assets/css/base.css` | Reset, atmosphere, cursor, buttons, reveal | Cursor CSS lives here (not a separate file). |
@@ -228,21 +229,25 @@ strings. This makes two cells differ from the project README by 0.1 — see Open
 the CSV and emitted the `<tbody>` and the per-seed range list. Hand-transcribing 30 cells
 was too error-prone given the user's "make no mistakes" instruction.
 
-**Cursor: copied the real adeia.xyz implementation, not the user's written description.**
-The user supplied a detailed spec (dual-layer circles, `mix-blend-mode: difference`,
-`backdrop-filter: invert(100%)`, magnetic snap, elastic squish, `cubic-bezier(0.175,
-0.885, 0.32, 1.275)`). **That description does not match the actual site.** When shown
-the discrepancy the user said *"no, please just do whatever's on the website."* The real
-thing: a 6px **square** point that tracks exactly, plus a 34px **square outline** ring
-lerping at 0.18/frame. None of the blend modes, filters, magnetism, or squish exist.
-Adaptations: their hard-coded `--paper`/`--warm`/`--cold` were mapped to
-`--ink`/`--accent`/`--accent-2` so the cursor themes (their site has no light mode), and
-their `[data-magnet]` selector became `[data-magnetic]` to match this markup.
+**Cursor: built, replaced, and reverted — the original design won.** The site's original
+cursor is a dot + trailing ring that morphs into a labelled accent disc over elements
+carrying `data-cursor`. It was replaced with a faithful copy of the square-ring cursor at
+<https://adeia.xyz/>, then reverted in full when the user said *"I liked the old cursor
+with it's previous designs. Revert it to that."* **Do not re-litigate this** — the
+labelled-disc cursor is the chosen design.
 
-**Native cursor hidden only after `cursor.js` runs** (the `has-cursor` class is added on
-first real pointermove, not at load). Copied from the reference and worth keeping: a
-script failure, a slow load, or a visitor who never moves the mouse all keep a working
-pointer.
+Two things worth keeping from that detour:
+
+- The user's written spec for the adeia cursor (dual-layer circles,
+  `mix-blend-mode: difference`, `backdrop-filter: invert(100%)`, magnetic snap, elastic
+  squish) **did not match that site at all.** The real implementation is a 6px square
+  point plus a 34px square outline ring lerping at 0.18/frame, with none of those
+  effects. When shown the discrepancy the user said *"no, please just do whatever's on
+  the website."* **Lesson: verify the artifact, not the description of it.**
+- That implementation hid the native cursor only *after* the script ran (a `has-cursor`
+  class added on first pointermove). The current cursor instead adds `cursor-on` at init.
+  The deferred approach is more robust — a script failure or a visitor who never moves
+  the mouse keeps a working pointer. Worth porting if the cursor is touched again.
 
 **Preloader is pure CSS.** It lifts itself via a keyframe animation regardless of whether
 JS runs, so a JS failure cannot leave a permanent curtain over the page.
@@ -271,7 +276,7 @@ the suggested command.
 **Code style:** the existing files are the spec. Notable habits: section banners with
 `═══` box-drawing rules; comments explain *why*, not *what*, and often name the thing
 that was rejected; BEM-ish class naming (`.tile--job`, `.beat__title`,
-`.cursor-ring__box`); design tokens in `tokens.css` and never hard-coded colours
+`.cursor__ring`); design tokens in `tokens.css` and never hard-coded colours
 elsewhere; every interactive feature has a reduced-motion and a touch fallback.
 
 **The user's bar for correctness is high.** Two separate messages ended with *"Make no
@@ -337,8 +342,9 @@ any heading. A too-narrow `max-width` in `ch` units was the compounding cause.
   index highlighting silently stops working.
 - The work-filter counts in the `.filter` buttons are **hard-coded** in `index.html`.
   Adding a role means updating both `data-tags` and the count.
-- `.cursor-ring` must remain the immediately-preceding sibling of `.cursor` — the
-  `.cursor-ring.is-text + .cursor` rule that hides the point depends on it.
+- The cursor markup lives in `index.html` (`.cursor > .cursor__dot + .cursor__ring >
+  .cursor__label`) and `cursor.js` bails out if any of those three children is missing.
+  Removing the markup silently disables the cursor rather than erroring.
 - The research stage's beat count, the `smoothstep` ranges in `research-gl.js`, and the
   `PHASES` `at` values in `scrolly.js` are mutually calibrated. Changing the number of
   beats re-times everything, because beats are spaced as `floor(p * beats.length)`.
@@ -357,19 +363,16 @@ Ranked by priority.
    them to 4dp. **If so the README is closer to truth and the CSV is a double-rounding
    hazard.** This is a question for Vyom: which should the site show? Both are defensible;
    the site currently follows the CSV because he said to use it.
-2. **The cursor's `is-cold` state has no trigger.** Add `data-machine` to something for it
-   to mean anything — the research telemetry HUD (`.stage__hud`) is the natural candidate,
-   since it is literally machine readout. One attribute, no code change needed.
-3. **Dead `data-cursor` attributes** on 10 elements in `index.html`. The new cursor
-   ignores them. Either remove them or leave them; currently harmless clutter.
-4. **No Toolchain / Skills section on the site.** The Capabilities section was deleted at
+2. **Commit and push the cursor revert.** It is sitting uncommitted in the working tree.
+   Until it ships, the live site shows the square-ring cursor the user rejected.
+3. **No Toolchain / Skills section on the site.** The Capabilities section was deleted at
    the user's request, but his GitHub profile README has a detailed toolchain table
    (Python, TypeScript, PyTorch, PyBullet, WebGL, LaTeX, CAD…). The site currently names
    no languages or tools anywhere. Worth asking whether he wants that back in some form —
    it is a real gap for a technical portfolio.
-5. **No OG image.** `og:title`/`og:description` are set but there is no `og:image`, so
+4. **No OG image.** `og:title`/`og:description` are set but there is no `og:image`, so
    link previews are bare text. UNVERIFIED whether he cares.
-6. **`post_fault_distance` is in the CSV but not on the site.** Deliberate (column count),
+5. **`post_fault_distance` is in the CSV but not on the site.** Deliberate (column count),
    but flagging it as available data if the table is ever reworked.
 
 ---
@@ -380,10 +383,9 @@ Ranked by priority.
    timing, and the content-editing conventions, and is not duplicated here.
 2. **Ask Vyom the Open Thread #1 question** (86.7 vs 86.8 — CSV or README?). It is a
    one-line fix either way, but it should not be guessed at, and it blocks nothing else.
-3. **Wire up `is-cold`** by adding `data-machine` to `.stage__hud` in `index.html`, then
-   verify the cursor border turns `--accent-2` over it. Smallest available win.
-4. **Decide on the dead `data-cursor` attributes** — remove them in the same pass as #3.
-5. **Raise the Toolchain gap (#4)** and, if he wants it, design it as tiles in the
+3. **Commit and push the pending cursor revert** so the live site matches the tree:
+   `git add -A && git commit -m "Restore previous cursor design" && git push`.
+4. **Raise the Toolchain gap (#3)** and, if he wants it, design it as tiles in the
    existing `.deck` system rather than reviving the old Capabilities layout.
 
 Serve locally with `python -m http.server 4173` before touching anything, and re-verify
@@ -400,7 +402,7 @@ by DOM measurement rather than screenshots.
 | Research project repo | <https://github.com/vyom-aggarwal/fault-recovery-quadruped-rl> |
 | Research data (authoritative) | `C:\Users\aggar\Documents\Research\UCSC AIEA\Research Project\fault-recovery-quadruped-rl\logs\across_seed_summary.csv` |
 | Research project README | `C:\Users\aggar\Documents\Research\UCSC AIEA\Research Project\fault-recovery-quadruped-rl\README.md` |
-| Cursor design copied from | <https://adeia.xyz/> — see `motion.js` and its cursor CSS |
+| Cursor design (tried, then reverted) | <https://adeia.xyz/> — real implementation is in its `motion.js`, not the description of it |
 | Scrollytelling structure referenced | <https://suhaslord.github.io/portfolio/> (`.scroll-stage` / sticky inner pattern) |
 | Vyom's GitHub profile README | source for the section 01 profile copy and the unused toolchain table |
 | LinkedIn | <https://www.linkedin.com/in/vyom-aggarwal/> |
