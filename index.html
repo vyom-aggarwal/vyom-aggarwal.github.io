@@ -264,9 +264,9 @@
             <h3 class="beat__title">A quadruped you can break <em>on purpose</em>.</h3>
             <p class="beat__body">Twelve revolute joints in PyBullet, physics at 240&nbsp;Hz stepped
               down to 60&nbsp;Hz control. PPO trained across <b>ten seeds at 1.5M timesteps</b> &mdash;
-              six converged to a usable gait, and only those six are allowed into the experiment.</p>
+              all ten converged to a usable gait, so every one of them is in the experiment.</p>
             <div class="beat__meta">
-              <span>34-dim observation</span><span>12-dim action</span><span>0.5 m/s target</span><span>~18.6 h laptop CPU</span>
+              <span>34-dim observation</span><span>12-dim action</span><span>0.5 m/s target</span><span>~8.4 h laptop CPU</span>
             </div>
           </article>
 
@@ -307,8 +307,8 @@
           <article class="beat">
             <p class="beat__no">06 &mdash; Finding</p>
             <h3 class="beat__title">The faults <em>separate cleanly</em>.</h3>
-            <p class="beat__body">Unadapted recovery runs from <b>0% on actuation_delay</b> to
-              <b>86.8% on sensor_noise</b>. Every actuation-side fault is less recoverable than both
+            <p class="beat__body">Unadapted recovery runs from <b>1.2% on actuation_delay</b> to
+              <b>82.3% on sensor_noise</b>. Every actuation-side fault is less recoverable than both
               sensor-side faults, with no overlap &mdash; which makes the physics/sensor distinction a
               measured property of the system rather than a labelling convention, and a defensible
               axis for the H3 generalization split.</p>
@@ -326,7 +326,7 @@
       <article class="tile s12" data-reveal>
         <div class="rtable__wrap">
           <table class="rtable">
-            <caption>Baseline A &middot; no adaptation &middot; 6 converged seeds &times; 100 trials &middot; &plusmn; is spread across seeds, shown where the aggregation reports one</caption>
+            <caption>Baseline A &middot; no adaptation &middot; 10 seeds &times; 100 trials &middot; &plusmn; is spread across seeds, shown where the aggregation reports one</caption>
             <thead>
               <tr>
                 <th scope="col">Fault (severity)</th>
@@ -338,47 +338,49 @@
               </tr>
             </thead>
             <tbody>
-              <tr><td>actuation_delay (10 steps)</td><td>100.0%</td><td>85.9%</td><td class="is-flag">0.0% &plusmn; 0.0</td><td>0.0% &plusmn; 0.0</td><td>&mdash;</td></tr>
-              <tr><td>torque_limit (0.2&times;)</td><td>95.2%</td><td>55.1%</td><td class="is-flag">41.2% &plusmn; 3.0</td><td><b>33.2% &plusmn; 10.3</b></td><td>1.864 s &plusmn; 0.618</td></tr>
-              <tr><td>joint_lock</td><td>91.2%</td><td>44.9%</td><td class="is-flag">54.9% &plusmn; 18.6</td><td>0.0% &plusmn; 0.0</td><td>2.222 s &plusmn; 0.628</td></tr>
-              <tr><td>sensor_dropout</td><td>95.7%</td><td>28.3%</td><td class="is-flag">81.4% &plusmn; 14.4</td><td>0.0% &plusmn; 0.0</td><td>2.077 s &plusmn; 0.940</td></tr>
-              <tr><td>sensor_noise (&sigma; 0.3)</td><td>83.2%</td><td>23.7%</td><td class="is-flag">86.8% &plusmn; 5.6</td><td>0.0% &plusmn; 0.0</td><td>2.227 s &plusmn; 0.451</td></tr>
+              <tr><td>actuation_delay (10 steps)</td><td>100.0%</td><td>98.5%</td><td class="is-flag">1.2% &plusmn; 1.4</td><td><b>78.5% &plusmn; 12.2</b></td><td>2.340 s &plusmn; 0.617</td></tr>
+              <tr><td>torque_limit (0.2&times;)</td><td>93.7%</td><td>57.4%</td><td class="is-flag">43.1% &plusmn; 8.4</td><td>31.1% &plusmn; 11.1</td><td>1.679 s &plusmn; 0.340</td></tr>
+              <tr><td>joint_lock</td><td>94.9%</td><td>49.8%</td><td class="is-flag">53.7% &plusmn; 8.2</td><td>4.2% &plusmn; 8.2</td><td>1.896 s &plusmn; 0.180</td></tr>
+              <tr><td>sensor_dropout</td><td>83.9%</td><td>31.7%</td><td class="is-flag">79.6% &plusmn; 7.5</td><td>2.6% &plusmn; 4.6</td><td>1.729 s &plusmn; 0.146</td></tr>
+              <tr><td>sensor_noise (&sigma; 0.3)</td><td>84.7%</td><td>29.3%</td><td class="is-flag">82.3% &plusmn; 8.2</td><td>2.0% &plusmn; 4.6</td><td>1.622 s &plusmn; 0.141</td></tr>
             </tbody>
           </table>
         </div>
         <p class="rtable__note">Recovery is <b>conditional on degradation</b> &mdash; of the trials
           where the fault measurably slowed the robot, the fraction that returned to pre-fault speed
           and held it. Trials the fault never affected are counted under Degraded rather than scored
-          as recoveries. <b>torque_limit</b> is the highest-power test case: moderate headroom, very
-          low between-seed variance, and the only fault that topples the robot.</p>
+          as recoveries. <b>torque_limit</b> and <b>joint_lock</b> are the highest-power test cases:
+          recovery sits mid-range at 43.1% and 53.7%, so an adaptation method has room to move it
+          without running into a floor or a ceiling. <b>actuation_delay</b> is the severe end &mdash;
+          it topples the robot in 78.5% of trials and almost never recovers.</p>
       </article>
 
       <article class="tile s4" data-reveal data-reveal-delay="60">
         <p class="tag">Training reliability</p>
         <dl class="spec">
           <div><dt>Seeds attempted</dt><dd>10 @ 1.5M</dd></div>
-          <div><dt>Converged</dt><dd>6 / 10 &middot; 60%</dd></div>
-          <div><dt>Excluded</dt><dd>1, 3, 5, 9</dd></div>
-          <div><dt>Forward speed</dt><dd>0.585 &plusmn; 0.053 m/s</dd></div>
+          <div><dt>Converged</dt><dd>10 / 10 &middot; 100%</dd></div>
+          <div><dt>Excluded</dt><dd>None</dd></div>
           <div><dt>Commanded</dt><dd>0.500 m/s</dd></div>
-          <div><dt>Wall clock</dt><dd>~18.6 h</dd></div>
+          <div><dt>Wall clock</dt><dd>~8.4 h</dd></div>
         </dl>
-        <p class="rtable__note">A 60% convergence rate is a reported result, not a defect to hide
-          &mdash; it characterises how reliably this setup produces a usable policy.</p>
+        <p class="rtable__note">Every seed reached a usable gait on this run, so none were held out
+          and all ten are aggregated below &mdash; the convergence rate is a reported result either
+          way, since it characterises how reliably this setup produces a usable policy.</p>
       </article>
 
       <article class="tile s4" data-reveal data-reveal-delay="120">
         <p class="tag">Per-seed recovery range</p>
         <dl class="spec">
-          <div><dt>actuation_delay</dt><dd>0 &ndash; 0%</dd></div>
-          <div><dt>torque_limit</dt><dd>39 &ndash; 45%</dd></div>
-          <div><dt>joint_lock</dt><dd>24 &ndash; 76%</dd></div>
-          <div><dt>sensor_dropout</dt><dd>55 &ndash; 93%</dd></div>
-          <div><dt>sensor_noise</dt><dd>78 &ndash; 95%</dd></div>
+          <div><dt>actuation_delay</dt><dd>0 &ndash; 4%</dd></div>
+          <div><dt>torque_limit</dt><dd>32 &ndash; 60%</dd></div>
+          <div><dt>joint_lock</dt><dd>41 &ndash; 68%</dd></div>
+          <div><dt>sensor_dropout</dt><dd>68 &ndash; 88%</dd></div>
+          <div><dt>sensor_noise</dt><dd>64 &ndash; 94%</dd></div>
         </dl>
-        <p class="rtable__note"><b>joint_lock</b> varies genuinely across seeds &mdash; some learned
-          gaits tolerate a frozen joint, others don&rsquo;t. Flagged automatically when the spread
-          exceeds 40 points.</p>
+        <p class="rtable__note"><b>actuation_delay</b> is narrow only because it sits on the floor
+          &mdash; every seed fails it. The other four spread 20 to 30 points, none of them wide
+          enough to trip the 40-point flag, so no fault is strongly seed-dependent on this run.</p>
       </article>
 
       <article class="tile s4 is-fill" data-reveal data-reveal-delay="180">

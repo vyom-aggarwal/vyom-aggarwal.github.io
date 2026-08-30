@@ -22,7 +22,9 @@ const PHASES = [
   { at: 0.00, status: 'Nominal gait', detail: 'base policy · healthy', tone: 'ok' },
   { at: 0.38, status: 'Fault injected', detail: 'joint_lock · random joint', tone: 'bad' },
   { at: 0.52, status: 'Residual engaged', detail: 'correcting around the fault', tone: 'warn' },
-  { at: 0.68, status: 'Speed held 30 steps', detail: 'scored: recovered', tone: 'ok' },
+  /* Trails the recovery smoothstep's end (0.63 in research-gl.js) by 0.02 so
+     the label settles after the motion does, not before it. Retime both. */
+  { at: 0.65, status: 'Speed held 30 steps', detail: 'scored: recovered', tone: 'ok' },
 ];
 
 export function initScrolly({ reducedMotion = false } = {}) {

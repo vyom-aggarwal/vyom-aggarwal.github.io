@@ -49,9 +49,9 @@ telemetry readout, and drives the quadruped.
 The rig is not decoration — the scroll *is* one Baseline A trial, mapped to
 its 500 control steps. A healthy trot runs until p = 0.40, i.e. **step 200**,
 where a leg seizes (`joint_lock`) and the body lists toward the dead corner.
-Recovery completes at p = 0.66 — step 330, **2.17 s post-fault**, against the
-measured `joint_lock` recovery time of 2.222 s. The velocity readout drops by
-`joint_lock`'s measured 44.9% and returns to within 15% of baseline, which is
+Recovery completes at p = 0.63 — step 315, **1.92 s post-fault**, against the
+measured `joint_lock` recovery time of 1.896 s. The velocity readout drops by
+`joint_lock`'s measured 49.8% and returns to within 15% of baseline, which is
 exactly what the scoring criterion calls *recovered*.
 
 **The locked leg stays locked** throughout. That is the claim: the residual
