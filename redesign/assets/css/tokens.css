@@ -1,87 +1,120 @@
 /* ═══════════════════════════════════════════════════════════
-   TOKENS — v2 "studio panel"
+   TOKENS — v2 "night side"
 
-   One fixed light palette. Every colour, size, and duration
-   downstream reads from here; nothing is hardcoded in a
-   component file.
+   One fixed dark palette. No light variant, no toggle, no
+   prefers-color-scheme branch. Every colour, size and duration
+   downstream reads from here.
 
-   Contrast, measured (WCAG 2.1, computed not estimated):
-     ink   on panel  10.51   AA
-     ink-2 on panel   7.17   AA
-     ink   on paper  15.31   AA
-     ink-2 on paper  10.44   AA
-     white on signal  5.73   AA
-     white on deep   10.75   AA
-     limb  on deep     6.74   AA
-     signal on paper   4.93   AA        -> body text OK on paper
-     signal on panel   3.39   large/UI  -> fill + rule only, never body text
-     white on panel    1.69   FAIL      -> wordmark is decorative, carries no meaning
-     limb  on panel    1.06   FAIL      -> decorative only, never type
+   The palette is Earth from orbit at night: --void is space,
+   --signal is the unlit ocean, --limb is the atmosphere still
+   glowing at the planet's edge. The cyan is the only real light
+   source in the frame, which is why it does the rim-light on the
+   robot and the focus rings, and why nothing else glows.
+
+   Contrast measured, not estimated (WCAG 2.1, computed):
+
+     ink    on panel   14.88  AA
+     ink-2  on panel    7.75  AA
+     ink-3  on panel    5.88  AA
+     signal on panel    6.16  AA   <- clears body text, so <em> works as text
+     limb   on panel   12.00  AA
+     ghost  on panel    1.65  sub-3, decorative only, carries no meaning
+     ink    on raised  13.38  AA
+     ink-2  on raised   6.96  AA
+     ink-3  on raised   5.28  AA
+     ink-3  on zebra    5.02  AA   <- the row that forced the ink-3 change
+     void   on signal   6.73  AA   <- button text is --void
+     white  on signal   2.89  FAIL <- never put white on --signal
+     limb   on void    13.12  AA   } focus ring clears 3:1 against
+     limb   on panel   12.00  AA   } every surface it can land on
+     white  on deep    10.75  AA
+     limb   on deep     7.24  AA
+
+   One deviation from the brief, deliberate: --ink-3 is #8C95A1,
+   not #808995. At #808995 it measures 4.29 on the table's zebra
+   row and 4.52 on --raised, so column heads would have failed AA
+   on the striped rows and sat 0.02 above the line everywhere
+   else. Lightening the text is the sanctioned fix. Nothing else
+   in the brief's palette failed.
    ═══════════════════════════════════════════════════════════ */
 
 :root {
-  color-scheme: light;
+  color-scheme: dark;
 
-  /* ── neutrals ──────────────────────────────────────────────
-     Cooled a few degrees off a warm studio gray so the blue
-     never sits on a competing temperature. */
-  --paper:       #EDEEEF;   /* canvas outside the panel */
-  --panel:       #C6C7C9;   /* the inset studio panel   */
-  --ink:         #16181B;   /* display type, headings   */
-  --ink-2:       #33363B;   /* body copy                */
-  --white:       #FFFFFF;   /* pixel wordmark, data cards */
+  /* ── the night side ────────────────────────────────────────
+     Elevation runs the other way from a light build: the canvas
+     is the deepest value on the page and nothing sits below it.
+     What catches light is what sits in front. */
+  --void:        #0A0D11;   /* canvas outside the panel — space */
+  --panel:       #14181E;   /* the studio panel, lighter than the canvas */
+  --raised:      #1C222A;   /* data cards, tables, inner surfaces */
 
-  /* ── the one accent, read off Earth from orbit ─────────────
-     deep = ocean under cloud shadow  (mass)
-     signal = lit ocean               (action)
-     limb = atmosphere at the edge    (light)
-     Never introduce a fourth blue. */
-  --signal:      #1668B3;
-  --signal-deep: #0D3F6E;
-  --limb:        #9FD5E8;
+  --ink:         #E8EBEE;   /* display type and headings, never #FFF */
+  --ink-2:       #A3ACB6;   /* body copy */
+  --ink-3:       #8C95A1;   /* meta, labels, timestamps, column heads */
+
+  /* ── the one accent. No fourth hue. ─────────────────────── */
+  --signal:      #4A9EE0;   /* CTA, accent, active state, <em> emphasis */
+  --signal-deep: #0D3F6E;   /* contact panel, large tinted surfaces */
+  --limb:        #8FE0F5;   /* rim-light, focus rings, hairline accents */
+
+  --ghost:       #383E46;   /* the pixel wordmark, and nothing else */
 
   /* derived accent surfaces — same three hues, alpha only */
-  --signal-soft: rgb(22 104 179 / 0.10);
-  --signal-line: rgb(22 104 179 / 0.34);
-  --limb-glow:   rgb(159 213 232 / 0.55);
+  --signal-soft: rgb(74 158 224 / 0.12);
+  --signal-line: rgb(74 158 224 / 0.42);
+  --limb-glow:   rgb(143 224 245 / 0.42);
 
-  /* ── rules and edges ──────────────────────────────────── */
-  --line:        rgb(22 24 27 / 0.12);
-  --line-2:      rgb(22 24 27 / 0.22);
+  /* ── edges. In the dark these carry the elevation the drop
+     shadow used to carry. ────────────────────────────────── */
+  --hair:        rgb(255 255 255 / 0.08);
+  --hair-2:      rgb(255 255 255 / 0.14);
+  --edge-top:    rgb(255 255 255 / 0.10);  /* panel's lit top edge */
+  --zebra:       rgb(255 255 255 / 0.02);
 
-  /* ── glass ─────────────────────────────────────────────── */
-  --glass-bg:     rgb(255 255 255 / 0.28);
-  --glass-blur:   blur(18px) saturate(1.1);
-  --glass-edge:   rgb(255 255 255 / 0.55);
-  /* Safari fallback when backdrop-filter is unavailable */
-  --glass-solid:  rgb(255 255 255 / 0.62);
+  /* ── glass, retuned for a dark ground ──────────────────────
+     .28 white over dark goes milky, so the fill drops to .055
+     and the blur does the work instead. */
+  --glass-bg:    rgb(255 255 255 / 0.055);
+  --glass-blur:  blur(20px) saturate(1.15);
+  --glass-edge:  rgb(255 255 255 / 0.09);
+  --glass-top:   rgb(255 255 255 / 0.16);
+  --glass-solid: #1A1F26;   /* Safari / no-backdrop-filter fallback */
 
-  /* ── shadow ────────────────────────────────────────────── */
-  --shadow-panel: 0 40px 90px -20px rgb(0 0 0 / 0.22);
-  --shadow-card:  0 12px 30px -12px rgb(0 0 0 / 0.16);
-  --shadow-lift:  0 20px 46px -16px rgb(0 0 0 / 0.20);
+  /* ── depth. A dark-on-dark shadow is invisible, so the panel
+     reads as raised through its top edge and hairline border;
+     these only add a wide ambient settle. ────────────────── */
+  --shadow-panel: 0 60px 140px -40px rgb(0 0 0 / 0.85);
+  --shadow-card:  0 24px 60px -30px rgb(0 0 0 / 0.70);
+  --shadow-lift:  0 30px 70px -28px rgb(0 0 0 / 0.80);
 
   /* ── type: three families, one job each ────────────────── */
-  --font-display: 'Archivo', 'Helvetica Neue', Arial, sans-serif;  /* display + UI + body */
+  --font-display: 'Archivo', 'Helvetica Neue', Arial, sans-serif;
   --font-mono:    'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
-  --font-pixel:   'Departure Mono', 'Silkscreen', monospace;       /* wordmark only */
+  --font-pixel:   'Departure Mono', 'Silkscreen', monospace;  /* wordmark only */
 
   /* scale, 1.333 ratio off a 16px base */
-  --fs-micro: 0.6875rem;   /* 11px  mono labels        */
-  --fs-mono:  0.75rem;     /* 12px  table + meta       */
-  --fs-sm:    0.8125rem;   /* 13px                     */
-  --fs-body:  1rem;        /* 16px                     */
+  --fs-micro: 0.6875rem;
+  --fs-mono:  0.75rem;
+  --fs-sm:    0.8125rem;
+  --fs-body:  1rem;
   --fs-lede:  clamp(1.0625rem, 1rem + 0.3vw, 1.333rem);
   --fs-h3:    clamp(1.15rem, 1.05rem + 0.5vw, 1.777rem);
   --fs-h2:    clamp(1.9rem, 1.3rem + 2.4vw, 3.157rem);
-  --fs-stat:  clamp(2.6rem, 1.6rem + 3.4vw, 4rem);     /* the 10/10 figure  */
-  --fs-display: clamp(2.4rem, 0.4rem + 7.4vw, 7.48rem); /* staggered headline */
-  --fs-word:  clamp(4rem, 1rem + 15vw, 15rem);          /* pixel wordmark    */
+  --fs-stat:  clamp(2.6rem, 1.6rem + 3.4vw, 4rem);
+  --fs-display: clamp(2.1rem, 0.4rem + 5.6vw, 5.6rem);
+  --fs-word:  clamp(3.2rem, 0.5rem + 8vw, 8rem);
 
-  --lh-display: 0.92;
-  --lh-tight:   1.12;
-  --lh-body:    1.55;
-  --track-tight: -0.03em;
+  /* Optical compensation for light-on-dark. Strokes bloom on a
+     dark ground, so the display weight drops a step, tracking
+     opens, and body leading gains a notch. */
+  --wt-display: 600;
+  --wt-ui:      500;
+  --lh-display: 0.94;
+  --lh-tight:   1.15;
+  --lh-body:    1.62;
+  --track-tight: -0.025em;
+  --track-mono:   0.01em;
   --track-wide:   0.12em;
   --measure:     68ch;
 
@@ -91,28 +124,27 @@
   --s-9: 128px;
 
   /* ── layout ────────────────────────────────────────────── */
-  --max:      1440px;   /* 12-column field           */
-  --cols:     12;
-  --inset:    24px;     /* panel inset from viewport */
-  --gutter:   clamp(20px, 3.2vw, 56px);  /* padding inside a panel */
-  --panel-gap: clamp(16px, 2vw, 28px);   /* gap between stacked panels */
+  --max:       1440px;
+  --inset:     24px;
+  --gutter:    clamp(20px, 3.2vw, 56px);
+  --panel-gap: clamp(16px, 2vw, 28px);
 
   /* ── radii ─────────────────────────────────────────────── */
-  --r-panel:  28px;
-  --r-card:   20px;
-  --r-btn:    10px;
-  --r-pill:   999px;
+  --r-panel: 28px;
+  --r-card:  20px;
+  --r-btn:   10px;
+  --r-pill:  999px;
 
   /* ── motion ────────────────────────────────────────────── */
   --ease:        cubic-bezier(0.22, 1, 0.36, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
   --dur-fast: 0.18s;
   --dur:      0.36s;
-  --dur-slow: 0.9s;      /* full page-load orchestration */
+  --dur-slow: 0.9s;
 }
 
 /* Mobile: the panel goes full-bleed, so the inset and its radius
-   collapse rather than every component re-declaring a breakpoint. */
+   collapse here instead of in every component. */
 @media (max-width: 640px) {
   :root { --inset: 0px; --r-panel: 0px; }
 }
