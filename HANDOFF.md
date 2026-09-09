@@ -77,8 +77,8 @@ with github pages."*
   elements, and a soft outlined ring over other interactive elements. States: `is-hot`,
   `is-soft`, `is-down`, `is-idle`.
 - Light/dark theming across every component including both WebGL canvases.
-- Role filter on the work deck (counts verified: all 10 / research 3 / robotics 2 /
-  math 2 / leadership 5).
+- Role filter on the work deck (counts verified: all 8 / research 3 / robotics 1 /
+  math 1 / leadership 4).
 - Reduced-motion and touch fallbacks throughout.
 - Structural checks pass: HTML tag balance, all `assets/` references resolve, all 9 JS
   modules parse as ESM.
@@ -210,7 +210,7 @@ small mat4 helpers. *Rejected:* Three.js via CDN; a CSS-3D fallback.
 **Console sidebar + tile grid, not stacked sections.** The first rebuild kept the original
 vertical band-per-section structure and was rejected outright. Current architecture is a
 fixed ~306px sidebar plus a scrolling canvas of modular tiles. Rationale: the content is
-many small discrete facts (10 roles, 6 awards, 2 schools), which a tile grid serves far
+many small discrete facts (8 roles, 6 awards, 2 schools), which a tile grid serves far
 better than full-width bands. *Rejected:* horizontal scroll; split-screen sticky; pure
 bento with no sidebar.
 
