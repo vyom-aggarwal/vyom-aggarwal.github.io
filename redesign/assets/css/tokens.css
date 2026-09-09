@@ -45,9 +45,10 @@
      Elevation runs the other way from a light build: the canvas
      is the deepest value on the page and nothing sits below it.
      What catches light is what sits in front. */
-  --void:        #0A0D11;   /* canvas outside the panel — space */
-  --panel:       #14181E;   /* the studio panel, lighter than the canvas */
-  --raised:      #1C222A;   /* data cards, tables, inner surfaces */
+  --void:        #000000;   /* space. True black, and free on OLED */
+  --window:      #04060A;   /* the hero viewport before the scene loads */
+  --panel:       #171C24;   /* panels, lifted because they sit on true black */
+  --raised:      #212832;   /* data cards, tables, inner surfaces */
 
   --ink:         #E8EBEE;   /* display type and headings, never #FFF */
   --ink-2:       #A3ACB6;   /* body copy */
@@ -58,7 +59,10 @@
   --signal-deep: #0D3F6E;   /* contact panel, large tinted surfaces */
   --limb:        #8FE0F5;   /* rim-light, focus rings, hairline accents */
 
-  --ghost:       #383E46;   /* the pixel wordmark, and nothing else */
+  /* The wordmark now sits over a scene whose brightness varies from
+     near-black to the limb, so a fixed hex would vanish in one place
+     and glare in another. Low-alpha white tracks the backdrop. */
+  --ghost:       rgb(255 255 255 / 0.08);
 
   /* derived accent surfaces — same three hues, alpha only */
   --signal-soft: rgb(74 158 224 / 0.12);
