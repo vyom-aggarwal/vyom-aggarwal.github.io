@@ -1,0 +1,291 @@
+/* ═══════════════════════════════════════════════════════════
+   HERO — the studio panel, stage 2
+
+   z-order, declared once so the wordmark interleave stays
+   readable instead of becoming a pile of magic numbers:
+     1  wordmark, back half
+     2  robot canvas and its halo
+     3  wordmark, front half + rim spill
+     4  copy, nav, rail, anything you can read or click
+   ═══════════════════════════════════════════════════════════ */
+
+.hero {
+  position: relative;
+  min-height: calc(100svh - (var(--inset) * 2));
+  padding: var(--gutter);
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-template-rows: auto 1fr auto;
+  column-gap: var(--s-4);
+  row-gap: var(--s-5);
+  isolation: isolate;
+}
+
+/* ═══ 1 · top bar ═══════════════════════════════════════ */
+.bar {
+  grid-column: 1 / -1;
+  display: flex; align-items: center; gap: var(--s-4);
+  position: relative; z-index: 4;
+}
+
+.ident { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+.ident__mark { width: 30px; height: 30px; border-radius: 7px; display: block; }
+.ident__name { color: var(--ink); font-weight: 600; font-size: var(--fs-sm); letter-spacing: -0.01em; }
+
+.navpill {
+  margin-inline: auto;
+  display: flex; align-items: center; gap: 2px;
+  padding: 5px; border-radius: var(--r-pill);
+}
+.navpill a {
+  padding: 9px 16px; border-radius: var(--r-pill);
+  font-size: var(--fs-sm); font-weight: var(--wt-ui); color: var(--ink-2);
+  text-decoration: none; white-space: nowrap;
+  transition: color var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease);
+}
+.navpill a:hover { color: var(--ink); }
+.navpill a[aria-current="true"] {
+  background: rgb(255 255 255 / 0.09);
+  color: var(--ink);
+}
+
+.status {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 8px 14px; border-radius: var(--r-pill);
+  font-family: var(--font-mono); font-size: var(--fs-mono);
+  letter-spacing: var(--track-mono); color: var(--ink-3);
+  white-space: nowrap;
+}
+.status b { color: var(--ink-2); font-weight: 500; font-variant-numeric: tabular-nums; }
+.status__dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--signal); box-shadow: 0 0 0 3px var(--signal-soft);
+}
+
+/* ═══ 2 · middle band ═══════════════════════════════════ */
+.head { grid-column: 1 / 8; align-self: center; position: relative; z-index: 4; }
+
+.counter {
+  font-family: var(--font-mono); font-size: var(--fs-mono);
+  letter-spacing: var(--track-wide); color: var(--ink-3);
+  margin-bottom: var(--s-4);
+}
+.counter b { color: var(--signal); font-weight: 500; }
+
+.display {
+  font-size: var(--fs-display);
+  font-weight: var(--wt-display);
+  line-height: var(--lh-display);
+  letter-spacing: var(--track-tight);
+  color: var(--ink);
+  text-transform: uppercase;
+}
+/* the stagger: each line carries its own left offset, so the block
+   reads as a shape rather than as a paragraph */
+.display > span { display: block; white-space: nowrap; }
+
+/* Each candidate gets its own optical size. Option B's longest line
+   is 18 characters and would otherwise run under the robot. */
+:root[data-headline="b"] .display { font-size: clamp(1.7rem, 0.3rem + 4.3vw, 4.3rem); }
+:root[data-headline="c"] .display { font-size: clamp(2rem, 0.4rem + 5.2vw, 5.2rem); }
+.display > span:nth-child(1) { margin-left: 12%; }
+.display > span:nth-child(2) { margin-left: 0; }
+.display > span:nth-child(3) { margin-left: 17%; }
+.display > span:nth-child(4) { margin-left: 4%; }
+.display em { font-style: normal; color: var(--signal); }
+
+/* padding-right clears the social rail, which floats over this column */
+.stat { grid-column: 9 / -1; align-self: center; position: relative; z-index: 4; text-align: right; padding-right: 62px; }
+.stat__row { display: flex; align-items: baseline; justify-content: flex-end; gap: 12px; }
+.stat__v {
+  font-size: var(--fs-stat); font-weight: var(--wt-display);
+  line-height: 1; letter-spacing: -0.035em; color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.stat__k {
+  font-family: var(--font-mono); font-size: var(--fs-micro);
+  text-transform: uppercase; letter-spacing: var(--track-wide);
+  color: var(--signal);
+}
+.stat__n {
+  margin-top: var(--s-3); margin-left: auto;
+  max-width: 32ch; font-size: var(--fs-sm); color: var(--ink-2);
+}
+
+/* ═══ 3 · bottom band ═══════════════════════════════════ */
+.foot { grid-column: 1 / 6; align-self: end; position: relative; z-index: 4; }
+.foot__lede { max-width: 42ch; font-size: var(--fs-lede); color: var(--ink-2); }
+.foot__lede em { font-style: normal; color: var(--signal); }
+.foot__cta { display: flex; gap: 12px; margin-top: var(--s-4); flex-wrap: wrap; }
+
+.aside {
+  grid-column: 9 / -1; align-self: end; text-align: right;
+  position: relative; z-index: 4;
+  font-size: var(--fs-sm); color: var(--ink-2); max-width: 34ch; margin-left: auto;
+  /* clears the AGGARWAL wordmark, which sits under this column */
+  padding-bottom: calc(var(--fs-word) * 0.62);
+}
+
+/* ═══ the 3D stage ══════════════════════════════════════ */
+.stage {
+  position: absolute; z-index: 2;
+  left: 50%; top: 50%; transform: translate(-52%, -35%);
+  width: min(46vw, 620px); aspect-ratio: 1 / 1;
+  pointer-events: none;
+}
+.stage__canvas, .stage__poster {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: contain;
+}
+.stage__canvas { opacity: 0; transition: opacity 0.6s var(--ease); }
+.stage__canvas.is-live { opacity: 1; }
+.stage__poster { transition: opacity 0.6s var(--ease); }
+.stage.is-live .stage__poster { opacity: 0; }
+
+/* ═══ the pixel wordmark ════════════════════════════════
+   --ghost measures 1.65 against --panel. That is deliberate: it
+   reproduces the relationship white-on-panel had in the light
+   build, so the wordmark stays a graphic and never competes with
+   the headline. It carries no information; the name is in the h1
+   and in the nav. */
+.word {
+  position: absolute; inset: 0;
+  pointer-events: none; user-select: none;
+  font-family: var(--font-pixel);
+  font-size: var(--fs-word);
+  line-height: 0.8;
+  color: var(--ghost);
+  text-transform: uppercase;
+}
+.word--back  { z-index: 1; }
+.word--front { z-index: 3; }
+
+.word i { position: absolute; font-style: normal; display: block; }
+.word .w-vyom { left: 26%; top: 64%; }
+.word .w-agg  { right: -5%; bottom: calc(var(--gutter) * 0.5); font-size: 0.6em; }
+
+/* The front copy is revealed only across the band where the robot
+   crosses the letterforms, so the wordmark interleaves with the
+   object instead of sitting flatly in front of it or behind it. */
+.word--front {
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0 66%, #000 71%, #000 100%);
+          mask-image: linear-gradient(to bottom, transparent 0 66%, #000 71%, #000 100%);
+}
+
+/* Rim spill: where the cyan key light falls, the letterforms
+   brighten locally. Same text, clipped to itself, painted with a
+   radial of --limb centred on the robot. This is what makes the
+   occlusion read as lighting rather than as a z-index trick. */
+.word--spill {
+  z-index: 3;
+  color: transparent;
+  background: radial-gradient(closest-side circle at 48% 56%, var(--limb) 0%, rgb(143 224 245 / 0.30) 44%, transparent 74%);
+  -webkit-background-clip: text;
+          background-clip: text;
+  opacity: 0.55;
+}
+
+/* ═══ social rail ═══════════════════════════════════════ */
+.rail {
+  position: absolute; z-index: 4;
+  right: var(--gutter); top: 50%; transform: translateY(-50%);
+  display: flex; flex-direction: column;
+  border-radius: var(--r-pill); padding: 6px;
+}
+.rail a {
+  display: grid; place-items: center;
+  width: 40px; height: 40px; border-radius: var(--r-pill);
+  color: var(--ink-3);
+  transition: color var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease);
+}
+.rail a:hover { color: var(--limb); background: rgb(255 255 255 / 0.07); }
+.rail svg { width: 17px; height: 17px; }
+
+/* ═══ scroll cue, sitting in a notch cut out of the panel ═══ */
+.notch {
+  position: absolute; z-index: 4; left: 50%; bottom: 0;
+  transform: translateX(-50%);
+  width: 208px; padding: 12px 0 10px;
+  background: var(--void);
+  border-radius: 22px 22px 0 0;
+  text-align: center;
+}
+.notch::before, .notch::after {
+  content: ""; position: absolute; bottom: 0; width: 22px; height: 22px;
+  background: radial-gradient(circle at 0 0, transparent 21px, var(--void) 22px);
+}
+.notch::before { left: -22px; }
+.notch::after  { right: -22px; transform: scaleX(-1); }
+.notch span {
+  display: block; font-family: var(--font-mono);
+  font-size: var(--fs-micro); letter-spacing: var(--track-wide);
+  text-transform: uppercase; color: var(--ink-3); line-height: 1.35;
+}
+.notch svg { width: 13px; height: 20px; margin: 0 auto 6px; stroke: var(--ink-3); fill: none; }
+.notch__wheel { animation: wheel 2.4s var(--ease-in-out) infinite; }
+@keyframes wheel {
+  0%, 100% { transform: translateY(0); opacity: 1; }
+  50%      { transform: translateY(3px); opacity: 0.35; }
+}
+
+/* ═══ page-load orchestration ═══════════════════════════
+   One sequence, about 900ms end to end, then nothing moves on
+   its own except the props drifting. */
+@media (prefers-reduced-motion: no-preference) {
+  .js .panel { animation: panel-in 0.62s var(--ease) both; }
+  .js .display > span { animation: line-in 0.62s var(--ease) both; }
+  .js .display > span:nth-child(1) { animation-delay: 0.16s; }
+  .js .display > span:nth-child(2) { animation-delay: 0.23s; }
+  .js .display > span:nth-child(3) { animation-delay: 0.30s; }
+  .js .display > span:nth-child(4) { animation-delay: 0.37s; }
+  .js .bar, .js .stat, .js .foot, .js .aside, .js .rail, .js .notch {
+    animation: soft-in 0.5s var(--ease) both; animation-delay: 0.34s;
+  }
+  .js .word, .js .stage { animation: soft-in 0.7s var(--ease) both; animation-delay: 0.52s; }
+}
+@keyframes panel-in { from { opacity: 0; transform: scale(0.985); } to { opacity: 1; transform: none; } }
+@keyframes line-in  { from { opacity: 0; transform: translateY(0.24em); } to { opacity: 1; transform: none; } }
+@keyframes soft-in  { from { opacity: 0; } to { opacity: 1; } }
+
+/* ═══ narrow ═══════════════════════════════════════════
+   The panel goes full-bleed, the stagger flattens flush left,
+   the object drops to the poster, the stat block moves below the
+   CTAs and the rail moves out of the hero.
+
+   Note: the desktop rules use align-self for grid row alignment.
+   In this column flex container align-self is the CROSS axis, so
+   every one of them has to be reset to stretch or the copy
+   shrink-wraps and overflows. */
+@media (max-width: 860px) {
+  .hero {
+    display: flex; flex-direction: column; align-items: stretch;
+    row-gap: var(--s-5);
+    padding-bottom: var(--s-7);
+  }
+  .bar    { order: 1; align-self: stretch; }
+  .head   { order: 2; align-self: stretch; }
+  .stage  { order: 3; align-self: center; position: relative;
+            left: auto; top: auto; transform: none;
+            width: 78%; margin: var(--s-2) auto 0; }
+  .foot   { order: 4; align-self: stretch; }
+  .stat   { order: 5; align-self: stretch; text-align: left; padding-right: 0; }
+  .aside  { order: 6; align-self: stretch; text-align: left;
+            margin-left: 0; max-width: none; padding-bottom: 0; }
+  .word   { order: 7; align-self: stretch; }
+
+  .bar .btn--solid { margin-left: auto; }
+  .navpill, .status, .rail, .notch { display: none; }
+
+  .display > span { margin-left: 0 !important; white-space: normal; }
+  .stat__row { justify-content: flex-start; }
+  .stat__n   { margin-left: 0; max-width: none; }
+  .foot__lede { max-width: none; }
+
+  .word {
+    position: relative; inset: auto; height: auto;
+    margin-top: var(--s-5); font-size: 19vw; line-height: 0.9;
+  }
+  .word--front, .word--spill { display: none; }  /* nothing left to interleave with */
+  .word i { position: static; }
+  .word .w-agg { font-size: 0.55em; }
+}
