@@ -1,0 +1,122 @@
+/* ═══════════════════════════════════════════════════════════
+   TOKENS — v2 "studio panel"
+
+   One fixed light palette. Every colour, size, and duration
+   downstream reads from here; nothing is hardcoded in a
+   component file.
+
+   Contrast, measured (WCAG 2.1, computed not estimated):
+     ink   on panel  10.51   AA
+     ink-2 on panel   7.17   AA
+     ink   on paper  15.31   AA
+     ink-2 on paper  10.44   AA
+     white on signal  5.73   AA
+     white on deep   10.75   AA
+     limb  on deep     6.74   AA
+     signal on paper   4.93   AA        -> body text OK on paper
+     signal on panel   3.39   large/UI  -> fill + rule only, never body text
+     white on panel    1.69   FAIL      -> wordmark is decorative, carries no meaning
+     limb  on panel    1.06   FAIL      -> decorative only, never type
+   ═══════════════════════════════════════════════════════════ */
+
+:root {
+  color-scheme: light;
+
+  /* ── neutrals ──────────────────────────────────────────────
+     Cooled a few degrees off a warm studio gray so the blue
+     never sits on a competing temperature. */
+  --paper:       #EDEEEF;   /* canvas outside the panel */
+  --panel:       #C6C7C9;   /* the inset studio panel   */
+  --ink:         #16181B;   /* display type, headings   */
+  --ink-2:       #33363B;   /* body copy                */
+  --white:       #FFFFFF;   /* pixel wordmark, data cards */
+
+  /* ── the one accent, read off Earth from orbit ─────────────
+     deep = ocean under cloud shadow  (mass)
+     signal = lit ocean               (action)
+     limb = atmosphere at the edge    (light)
+     Never introduce a fourth blue. */
+  --signal:      #1668B3;
+  --signal-deep: #0D3F6E;
+  --limb:        #9FD5E8;
+
+  /* derived accent surfaces — same three hues, alpha only */
+  --signal-soft: rgb(22 104 179 / 0.10);
+  --signal-line: rgb(22 104 179 / 0.34);
+  --limb-glow:   rgb(159 213 232 / 0.55);
+
+  /* ── rules and edges ──────────────────────────────────── */
+  --line:        rgb(22 24 27 / 0.12);
+  --line-2:      rgb(22 24 27 / 0.22);
+
+  /* ── glass ─────────────────────────────────────────────── */
+  --glass-bg:     rgb(255 255 255 / 0.28);
+  --glass-blur:   blur(18px) saturate(1.1);
+  --glass-edge:   rgb(255 255 255 / 0.55);
+  /* Safari fallback when backdrop-filter is unavailable */
+  --glass-solid:  rgb(255 255 255 / 0.62);
+
+  /* ── shadow ────────────────────────────────────────────── */
+  --shadow-panel: 0 40px 90px -20px rgb(0 0 0 / 0.22);
+  --shadow-card:  0 12px 30px -12px rgb(0 0 0 / 0.16);
+  --shadow-lift:  0 20px 46px -16px rgb(0 0 0 / 0.20);
+
+  /* ── type: three families, one job each ────────────────── */
+  --font-display: 'Archivo', 'Helvetica Neue', Arial, sans-serif;  /* display + UI + body */
+  --font-mono:    'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-pixel:   'Departure Mono', 'Silkscreen', monospace;       /* wordmark only */
+
+  /* scale, 1.333 ratio off a 16px base */
+  --fs-micro: 0.6875rem;   /* 11px  mono labels        */
+  --fs-mono:  0.75rem;     /* 12px  table + meta       */
+  --fs-sm:    0.8125rem;   /* 13px                     */
+  --fs-body:  1rem;        /* 16px                     */
+  --fs-lede:  clamp(1.0625rem, 1rem + 0.3vw, 1.333rem);
+  --fs-h3:    clamp(1.15rem, 1.05rem + 0.5vw, 1.777rem);
+  --fs-h2:    clamp(1.9rem, 1.3rem + 2.4vw, 3.157rem);
+  --fs-stat:  clamp(2.6rem, 1.6rem + 3.4vw, 4rem);     /* the 10/10 figure  */
+  --fs-display: clamp(2.4rem, 0.4rem + 7.4vw, 7.48rem); /* staggered headline */
+  --fs-word:  clamp(4rem, 1rem + 15vw, 15rem);          /* pixel wordmark    */
+
+  --lh-display: 0.92;
+  --lh-tight:   1.12;
+  --lh-body:    1.55;
+  --track-tight: -0.03em;
+  --track-wide:   0.12em;
+  --measure:     68ch;
+
+  /* ── space: 8px base ───────────────────────────────────── */
+  --s-1: 4px;   --s-2: 8px;   --s-3: 16px;  --s-4: 24px;
+  --s-5: 32px;  --s-6: 48px;  --s-7: 64px;  --s-8: 96px;
+  --s-9: 128px;
+
+  /* ── layout ────────────────────────────────────────────── */
+  --max:      1440px;   /* 12-column field           */
+  --cols:     12;
+  --inset:    24px;     /* panel inset from viewport */
+  --gutter:   clamp(20px, 3.2vw, 56px);  /* padding inside a panel */
+  --panel-gap: clamp(16px, 2vw, 28px);   /* gap between stacked panels */
+
+  /* ── radii ─────────────────────────────────────────────── */
+  --r-panel:  28px;
+  --r-card:   20px;
+  --r-btn:    10px;
+  --r-pill:   999px;
+
+  /* ── motion ────────────────────────────────────────────── */
+  --ease:        cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast: 0.18s;
+  --dur:      0.36s;
+  --dur-slow: 0.9s;      /* full page-load orchestration */
+}
+
+/* Mobile: the panel goes full-bleed, so the inset and its radius
+   collapse rather than every component re-declaring a breakpoint. */
+@media (max-width: 640px) {
+  :root { --inset: 0px; --r-panel: 0px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --dur-fast: 0.01ms; --dur: 0.01ms; --dur-slow: 0.01ms; }
+}
