@@ -1,27 +1,12 @@
 /* ═══════════════════════════════════════════════════════════
    robot.js — the hero subject.
 
-   STAND-IN. This is a procedural quadruped built from primitives
-   in the proportions of the Laikago model the research actually
-   trains on. It is here because that URDF ships inside pybullet's
-   own data directory, not in the project repo, so its
-   redistribution licence has not been cleared for a public page.
-   Swap it for a real glTF export by replacing buildRobot().
-
-   Lighting is the whole point of the composition: one cyan key
-   from the upper left, a fresnel rim in the same cyan, and a wide
-   halo behind. On the night side the atmosphere is the only light
-   source, so the robot is lit by --limb and nothing else.
+   The quadruped stands still; only the props drift, on long
+   irregular periods. Geometry, materials and lighting all come
+   from kit.js, which the research stage shares.
    ═══════════════════════════════════════════════════════════ */
 
-import * as THREE from './three.module.min.js';
-
-/* palette, read straight off the tokens so this file never
-   holds a second copy of the truth */
-const css = (name, fallback) => {
-  const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-  return new THREE.Color(v || fallback);
-};
+import { THREE, makeMaterials, makeHalo, buildQuadruped, box } from './kit.js';
 
 /* seed 0's own learning curve, rollout/ep_rew_mean sampled to 40
    points from logs/seed_0/progress.csv in the research repo. Real
@@ -82,10 +67,6 @@ const HALO_VERT = `
   }`;
 
 export function initRobot(canvas, { reducedMotion = false } = {}) {
-  const LIMB = css('--limb', '#8FE0F5');
-  const SIGNAL = css('--signal', '#4A9EE0');
-  const KEY = new THREE.Vector3(-0.78, 0.40, 0.52);   /* upper-left */
-
   const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
   renderer.setClearAlpha(0);
 
@@ -94,144 +75,13 @@ export function initRobot(canvas, { reducedMotion = false } = {}) {
   camera.position.set(3.05, 0.86, 4.05);
   camera.lookAt(0, -0.02, 0);
 
-  const shells = [];
-  const mat = (hex, { amb = 0.30, rimStr = 1.0, rimPow = 3.0 } = {}) => {
-    const m = new THREE.ShaderMaterial({
-      vertexShader: VERT,
-      fragmentShader: FRAG,
-      uniforms: {
-        uBase:   { value: new THREE.Color(hex) },
-        uRim:    { value: LIMB.clone() },
-        uKey:    { value: KEY.clone() },
-        uCam:    { value: camera.position.clone() },
-        uAmb:    { value: amb },
-        uRimStr: { value: rimStr },
-        uRimPow: { value: rimPow },
-      },
-    });
-    shells.push(m);
-    return m;
-  };
+  const M = makeMaterials(camera);
 
-  /* Shell whites stay off-white; against --void they read as
-     luminous with no change to their albedo. The blue is on the
-     joints only, desaturated a little because it gains saturation
-     against a near-black ground. */
-  const SHELL  = mat('#E4E7EA', { amb: 0.26, rimStr: 1.15 });
-  const STRUCT = mat('#9AA3AD', { amb: 0.24, rimStr: 0.95 });
-  const DARK   = mat('#4C545E', { amb: 0.22, rimStr: 0.85 });
-  const JOINT  = mat(SIGNAL.clone().lerp(new THREE.Color('#7FA8C6'), 0.22), { amb: 0.34, rimStr: 1.35 });
-
-  /* ── halo. The atmospheric glow, and the page's light source. ── */
-  const halo = new THREE.Mesh(
-    new THREE.PlaneGeometry(2.9, 2.9),
-    new THREE.ShaderMaterial({
-      vertexShader: HALO_VERT,
-      fragmentShader: HALO_FRAG,
-      uniforms: { uRim: { value: LIMB.clone() }, uStr: { value: 0.62 } },
-      transparent: true,
-      depthWrite: false,
-      blending: THREE.AdditiveBlending,
-    })
-  );
+  const halo = makeHalo(M.LIMB);
   halo.position.set(-0.10, 0.12, -1.5);
   scene.add(halo);
 
-  /* ── the quadruped ─────────────────────────────────────────
-     Laikago proportions: ~0.55 m body length at scale, hips at
-     the corners, three-quarter view, mid-trot. Nothing here
-     animates; the brief holds the object still and lets only the
-     props drift. */
-  const robot = new THREE.Group();
-
-  const box = (w, h, d, m) => new THREE.Mesh(new THREE.BoxGeometry(w, h, d, 1, 1, 1), m);
-  const cyl = (r, h, m, seg = 20) => new THREE.Mesh(new THREE.CylinderGeometry(r, r, h, seg), m);
-  const cap = (r, h, m) => new THREE.Mesh(new THREE.CapsuleGeometry(r, h, 6, 16), m);
-  const sph = (r, m) => new THREE.Mesh(new THREE.SphereGeometry(r, 22, 16), m);
-
-  /* Trunk, built in three slabs rather than one box so the
-     silhouette has a shoulder line to catch the rim light. A single
-     box reads as a table from a three-quarter view. */
-  const trunk = box(1.34, 0.26, 0.52, SHELL);
-  trunk.position.y = 0.02;
-  robot.add(trunk);
-
-  const deck = box(1.02, 0.09, 0.40, SHELL);
-  deck.position.y = 0.19;
-  robot.add(deck);
-
-  const belly = box(1.16, 0.11, 0.42, STRUCT);
-  belly.position.y = -0.14;
-  robot.add(belly);
-
-  /* one anodised service panel on the flank, the way lab hardware
-     gets exactly one blue part and nothing else */
-  for (const sz of [-1, 1]) {
-    const plate = box(0.40, 0.13, 0.02, JOINT);
-    plate.position.set(-0.16, 0.03, sz * 0.265);
-    robot.add(plate);
-  }
-
-  /* shoulder housings at the hips */
-  for (const sx of [-1, 1]) for (const sz of [-1, 1]) {
-    const housing = box(0.24, 0.22, 0.16, SHELL);
-    housing.position.set(sx * 0.52, -0.06, sz * 0.33);
-    robot.add(housing);
-  }
-
-  /* head */
-  const head = box(0.28, 0.21, 0.32, SHELL);
-  head.position.set(0.78, 0.05, 0);
-  robot.add(head);
-  const visor = box(0.05, 0.10, 0.25, DARK);
-  visor.position.set(0.915, 0.05, 0);
-  robot.add(visor);
-  const sensor = cyl(0.042, 0.06, JOINT);
-  sensor.rotation.z = Math.PI / 2;
-  sensor.position.set(0.94, 0.15, 0);
-  robot.add(sensor);
-
-  /* legs. hip pitch / knee pitch in radians, trot phase:
-     front-left and rear-right forward, the other diagonal back. */
-  const LEGS = [
-    { x:  0.52, z:  0.33, hip: -0.52, knee:  0.92 },   /* FL forward */
-    { x:  0.52, z: -0.33, hip:  0.34, knee:  1.24 },   /* FR back    */
-    { x: -0.52, z:  0.33, hip:  0.40, knee:  1.16 },   /* RL back    */
-    { x: -0.52, z: -0.33, hip: -0.46, knee:  0.86 },   /* RR forward */
-  ];
-
-  for (const L of LEGS) {
-    const hipG = new THREE.Group();
-    hipG.position.set(L.x, -0.08, L.z);
-    hipG.rotation.z = L.hip;
-
-    const hipJoint = cyl(0.098, 0.17, JOINT);
-    hipJoint.rotation.x = Math.PI / 2;
-    hipG.add(hipJoint);
-
-    const thigh = cap(0.072, 0.40, SHELL);
-    thigh.position.y = -0.24;
-    hipG.add(thigh);
-
-    const kneeG = new THREE.Group();
-    kneeG.position.y = -0.46;
-    kneeG.rotation.z = -L.knee;
-
-    const kneeJoint = sph(0.088, JOINT);
-    kneeG.add(kneeJoint);
-
-    const shank = cap(0.048, 0.36, STRUCT);
-    shank.position.y = -0.22;
-    kneeG.add(shank);
-
-    const foot = sph(0.062, DARK);
-    foot.position.y = -0.43;
-    kneeG.add(foot);
-
-    hipG.add(kneeG);
-    robot.add(hipG);
-  }
-
+  const { group: robot } = buildQuadruped(M);
   robot.rotation.y = -0.42;
   robot.rotation.z = 0.05;
   robot.position.y = 0.30;
@@ -250,15 +100,15 @@ export function initRobot(canvas, { reducedMotion = false } = {}) {
     return mesh;
   };
 
-  addProp(new THREE.Mesh(new THREE.TorusGeometry(0.20, 0.055, 14, 40), STRUCT),
+  addProp(new THREE.Mesh(new THREE.TorusGeometry(0.20, 0.055, 14, 40), M.STRUCT),
     { pos: [0.88, 0.58, 0.55], spin: [0.9, 0.4, 0.2], period: 8.4, amp: 0.11, phase: 0.0 });
 
   /* a capsule actuator, the part the fault model actually breaks */
-  addProp(new THREE.Mesh(new THREE.CapsuleGeometry(0.085, 0.26, 6, 16), JOINT),
+  addProp(new THREE.Mesh(new THREE.CapsuleGeometry(0.085, 0.26, 6, 16), M.JOINT),
     { pos: [0.95, -0.52, 0.30], spin: [0.2, 0, -0.7], period: 10.6, amp: 0.09, phase: 1.9 });
 
   /* hex bolt */
-  addProp(new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.15, 0.10, 6), SHELL),
+  addProp(new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.15, 0.10, 6), M.SHELL),
     { pos: [-0.06, -0.95, 0.75], spin: [0.5, 0.3, 0.35], period: 7.2, amp: 0.12, phase: 3.4 });
 
   /* Σ plate */
@@ -269,17 +119,15 @@ export function initRobot(canvas, { reducedMotion = false } = {}) {
   addProp(new THREE.Mesh(new THREE.PlaneGeometry(0.74, 0.43), sparkMat()),
     { pos: [0.10, 1.02, -0.35], spin: [0, 0.30, 0.06], period: 11.0, amp: 0.08, phase: 4.8 });
 
-  /* the one playful object: a bone, floating near the robot dog */
-  const bone = new THREE.Group();
-  const shaft = cap(0.038, 0.20, SHELL);
-  shaft.rotation.z = Math.PI / 2;
-  bone.add(shaft);
-  for (const sx of [-1, 1]) for (const sz of [-1, 1]) {
-    const knob = sph(0.055, SHELL);
-    knob.position.set(sx * 0.145, sz * 0.052, 0);
-    bone.add(knob);
+  /* a finned heat sink */
+  const sink = new THREE.Group();
+  sink.add(box(0.26, 0.05, 0.20, M.STRUCT));
+  for (let i = 0; i < 5; i++) {
+    const fin = box(0.018, 0.15, 0.19, M.SHELL);
+    fin.position.set(-0.10 + i * 0.05, 0.10, 0);
+    sink.add(fin);
   }
-  addProp(bone, { pos: [-0.75, -0.80, -0.55], spin: [0.3, 0.2, -0.45], period: 6.4, amp: 0.13, phase: 5.6 });
+  addProp(sink, { pos: [-0.75, -0.80, -0.55], spin: [0.34, 0.26, -0.30], period: 6.4, amp: 0.13, phase: 5.6 });
 
   /* ── canvas-texture props ──────────────────────────────── */
   function glyphMat(ch) {
@@ -357,7 +205,7 @@ export function initRobot(canvas, { reducedMotion = false } = {}) {
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
-    for (const m of shells) m.uniforms.uCam.value.copy(camera.position);
+    for (const m of M.all) m.uniforms.uCam.value.copy(camera.position);
   };
   resize();
   addEventListener('resize', resize);
