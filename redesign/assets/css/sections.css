@@ -287,10 +287,10 @@
    The only place the accent goes large. Closing on the darkest
    blue reads like crossing the terminator into the night side. */
 .contact { position: relative; background: var(--signal-deep); overflow: hidden; }
-.contact .section__no { color: rgb(255 255 255 / 0.55); }
+.contact .section__no { color: rgb(255 255 255 / 0.70); }   /* 6.11 on --signal-deep */
 .contact .section__no b { color: var(--limb); }
 .contact__title { font-size: var(--fs-h2); color: #FFFFFF; letter-spacing: var(--track-tight); }
-.contact__sub { margin-top: var(--s-4); color: rgb(255 255 255 / 0.78); max-width: 52ch; font-size: var(--fs-lede); }
+.contact__sub { margin-top: var(--s-4); color: rgb(255 255 255 / 0.82); max-width: 52ch; font-size: var(--fs-lede); }
 
 .contact__links { display: grid; gap: var(--s-3); margin-top: var(--s-7); grid-template-columns: repeat(auto-fit, minmax(268px, 1fr)); }
 .contact__link {
@@ -301,7 +301,7 @@
 .contact__k {
   display: block; font-family: var(--font-mono); font-size: var(--fs-micro);
   text-transform: uppercase; letter-spacing: var(--track-wide);
-  color: rgb(255 255 255 / 0.60); margin-bottom: 7px;
+  color: rgb(255 255 255 / 0.70); margin-bottom: 7px;   /* 6.11 on --signal-deep */
 }
 .contact__v {
   display: inline-block; color: #FFFFFF; font-size: var(--fs-body);

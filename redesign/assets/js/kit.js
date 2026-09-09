@@ -130,9 +130,9 @@ export function makeHalo(LIMB, { size = 2.9, strength = 0.62 } = {}) {
 
 /* ── primitives ───────────────────────────────────────── */
 export const box = (w, h, d, m) => new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m);
-export const cyl = (r, h, m, seg = 20) => new THREE.Mesh(new THREE.CylinderGeometry(r, r, h, seg), m);
-export const cap = (r, h, m) => new THREE.Mesh(new THREE.CapsuleGeometry(r, h, 6, 16), m);
-export const sph = (r, m) => new THREE.Mesh(new THREE.SphereGeometry(r, 22, 16), m);
+export const cyl = (r, h, m, seg = 14) => new THREE.Mesh(new THREE.CylinderGeometry(r, r, h, seg), m);
+export const cap = (r, h, m) => new THREE.Mesh(new THREE.CapsuleGeometry(r, h, 4, 12), m);
+export const sph = (r, m) => new THREE.Mesh(new THREE.SphereGeometry(r, 16, 12), m);
 
 /* ── the quadruped ────────────────────────────────────────
    STAND-IN geometry in Laikago proportions, built from primitives.
