@@ -91,7 +91,7 @@
   /* ── type: three families, one job each ────────────────── */
   --font-display: 'Archivo', 'Helvetica Neue', Arial, sans-serif;
   --font-mono:    'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
-  --font-pixel:   'Departure Mono', 'Silkscreen', monospace;  /* wordmark only */
+  --font-pixel:   'Departure Mono', monospace;  /* wordmark only */
 
   /* scale, 1.333 ratio off a 16px base */
   --fs-micro: 0.6875rem;
