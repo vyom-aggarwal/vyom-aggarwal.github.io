@@ -243,7 +243,10 @@
   }
   .js .word, .js .stage { animation: soft-in 0.7s var(--ease) both; animation-delay: 0.52s; }
 }
-@keyframes panel-in { from { opacity: 0; transform: scale(0.985); } to { opacity: 1; transform: none; } }
+/* Scale only, never opacity. A transparent ancestor removes every
+   descendant from Chrome's LCP candidate set, and fading the whole
+   panel in was suppressing the metric outright. */
+@keyframes panel-in { from { transform: scale(0.985); } to { transform: none; } }
 @keyframes line-in  { from { opacity: 0; transform: translateY(0.24em); } to { opacity: 1; transform: none; } }
 @keyframes soft-in  { from { opacity: 0; } to { opacity: 1; } }
 
@@ -286,6 +289,11 @@
     margin-top: var(--s-5); font-size: 19vw; line-height: 0.9;
   }
   .word--front, .word--spill { display: none; }  /* nothing left to interleave with */
+
+  /* The poster is the largest paint on a phone. Fading it in from
+     zero opacity delays or suppresses the LCP candidate entirely,
+     so the entrance sequence skips it here. */
+  .js .stage, .js .word { animation: none; }
   .word i { position: static; }
   .word .w-agg { font-size: 0.55em; }
 }
