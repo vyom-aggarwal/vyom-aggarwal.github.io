@@ -84,33 +84,34 @@
    reads as a shape rather than as a paragraph */
 .display > span { display: block; white-space: nowrap; }
 
-/* Each candidate gets its own optical size. Option B's longest line
-   is 18 characters and would otherwise run under the robot. */
-:root[data-headline="b"] .display { font-size: clamp(1.7rem, 0.3rem + 4.3vw, 4.3rem); }
-:root[data-headline="c"] .display { font-size: clamp(2rem, 0.4rem + 5.2vw, 5.2rem); }
 .display > span:nth-child(1) { margin-left: 12%; }
 .display > span:nth-child(2) { margin-left: 0; }
 .display > span:nth-child(3) { margin-left: 17%; }
 .display > span:nth-child(4) { margin-left: 4%; }
 .display em { font-style: normal; color: var(--signal); }
 
-/* padding-right clears the social rail, which floats over this column */
-.stat { grid-column: 9 / -1; align-self: center; position: relative; z-index: 4; text-align: right; padding-right: 62px; }
-.stat__row { display: flex; align-items: baseline; justify-content: flex-end; gap: 12px; }
-.stat__v {
-  font-size: var(--fs-stat); font-weight: var(--wt-display);
-  line-height: 1; letter-spacing: -0.035em; color: var(--ink);
-  font-variant-numeric: tabular-nums;
+/* Telemetry, not a metric. Three labelled lines on one baseline
+   grid; padding-right clears the social rail floating over this
+   column. */
+.telem {
+  grid-column: 8 / -1; align-self: center;
+  position: relative; z-index: 4; padding-right: 62px;
+  font-family: var(--font-mono); font-size: var(--fs-mono);
+  letter-spacing: var(--track-mono);
 }
-.stat__k {
-  font-family: var(--font-mono); font-size: var(--fs-micro);
-  text-transform: uppercase; letter-spacing: var(--track-wide);
-  color: var(--signal);
+.telem > div {
+  display: grid; grid-template-columns: 11ch 1fr;
+  gap: var(--s-3); padding: 9px 0;
+  border-top: 1px solid var(--hair);
 }
-.stat__n {
-  margin-top: var(--s-3); margin-left: auto;
-  max-width: 32ch; font-size: var(--fs-sm); color: var(--ink-2);
+.telem > div:last-child { border-bottom: 1px solid var(--hair); }
+.telem dt {
+  color: var(--signal); text-transform: uppercase;
+  font-size: var(--fs-micro); letter-spacing: var(--track-wide);
+  padding-top: 2px;
 }
+.telem dd { margin: 0; color: var(--ink); }
+.telem dd i { display: block; font-style: normal; color: var(--ink-3); margin-top: 3px; }
 
 /* ═══ 3 · bottom band ═══════════════════════════════════ */
 .foot { grid-column: 1 / 6; align-self: end; position: relative; z-index: 4; }
@@ -126,17 +127,32 @@
   padding-bottom: calc(var(--fs-word) * 0.62);
 }
 
-/* ═══ the 3D stage ══════════════════════════════════════ */
+/* ═══ the window ════════════════════════════════════════
+   The panel is no longer a card with an object on it. It is a
+   viewport, and the scene fills it edge to edge; Earth is cropped
+   by the panel so its full curve is implied rather than drawn. */
 .stage {
-  position: absolute; z-index: 2;
-  left: 50%; top: 50%; transform: translate(-52%, -35%);
-  width: min(46vw, 620px); aspect-ratio: 1 / 1;
+  position: absolute; inset: 0; z-index: 2;
+  border-radius: inherit; overflow: hidden;
   pointer-events: none;
 }
 .stage__canvas, .stage__poster {
   position: absolute; inset: 0; width: 100%; height: 100%;
-  object-fit: contain;
+  object-fit: cover; object-position: 62% 62%;
 }
+/* A scrim under the chrome. The window is a photograph with a wide
+   brightness range, and copy sitting straight on it is unreadable
+   wherever the city lights are dense. Three soft gradients hold the
+   edges down without closing the window. */
+.scrim {
+  position: absolute; inset: 0; z-index: 3; pointer-events: none;
+  border-radius: inherit;
+  background:
+    linear-gradient(to bottom, rgb(0 0 0 / 0.78) 0%, rgb(0 0 0 / 0) 20%),
+    linear-gradient(to right,  rgb(0 0 0 / 0.80) 0%, rgb(0 0 0 / 0.30) 32%, rgb(0 0 0 / 0) 48%),
+    linear-gradient(to top,    rgb(0 0 0 / 0.62) 0%, rgb(0 0 0 / 0) 24%);
+}
+
 .stage__canvas { opacity: 0; transition: opacity 0.6s var(--ease); }
 .stage__canvas.is-live { opacity: 1; }
 .stage__poster { transition: opacity 0.6s var(--ease); }
@@ -238,7 +254,7 @@
   .js .display > span:nth-child(2) { animation-delay: 0.23s; }
   .js .display > span:nth-child(3) { animation-delay: 0.30s; }
   .js .display > span:nth-child(4) { animation-delay: 0.37s; }
-  .js .bar, .js .stat, .js .foot, .js .aside, .js .rail, .js .notch {
+  .js .bar, .js .telem, .js .foot, .js .aside, .js .rail, .js .notch {
     animation: soft-in 0.5s var(--ease) both; animation-delay: 0.34s;
   }
   .js .word, .js .stage { animation: soft-in 0.7s var(--ease) both; animation-delay: 0.52s; }
@@ -267,11 +283,10 @@
   }
   .bar    { order: 1; align-self: stretch; }
   .head   { order: 2; align-self: stretch; }
-  .stage  { order: 3; align-self: center; position: relative;
-            left: auto; top: auto; transform: none;
-            width: 78%; margin: var(--s-2) auto 0; }
+  /* the window keeps filling the panel; it does not become a card */
+  .stage  { position: absolute; inset: 0; }
   .foot   { order: 4; align-self: stretch; }
-  .stat   { order: 5; align-self: stretch; text-align: left; padding-right: 0; }
+  .telem  { order: 5; align-self: stretch; padding-right: 0; }
   .aside  { order: 6; align-self: stretch; text-align: left;
             margin-left: 0; max-width: none; padding-bottom: 0; }
   .word   { order: 7; align-self: stretch; }
@@ -280,8 +295,6 @@
   .navpill, .status, .rail, .notch { display: none; }
 
   .display > span { margin-left: 0 !important; white-space: normal; }
-  .stat__row { justify-content: flex-start; }
-  .stat__n   { margin-left: 0; max-width: none; }
   .foot__lede { max-width: none; }
 
   .word {

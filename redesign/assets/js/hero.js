@@ -27,6 +27,31 @@ if (clock) {
    of on frame one. */
 if (params.has('still')) document.documentElement.classList.remove('js');
 
+/* The three headline candidates, for the stage-2 comparison only.
+   Option A is what ships and it is already in the HTML, so this runs
+   only when a candidate is named in the URL. */
+const HEADLINES = {
+  b: ['Nothing', 'Up There', 'Gets A', 'Second Try'],
+  c: ['Everything', 'Up There', 'Has To Work', 'The First Time'],
+};
+const pick = params.get('headline');
+if (pick && HEADLINES[pick]) {
+  const display = document.getElementById('display');
+  display.innerHTML = '';
+  HEADLINES[pick].forEach((text, i) => {
+    const span = document.createElement('span');
+    if (i === 0) {
+      const sr = document.createElement('span');
+      sr.className = 'u-sr';
+      sr.textContent = 'Vyom Aggarwal. ';
+      span.append(sr);
+    }
+    span.append(document.createTextNode(text));
+    display.append(span);
+  });
+}
+document.documentElement.dataset.headline = pick || 'a';
+
 /* ── the 3D object, lazily ────────────────────────────────
    The poster is the LCP element and ships in the HTML. Three.js
    is 167KB over the wire and must never be on that path, so it
@@ -38,9 +63,9 @@ const wantsGL = stage && canvas && !reducedMotion && innerWidth > 860;
 
 if (wantsGL) {
   const boot = () => {
-    import('./robot.js')
-      .then(({ initRobot }) => {
-        const rig = initRobot(canvas, { reducedMotion });
+    import('./earth.js')
+      .then(({ initEarth }) => {
+        const rig = initEarth(canvas, { reducedMotion });
         canvas.classList.add('is-live');
         stage.classList.add('is-live');
         /* Once the canvas is up the poster is dead weight, and leaving

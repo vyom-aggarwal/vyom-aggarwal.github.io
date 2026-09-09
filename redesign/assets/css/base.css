@@ -103,6 +103,10 @@ button { font: inherit; color: inherit; background: none; border: 0; }
    no bleeding content, so there is nothing for it to clip anyway. */
 .panel--stage { overflow: visible; }
 
+/* The hero panel is a window. Its backdrop is --window rather than
+   --panel, so the scene has somewhere black to sit before it loads. */
+.panel--window { background: var(--window); }
+
 .panel::before {
   content: ''; position: absolute; inset: 0 0 auto; height: 1px;
   background: linear-gradient(90deg, transparent, var(--edge-top) 18%, var(--edge-top) 82%, transparent);

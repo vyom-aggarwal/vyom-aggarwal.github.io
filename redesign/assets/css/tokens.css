@@ -106,7 +106,7 @@
   --fs-h3:    clamp(1.15rem, 1.05rem + 0.5vw, 1.777rem);
   --fs-h2:    clamp(1.9rem, 1.3rem + 2.4vw, 3.157rem);
   --fs-stat:  clamp(2.6rem, 1.6rem + 3.4vw, 4rem);
-  --fs-display: clamp(2.1rem, 0.4rem + 5.6vw, 5.6rem);
+  --fs-display: clamp(1.9rem, 0.3rem + 4.1vw, 4.1rem);
   --fs-word:  clamp(3.2rem, 0.5rem + 8vw, 8rem);
 
   /* Optical compensation for light-on-dark. Strokes bloom on a
