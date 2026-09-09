@@ -42,11 +42,31 @@ export function initRig(canvas, { reducedMotion = false } = {}) {
   robot.scale.setScalar(0.82);
   scene.add(robot);
 
-  /* the joint that seizes. Rear-left, so it stays visible from
-     this camera rather than hiding behind the trunk. */
-  const LOCKED = 2;
-  const lockedKnee = legs[LOCKED].kneeJoint;
-  const lockedHip = legs[LOCKED].hipJoint;
+  /* the joint that seizes. Front-left, the leg nearest this camera,
+     so the fault colour is actually visible rather than hidden
+     behind the trunk. */
+  const LOCKED = 0;
+  /* Recolour the whole limb, not just the two joints: from a
+     three-quarter view either joint can end up behind the trunk,
+     and a fault you cannot see is not worth animating. */
+  const lockedParts = [
+    legs[LOCKED].kneeJoint,
+    legs[LOCKED].hipJoint,
+    legs[LOCKED].shank,
+    legs[LOCKED].foot,
+  ];
+  const lockedRest = lockedParts.map((m) => m.material);
+
+  /* A callout ring on the seized joint. It draws over the geometry
+     rather than behind it, because from a three-quarter view the
+     faulted leg can sit behind the trunk and a fault you cannot see
+     is not worth animating. */
+  const mark = new THREE.Mesh(
+    new THREE.TorusGeometry(0.17, 0.012, 8, 36),
+    new THREE.MeshBasicMaterial({ color: 0xE0674A, transparent: true, opacity: 0, depthTest: false })
+  );
+  mark.renderOrder = 10;
+  legs[LOCKED].kneeG.add(mark);
 
   const state = { speed: 1, progress: 0 };
   let gaitPhase = 0;
@@ -103,7 +123,7 @@ export function initRig(canvas, { reducedMotion = false } = {}) {
   function speedFor(p) {
     const drop = ramp(p, 0.38, 0.48);
     const back = ramp(p, 0.52, 0.65);
-    return 1 - drop * 0.72 + back * 0.62;
+    return 1 - drop * 0.72 + back * 0.72;
   }
 
   function setProgress(p) {
@@ -111,8 +131,9 @@ export function initRig(canvas, { reducedMotion = false } = {}) {
     state.speed = speedFor(state.progress);
     /* the locked joint turns from signal blue to the fault colour */
     const f = ramp(state.progress, 0.38, 0.46);
-    lockedKnee.material = f > 0.5 ? M.FAULT : M.JOINT;
-    lockedHip.material = f > 0.5 ? M.FAULT : M.JOINT;
+    lockedParts.forEach((m, i) => { m.material = f > 0.5 ? M.FAULT : lockedRest[i]; });
+    mark.material.opacity = f * 0.95;
+    mark.scale.setScalar(1 + (1 - f) * 1.6);
   }
 
   const resize = () => {
@@ -138,6 +159,7 @@ export function initRig(canvas, { reducedMotion = false } = {}) {
     const t = (now - t0) / 1000;
     /* the ground slides to read as forward travel */
     ground.position.x = -((t * 0.42 * state.speed) % 0.22);
+    mark.quaternion.copy(camera.quaternion);
     pose(t);
     renderer.render(scene, camera);
   };
