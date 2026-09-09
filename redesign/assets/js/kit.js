@@ -202,7 +202,7 @@ export function buildQuadruped(M) {
 
     hipG.add(kneeG);
     g.add(hipG);
-    legs.push({ hipG, kneeG, hipJoint, kneeJoint, rest: L });
+    legs.push({ hipG, kneeG, hipJoint, kneeJoint, shank, foot, rest: L });
   }
 
   return { group: g, legs };
