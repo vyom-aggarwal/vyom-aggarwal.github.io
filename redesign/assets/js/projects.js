@@ -23,7 +23,7 @@ function wakeCard(cardEl, on) {
   if (!on) return;
 
   models.set(canvas, { setActive() {} });      /* claim the slot, once */
-  (cardModule || (cardModule = import('./cards.js?v=8b45094b')))
+  (cardModule || (cardModule = import('./cards.js?v=09e6e1bf')))
     .then(({ initCardModel }) => {
       const rig = initCardModel(canvas, canvas.dataset.model);
       if (!rig) return;

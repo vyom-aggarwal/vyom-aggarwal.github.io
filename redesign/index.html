@@ -20,11 +20,11 @@
 <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
 
 <link rel="preload" href="assets/fonts/Archivo-var.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/css/tokens.css?v=8b45094b">
-<link rel="stylesheet" href="assets/css/base.css?v=8b45094b">
-<link rel="stylesheet" href="assets/css/hero.css?v=8b45094b">
-<link rel="stylesheet" href="assets/css/projects.css?v=8b45094b">
-<link rel="stylesheet" href="assets/css/sections.css?v=8b45094b">
+<link rel="stylesheet" href="assets/css/tokens.css?v=09e6e1bf">
+<link rel="stylesheet" href="assets/css/base.css?v=09e6e1bf">
+<link rel="stylesheet" href="assets/css/hero.css?v=09e6e1bf">
+<link rel="stylesheet" href="assets/css/projects.css?v=09e6e1bf">
+<link rel="stylesheet" href="assets/css/sections.css?v=09e6e1bf">
 
 <noscript><style>
   /* The project write-ups exist only inside these dialogs, so without
@@ -269,14 +269,15 @@
         <button class="pcard" type="button" aria-haspopup="dialog" data-open="codon-lab">
           <span class="pcard__stage">
             <img class="pcard__poster" src="assets/img/card-console.webp?v=2b29eb1b" alt="" width="720" height="450" loading="lazy" decoding="async">
-            <canvas class="pcard__canvas" data-model="console" aria-hidden="true"></canvas>
+            <canvas class="pcard__canvas" data-model="protein" aria-hidden="true"></canvas>
           </span>
           <span class="pcard__meta">
-            <span class="pcard__state"><i></i>Phases 1–9 built · 2 clauses outstanding</span>
+            <span class="pcard__state"><i></i>Eight of ten clauses closed · primers not built</span>
             <span class="pcard__title">Codon Lab</span>
-            <span class="pcard__line">Turns a plain-language protein engineering goal into a ranked,
-              defensible list of mutations — and refuses to guess when it does not know.</span>
-            <span class="pcard__chips"><b>10,450 ranked variants</b><b>263 gate checks</b><b>620 tests</b></span>
+            <span class="pcard__line">You describe what the protein should do, in English. It returns a
+              ranked, constrained list of specific mutations, every number traceable to the model that
+              produced it.</span>
+            <span class="pcard__chips"><b>10,450 ranked variants</b><b>2,172 measured T50</b><b>263 gate checks</b></span>
           </span>
         </button>
       </li>
@@ -465,96 +466,127 @@
         <header class="proj__head">
           <p class="proj__eyebrow">Project B · Protein design copilot</p>
           <h2 class="proj__title" id="cl-title">Codon Lab</h2>
-          <p class="proj__lede">Turns a plain-language protein engineering goal into a ranked, defensible
-            list of specific mutations — and <em>refuses to guess</em> when it does not know.</p>
+          <p class="proj__lede">A protein-engineering copilot. You describe what you want the protein
+            to do, in English; it returns a ranked, constrained list of specific mutations. It also
+            <em>refuses</em> — when it cannot know something, it says so and says why, instead of
+            returning a plausible number.</p>
           <button class="proj__close" type="button" data-close><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3l10 10M13 3L3 13"/></svg><span class="u-sr">Close project</span></button>
         </header>
 
         <div class="proj__body">
-          <p class="beat__body">The models that could help a wet-lab protein engineer are Python repos
-            with CUDA requirements, not tools. So bench scientists either do not use them, or run a
-            colleague's notebook once and never trust the output enough to spend $4,000 of ordering
-            budget on it. <b>The gap is not capability. It is trust.</b></p>
+          <p class="beat__body">The models that could help a wet-lab protein engineer — ESM,
+            ProteinMPNN, ThermoMPNN, RFdiffusion, AlphaFold — are Python repositories with CUDA
+            requirements, not tools. So bench scientists either do not use them at all, or get a
+            one-off notebook from a computational colleague, run it once, and never trust the output
+            enough to spend $4,000 of ordering budget on it. <b>The gap is not capability. It is
+            trust.</b> A scientist will not order oligos off the back of a number they cannot
+            interrogate.</p>
 
           <h3 class="proj__sub">Three <em>invariants</em>.</h3>
           <div class="inv">
             <article class="inv__item">
               <p class="inv__no">01 — Parse, then confirm</p>
               <p class="inv__title">Never silently interpret.</p>
-              <p class="inv__body">The user types a goal in English. It is parsed into an explicit
-                structured objective and shown back as editable chips. <b>Nothing runs until the user
-                confirms that parse.</b> The gate lives in the service layer rather than on a screen,
-                because the job queue is a second caller, and a check that lives only in the UI is a
-                check the API does not have.</p>
-              <p class="inv__body">The parser has no scientific authority. Every field is optional, and
-                an absent field means not stated, never a default. A parse that quietly filled in
-                50 °C because thermostability usually means about that would be indistinguishable, on
-                screen, from a number the scientist chose.</p>
+              <p class="inv__body">You type a goal in English. The app parses it into an explicit
+                objective — target, budget, host, assay — and shows that parse back as editable chips.
+                <b>Nothing runs until you confirm it.</b> A tool that guesses what "more thermostable"
+                means, and quietly proceeds, is a tool you abandon after the first surprising result.</p>
+              <p class="inv__body">The refusal is enforced in the service layer, not in a route. The
+                job queue is a second caller, and a check placed in a route can be routed around.</p>
             </article>
             <article class="inv__item">
               <p class="inv__no">02 — Provenance</p>
               <p class="inv__title">Every number is traceable.</p>
-              <p class="inv__body">Any score traces to which model, which version, which weights hash,
-                which inputs, which run, at what time — <b>in two clicks, counted literally</b>.
-                Enforced in the database, where the model version and the run are both non-null, and in
-                the type system: a predictor returns a value carrying no run and no model version, so it
-                is structurally incapable of producing an untraceable number.</p>
-              <p class="inv__body">The weights hash is taken over the checkpoint bytes actually loaded,
-                never a placeholder. A made-up hash is indistinguishable from a real one in a provenance
-                trail, which turns the whole claim into a lie.</p>
+              <p class="inv__body">Any score on any screen reaches its model, version and weights hash
+                <b>in two clicks</b>, counted in tests with trusted events. Provenance is a first-class
+                table, not a log file, and the database refuses to store a score without a model
+                version and a run.</p>
+              <p class="inv__body">The weights hash is a SHA-256 of the bytes actually loaded, never a
+                placeholder. A made-up hash is indistinguishable from a real one in a provenance trail,
+                which turns the entire traceability claim into a lie.</p>
             </article>
             <article class="inv__item">
               <p class="inv__no">03 — Fabrication</p>
               <p class="inv__title">Never invent a scientific number.</p>
-              <p class="inv__body">Exactly one module is permitted to invent a number, and it declares
-                itself. That single flag raises a persistent amber bar and badges <b>every individual
-                number</b> with a footnoted mark. Unavailable means an em dash with a tooltip explaining
-                why — never an imputed value, never a blank that could pass for zero. A predictor that
-                cannot run says so and produces nothing; it never falls back to another provider.</p>
+              <p class="inv__body">A model that cannot run <b>reports why</b>. The cell reads as an em
+                dash with the reason on hover — never an imputed value, never an estimated placeholder.
+                The one provider allowed to invent numbers badges every one of them, watermarks
+                exports, and refuses to generate primers.</p>
             </article>
           </div>
 
-          <h3 class="proj__sub">No claim rests on a <em>rank statistic</em> alone.</h3>
-          <p class="beat__body">Agreement with published solvent-accessibility output was supposed to
-            validate the van der Waals radii set. It cannot. A correlation statistic is invariant to the
-            transform that produces the error it is meant to catch: swapping the radii set for a uniform
-            radius moved <b>8 residues across a region boundary</b> while raising correlation to
-            r = 0.998. The test would have passed more convincingly while the answer got worse.</p>
-          <p class="beat__note">So the scorecard reports a rank metric <b>and</b> an error metric
-            <b>and</b> a bias term. A predictor offset by a constant +2 kcal/mol scores Spearman
-            1.0000 and precision@10 of 1.0 while being useless for the decision the user is actually
-            making. The gate constructs exactly that predictor and asserts it is caught only by the
-            bias term, at −2.00 kcal/mol.</p>
+          <h3 class="proj__sub">What it <em>refuses</em> to do, and why.</h3>
+          <p class="beat__body">The refusals are the product. Each one names what is wrong and what
+            would fix it.</p>
+          <div class="tablewrap">
+            <table class="rtable rtable--refusals">
+              <thead>
+                <tr><th scope="col">It refuses to</th><th scope="col">Because</th></tr>
+              </thead>
+              <tbody>
+                <tr data-power><td>Accept a mutation code before you confirm a numbering scheme</td><td>Ser77 and Ser108 can be the same residue. Guessing is the most expensive error in the domain.</td></tr>
+                <tr><td>Start a run from an unconfirmed parse</td><td>A tool that guesses what your goal meant is one you stop trusting after the first surprise.</td></tr>
+                <tr data-power><td>Report a ΔΔG interval it does not have</td><td>ThermoMPNN has no per-variant uncertainty. A benchmark RMSE dressed as an interval renders identically to a real one.</td></tr>
+                <tr><td>Compute an error term across incompatible units</td><td>A measured T50 in °C and a predicted ΔΔG in kcal/mol cannot be subtracted. The card says so instead of producing a number.</td></tr>
+                <tr><td>Fall back to another model when one is unavailable</td><td>You would get numbers from a model you did not choose, labelled as the one you did.</td></tr>
+                <tr><td>Generate primers from synthetic scores</td><td>A synthetic ΔΔG is recognisable as synthetic on screen. An oligo ordered off one is not.</td></tr>
+                <tr><td>Generate primers without your construct's DNA</td><td>A primer anneals to the plasmid on your bench. Back-translating the protein invents a sequence that is nobody's plasmid.</td></tr>
+                <tr><td>Trim a signal peptide to make your DNA fit</td><td>Every primer position would shift by the length of the leader, and a primer at the wrong position anneals to nothing.</td></tr>
+                <tr><td>Apply a numbering offset on your behalf</td><td>Even when one constant shift explains every unplaced row, it proposes and waits.</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3 class="proj__sub">The measurement is the <em>moat</em>.</h3>
+          <p class="beat__body">You upload measured values from your assay. The app joins them to the
+            variants it predicted — exactly, with no similarity threshold anywhere, because
+            <b>A123V</b> and <b>A123L</b> differ by one character and are different experiments. A
+            persistent scorecard then accumulates per predictor, so across three projects a lab learns
+            which predictor to trust for its own chemistry.</p>
+          <p class="beat__body">It ships against real data. The build seeds <b>2,172 measured T50
+            values</b> for <em>B. subtilis</em> lipase A from ProteinGym, vendored with its SHA-256 and
+            checked byte-identical against UniProt P37957. Against those measurements, real ESM-2 650M
+            scores <b>Spearman ρ = 0.30</b> where the synthetic predictor scores <b>−0.06</b> —
+            measured on this machine, not quoted from a paper.</p>
+          <p class="beat__note">A DSSP-agreement test was supposed to validate the van der Waals radii
+            set and could not: swapping ProtOr for a uniform radius <em>raised</em> correlation to
+            r = 0.998 while moving 8 of 1BTL's 263 residues across a region boundary. Correlation is
+            invariant to monotonic transforms, and a systematic offset, a scale error and a
+            miscalibration are all monotonic. So the scorecard reports a rank metric <b>and</b> an
+            error metric <b>and</b> a bias term, with bias rendered next to rank.</p>
 
           <h3 class="proj__sub">What is <em>not</em> verified.</h3>
           <p class="beat__body">Tracked as carefully as the code, because on this project the
-            distinction is the product.</p>
+            distinction is the point.</p>
           <ul class="unverified">
-            <li><b>Frame rate.</b> Constant work per scroll update is asserted in CI — 10,000 rows mount
-              the same number of table rows as 100. Measured once in a real browser on a 10,450-row
-              ranking: 32 rows, 772 DOM nodes, 0.8 ms for a synchronous scroll. That is the property
-              60 fps rests on. It is not a frame rate, and none is claimed.</li>
-            <li><b>The structure viewer.</b> It reports ready and its coordinates come from our own API,
-              but everything it draws goes to a canvas. Nothing about the image is verified.</li>
-            <li><b>The language-model goal parser has never run against the live API.</b> No key is
-              configured, so every parse falls back to the deterministic rule parser and is badged
-              as such.</li>
-            <li><b>Absolute stability accuracy.</b> The predictor's position mapping and sign convention
-              are checked; its values are compared against no external benchmark.</li>
-            <li><b>No screen has been looked at by a human.</b> Rendering was verified by reading the DOM
-              and by driving it in a real browser. That establishes correct, not good.</li>
+            <li><b>Nobody has looked at these screens with a design eye.</b> The brief is emphatic
+              about how this must look, and no human has judged it. No test can.</li>
+            <li><b>Nothing has ever been signed in to.</b> Identity is wired end to end, but no account
+              exists, so no real token has reached the verifier outside synthetic key pairs in tests.</li>
+            <li><b>The containerised real-model path.</b> Real predictors are verified on this machine,
+              not in the deployed image.</li>
+            <li><b>A screen reader.</b> Structure and computed contrast are asserted on every build;
+              nobody has opened the app in NVDA or VoiceOver.</li>
           </ul>
 
           <h3 class="proj__sub">Known gaps.</h3>
           <ul class="unverified">
-            <li><b>Primers and the one-page PDF are not built.</b> The blocker is gone and the chemistry
-              is decided; the designer itself remains.</li>
-            <li><b>A run abandoned mid-flight stays running forever.</b> Nothing reaps it, and the
-              idempotency index then blocks an identical re-run.</li>
-            <li><b>Uncertainty intervals.</b> The stability predictor has no per-variant uncertainty to
-              give, so it reports the point estimate with the reason stated rather than dressing a
-              benchmark error as a per-variant interval. The requirement is formally unmet, visibly.</li>
+            <li><b>Primers and the one-page PDF are not built</b> — the last clause of the definition
+              of done that is not met. The blocker is gone, a target can carry its construct's DNA, and
+              the chemistry is decided and recorded. The designer itself remains.</li>
+            <li><b>The hour-long job timeout is still marginal.</b> A 550-residue target needs about
+              142 minutes, so it finishes across two or three runs rather than one. Continuation is
+              manual.</li>
+            <li><b>ΔΔG intervals.</b> The brief requires an interval and ThermoMPNN has none to give.
+              It reports the point estimate with the reason stated, which leaves the requirement
+              formally unmet, and visibly so.</li>
+            <li><b>Projects cannot be shared.</b> Ownership is per user; a lab wanting a shared project
+              needs an organisation model that is not built.</li>
           </ul>
+
+          <p class="beat__note">Eight of ten clauses in the definition of done are closed. One is
+            knowingly open behind named work. One cannot be closed by anyone who has not looked at the
+            screens.</p>
 
           <p class="privnote">Repository is private. Available on request.</p>
         </div>
@@ -781,8 +813,8 @@
 }
 </script>
 
-<script type="module" src="assets/js/hero.js?v=8b45094b"></script>
-<script type="module" src="assets/js/projects.js?v=8b45094b"></script>
-<script type="module" src="assets/js/sections.js?v=8b45094b"></script>
+<script type="module" src="assets/js/hero.js?v=09e6e1bf"></script>
+<script type="module" src="assets/js/projects.js?v=09e6e1bf"></script>
+<script type="module" src="assets/js/sections.js?v=09e6e1bf"></script>
 </body>
 </html>
