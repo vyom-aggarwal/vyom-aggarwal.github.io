@@ -12,7 +12,7 @@
    instead of being baked into the image. See img/CREDITS.md.
    ═══════════════════════════════════════════════════════════ */
 
-import * as THREE from './three.module.min.js';
+import * as THREE from './three.module.min.js?v=7dc2c391';
 
 const css = (name, fallback) => {
   const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
@@ -184,7 +184,7 @@ export function initEarth(canvas, { reducedMotion = false } = {}) {
   const globe = new THREE.Group();
   globe.position.set(1.02, -0.86, 0);
 
-  const tex = new THREE.TextureLoader().load('assets/img/earth-2k.webp?v=e23b511c');
+  const tex = new THREE.TextureLoader().load('assets/img/earth-2k.webp?v=5b8afb06');
   tex.colorSpace = THREE.SRGBColorSpace;
   tex.anisotropy = 4;
 
