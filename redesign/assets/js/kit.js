@@ -12,7 +12,7 @@
    and a weak bounce from below to keep the underside off black.
    ═══════════════════════════════════════════════════════════ */
 
-import * as THREE from './three.module.min.js?v=7dc2c391';
+import * as THREE from './three.module.min.js?v=deff3f92';
 
 export const KEY = new THREE.Vector3(-0.78, 0.40, 0.52);
 
@@ -68,7 +68,10 @@ const HALO_FRAG = `
   void main() {
     float r = length(vUv - 0.5) * 2.0;
     float a = pow(max(1.0 - r, 0.0), 2.2) * uStr;
-    gl_FragColor = vec4(uRim, a);
+    /* Three's canvas is premultiplied, so AdditiveBlending uses
+       blendSrc = ONE. Writing vec4(colour, a) adds the full colour
+       regardless of a, which blows the halo out to white. */
+    gl_FragColor = vec4(uRim * a, a);
   }`;
 
 /* ── materials ────────────────────────────────────────────
