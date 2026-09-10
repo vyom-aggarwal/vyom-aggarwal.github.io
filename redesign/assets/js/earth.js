@@ -116,6 +116,11 @@ const PART_FRAG = `
   varying vec3 vW;
   void main() {
     vec3 N = normalize(vN);
+    /* Double-sided parts — the nozzle bell and the dish — show their
+       back faces, whose normals point away from the camera. Without
+       this flip the fresnel term is inverted and the inside of the
+       bell blows out to white. */
+    if (!gl_FrontFacing) N = -N;
     vec3 V = normalize(uCam - vW);
     vec3 L = normalize(uKey);
     float d = max(dot(N, L), 0.0);
@@ -145,8 +150,9 @@ export function initEarth(canvas, { reducedMotion = false } = {}) {
   const SUN = new THREE.Vector3(-0.42, 0.26, -0.94).normalize();
 
   const parts = [];
-  const partMat = (hex, { amb = 0.05, rimStr = 1.5 } = {}) => {
+  const partMat = (hex, { amb = 0.05, rimStr = 1.5, side = THREE.FrontSide } = {}) => {
     const m = new THREE.ShaderMaterial({
+      side,
       vertexShader: ATMO_VERT,
       fragmentShader: PART_FRAG,
       uniforms: {
@@ -167,7 +173,10 @@ export function initEarth(canvas, { reducedMotion = false } = {}) {
   const DARK  = partMat('#11151A', { amb: 0.05, rimStr: 1.8 });
   const GOLD  = partMat('#6A5730', { amb: 0.09, rimStr: 1.6 });
   const BLUE  = partMat(SIGNAL.clone().multiplyScalar(0.72), { amb: 0.11, rimStr: 1.05 });
-  const CHAR  = partMat('#241A15', { amb: 0.07, rimStr: 1.6 });
+  const CARBON = partMat('#0E1116', { amb: 0.045, rimStr: 1.5 });
+  /* the bell interior and the dish are seen from inside as well as out */
+  const BELL   = partMat('#1A1F26', { amb: 0.05, rimStr: 1.7, side: THREE.DoubleSide });
+  const DISH   = partMat('#79828B', { amb: 0.07, rimStr: 1.9, side: THREE.DoubleSide });
 
   /* ── Earth ─────────────────────────────────────────────────
      Off-centre and oversized so the panel crops it: the curve
@@ -243,164 +252,207 @@ export function initEarth(canvas, { reducedMotion = false } = {}) {
   scene.add(globe);
 
   /* ── the spacecraft ────────────────────────────────────────
-     An original vehicle, not a real one: a bus, a truss, a
-     radiator wing and a nozzle bell. It reads as a silhouette with
-     one lit edge and is there for scale, not for detail. */
+     An original vehicle, not a recognisable real one, and now the
+     only object in the frame besides the planet.
+
+     Forward instrument section, an octagonal service bus under a
+     multi-layer-insulation band, two ribbed radiator wings, a
+     high-gain dish on a boom, a three-longeron Warren truss
+     carrying a pair of propellant tanks, and a lathed nozzle bell.
+     It still reads as a silhouette with one limb-lit edge; the
+     detail is there so the edge has something to describe.
+
+     +x is forward, so the whole vehicle pitches with one rotation.
+     Nothing uses negative scale: a mirrored scale flips the normals
+     and the fresnel rim would light the wrong side. */
   const ship = new THREE.Group();
   {
-    const bus = new THREE.Mesh(new THREE.BoxGeometry(0.19, 0.12, 0.12), HULL);
-    ship.add(bus);
+    /* Octagonal prisms read as machined hardware where a box reads
+       as a crate, and they give the rim light a facet edge to catch. */
+    const prism = (r, len, m, seg = 8) => {
+      const mesh = new THREE.Mesh(new THREE.CylinderGeometry(r, r, len, seg), m);
+      mesh.rotation.z = Math.PI / 2;
+      return mesh;
+    };
+    const UP = new THREE.Vector3(0, 1, 0);
+    const aim = (mesh, dir) => {
+      mesh.quaternion.setFromUnitVectors(UP, dir.clone().normalize());
+      return mesh;
+    };
 
-    /* truss aft */
-    for (const dz of [-0.035, 0.035]) for (const dy of [-0.032, 0.032]) {
-      const rail = new THREE.Mesh(new THREE.CylinderGeometry(0.006, 0.006, 0.20, 6), DARK);
-      rail.rotation.z = Math.PI / 2;
-      rail.position.set(-0.19, dy, dz);
-      ship.add(rail);
+    /* ── service bus ── */
+    ship.add(prism(0.078, 0.30, HULL));
+    for (const x of [0.158, -0.158]) {
+      const cap = prism(0.064, 0.018, HULL);
+      cap.position.x = x;
+      ship.add(cap);
     }
+    /* MLI blanket around the middle of the bus */
+    ship.add(prism(0.0815, 0.115, GOLD));
+    /* two longitudinal stringers */
+    for (const ang of [Math.PI * 0.25, Math.PI * -0.25]) {
+      const st = new THREE.Mesh(new THREE.BoxGeometry(0.29, 0.008, 0.018), DARK);
+      st.position.set(0, Math.sin(ang) * 0.080, Math.cos(ang) * 0.080);
+      st.rotation.x = -ang;
+      ship.add(st);
+    }
+
+    /* ── forward instrument section ── */
+    const fwd = prism(0.050, 0.11, SHELL);
+    fwd.position.x = 0.225;
+    ship.add(fwd);
+    const collar = prism(0.057, 0.014, DARK);
+    collar.position.x = 0.170;
+    ship.add(collar);
+    const barrel = prism(0.030, 0.042, DARK, 16);
+    barrel.position.x = 0.300;
+    ship.add(barrel);
+    const lens = prism(0.026, 0.006, BLUE, 16);
+    lens.position.x = 0.322;
+    ship.add(lens);
+
+    /* ── RCS clusters, four around the forward section ── */
     for (let i = 0; i < 4; i++) {
-      const brace = new THREE.Mesh(new THREE.CylinderGeometry(0.004, 0.004, 0.085, 5), DARK);
-      brace.rotation.x = Math.PI / 4;
-      brace.position.set(-0.255 + i * 0.045, 0, 0);
-      ship.add(brace);
+      const ang = (i / 4) * Math.PI * 2 + Math.PI / 4;
+      const dir = new THREE.Vector3(0, Math.sin(ang), Math.cos(ang));
+      const pod = new THREE.Mesh(new THREE.CylinderGeometry(0.005, 0.010, 0.022, 8), DARK);
+      aim(pod, dir);
+      pod.position.set(0.192, dir.y * 0.058, dir.z * 0.058);
+      ship.add(pod);
     }
 
-    /* radiator wing, gold-foil side toward the planet */
-    const rad = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.005, 0.115), GOLD);
-    rad.position.set(-0.04, 0.085, 0);
-    rad.rotation.z = 0.16;
-    ship.add(rad);
-    const rad2 = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.005, 0.115), GOLD);
-    rad2.position.set(-0.04, -0.085, 0);
-    rad2.rotation.z = -0.16;
-    ship.add(rad2);
+    /* ── radiator wings ──
+       Built per side with explicit sign rather than a mirrored
+       scale, for the normals reason above. */
+    for (const sy of [1, -1]) {
+      const boom = new THREE.Mesh(new THREE.CylinderGeometry(0.007, 0.007, 0.058, 8), SHELL);
+      boom.position.set(-0.02, sy * 0.052, 0);
+      ship.add(boom);
 
-    /* nozzle bell */
-    const bell = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.021, 0.10, 20, 1, true), SHELL);
-    bell.rotation.z = Math.PI / 2;
-    bell.position.set(-0.37, 0, 0);
+      const yPanel = sy * 0.098;
+      const panel = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.0045, 0.135), GOLD);
+      panel.position.set(-0.02, yPanel, 0);
+      panel.rotation.x = sy * 0.16;
+      ship.add(panel);
+
+      /* ribs: a flat plate with no structure reads as a sticker */
+      for (let i = 0; i < 5; i++) {
+        const rib = new THREE.Mesh(new THREE.BoxGeometry(0.007, 0.011, 0.137), CARBON);
+        rib.position.set(-0.12 + i * 0.05, yPanel, 0);
+        rib.rotation.x = sy * 0.16;
+        ship.add(rib);
+      }
+      const spar = new THREE.Mesh(new THREE.BoxGeometry(0.262, 0.012, 0.009), CARBON);
+      spar.position.set(-0.02, yPanel, 0);
+      spar.rotation.x = sy * 0.16;
+      ship.add(spar);
+    }
+
+    /* ── high-gain antenna on a boom ── */
+    const arm = new THREE.Mesh(new THREE.CylinderGeometry(0.005, 0.005, 0.085, 6), SHELL);
+    aim(arm, new THREE.Vector3(0.15, 0.72, 0.68));
+    arm.position.set(0.055, 0.040, 0.058);
+    ship.add(arm);
+
+    const dish = new THREE.Mesh(
+      new THREE.SphereGeometry(0.058, 26, 12, 0, Math.PI * 2, 0, Math.PI / 2.7), DISH);
+    aim(dish, new THREE.Vector3(-0.15, -0.72, -0.68));
+    dish.position.set(0.078, 0.062, 0.108);
+    ship.add(dish);
+
+    const feed = new THREE.Mesh(new THREE.CylinderGeometry(0.0035, 0.0035, 0.040, 6), DARK);
+    aim(feed, new THREE.Vector3(0.15, 0.72, 0.68));
+    feed.position.set(0.072, 0.054, 0.092);
+    ship.add(feed);
+
+    /* ── truss: three longerons, ring frames, alternating diagonals ── */
+    const TR = 0.048, X0 = -0.178, BAY = 0.070, BAYS = 3;
+    const nodes = [];
+    for (let b = 0; b <= BAYS; b++) {
+      const x = X0 - b * BAY;
+      const ring = new THREE.Mesh(new THREE.TorusGeometry(TR, 0.0035, 6, 18), CARBON);
+      ring.rotation.y = Math.PI / 2;
+      ring.position.x = x;
+      ship.add(ring);
+      const row = [];
+      for (let i = 0; i < 3; i++) {
+        const ang = (i / 3) * Math.PI * 2 + Math.PI / 6;
+        row.push(new THREE.Vector3(x, Math.sin(ang) * TR, Math.cos(ang) * TR));
+      }
+      nodes.push(row);
+    }
+    for (let i = 0; i < 3; i++) {
+      const ang = (i / 3) * Math.PI * 2 + Math.PI / 6;
+      const lon = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.0046, 0.0046, BAY * BAYS, 6), SHELL);
+      lon.rotation.z = Math.PI / 2;
+      lon.position.set(X0 - (BAY * BAYS) / 2, Math.sin(ang) * TR, Math.cos(ang) * TR);
+      ship.add(lon);
+    }
+    const strut = (from, to) => {
+      const d = new THREE.Vector3().subVectors(to, from);
+      const m = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.0033, 0.0033, d.length(), 5), CARBON);
+      aim(m, d);
+      m.position.copy(from).add(to).multiplyScalar(0.5);
+      ship.add(m);
+    };
+    for (let b = 0; b < BAYS; b++) {
+      for (let i = 0; i < 3; i++) {
+        /* handedness alternates bay to bay, which is what makes it
+           read as a truss rather than as a cage */
+        const j = (b % 2 === 0) ? (i + 1) % 3 : (i + 2) % 3;
+        strut(nodes[b][i], nodes[b + 1][j]);
+      }
+    }
+
+    /* ── propellant tanks flanking the truss ── */
+    for (const sz of [1, -1]) {
+      const at = new THREE.Vector3(-0.248, -0.012, sz * 0.080);
+      const tank = new THREE.Mesh(new THREE.SphereGeometry(0.046, 22, 16), SHELL);
+      tank.position.copy(at);
+      ship.add(tank);
+      const strap = new THREE.Mesh(new THREE.TorusGeometry(0.0475, 0.0035, 6, 18), CARBON);
+      strap.rotation.y = Math.PI / 2;
+      strap.position.copy(at);
+      ship.add(strap);
+      const line = new THREE.Mesh(new THREE.CylinderGeometry(0.003, 0.003, 0.115, 5), CARBON);
+      line.rotation.z = Math.PI / 2;
+      line.position.set(-0.337, -0.012, sz * 0.080);
+      ship.add(line);
+    }
+
+    /* ── engine: mount, throat, lathed bell ── */
+    const mount = prism(0.052, 0.022, SHELL);
+    mount.position.x = -0.400;
+    ship.add(mount);
+    const throat = prism(0.019, 0.032, DARK, 16);
+    throat.position.x = -0.421;
+    ship.add(throat);
+
+    /* A real bell is a curve. A cone is not, and it shows. */
+    const bell = new THREE.Mesh(new THREE.LatheGeometry([
+      new THREE.Vector2(0.019, 0),
+      new THREE.Vector2(0.023, 0.014),
+      new THREE.Vector2(0.031, 0.034),
+      new THREE.Vector2(0.042, 0.058),
+      new THREE.Vector2(0.054, 0.086),
+      new THREE.Vector2(0.064, 0.116),
+    ], 28), BELL);
+    bell.rotation.z = Math.PI / 2;      /* lathe axis +y maps to -x */
+    bell.position.x = -0.436;
     ship.add(bell);
 
-    /* one blue detail, the same anodised part the robot carries */
-    const port = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.016, 0.02), BLUE);
-    port.position.set(0.055, 0.058, 0.055);
-    ship.add(port);
+    const lip = new THREE.Mesh(new THREE.TorusGeometry(0.064, 0.0036, 6, 26), SHELL);
+    lip.rotation.y = Math.PI / 2;
+    lip.position.x = -0.552;
+    ship.add(lip);
 
-    ship.scale.setScalar(0.20);
+    /* Held to 8% of the window width, which is the cap set for it. */
+    ship.scale.setScalar(0.222);
     ship.rotation.set(0.30, 0.86, 0.10);
   }
   scene.add(ship);
-
-  /* ── props ─────────────────────────────────────────────────
-     Seven, at varied depth, each catching the limb on the side
-     that faces it. */
-  const props = [];
-  const addProp = (mesh, { pos, spin = [0, 0, 0], period, amp = 0.05, phase = 0 }) => {
-    mesh.position.set(...pos);
-    mesh.rotation.set(...spin);
-    scene.add(mesh);
-    props.push({ mesh, base: mesh.position.clone(), period, amp, phase });
-    return mesh;
-  };
-
-  /* reaction wheel */
-  const wheel = new THREE.Group();
-  wheel.add(new THREE.Mesh(new THREE.TorusGeometry(0.085, 0.026, 10, 28), SHELL));
-  wheel.add(new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.022, 0.055, 12), DARK));
-  wheel.children[1].rotation.x = Math.PI / 2;
-  addProp(wheel, { pos: [0.35, 0.45, 0.35], spin: [0.9, 0.3, 0.2], period: 9.0, amp: 0.05, phase: 0.2 });
-
-  /* CubeSat, 1U, one panel deployed */
-  const cube = new THREE.Group();
-  cube.add(new THREE.Mesh(new THREE.BoxGeometry(0.10, 0.10, 0.10), SHELL));
-  const panel = new THREE.Mesh(new THREE.BoxGeometry(0.005, 0.10, 0.20), BLUE);
-  panel.position.set(0.055, 0, 0.14);
-  panel.rotation.y = -0.30;
-  cube.add(panel);
-  addProp(cube, { pos: [-1.10, 0.52, -0.30], spin: [0.35, 0.6, 0.1], period: 11.0, amp: 0.045, phase: 2.1 });
-
-  /* parabolic antenna */
-  const dish = new THREE.Group();
-  const bowl = new THREE.Mesh(new THREE.SphereGeometry(0.10, 20, 12, 0, Math.PI * 2, 0, Math.PI / 2.6), SHELL);
-  bowl.rotation.x = Math.PI;
-  dish.add(bowl);
-  const boom = new THREE.Mesh(new THREE.CylinderGeometry(0.004, 0.004, 0.09, 6), DARK);
-  boom.position.y = -0.045;
-  dish.add(boom);
-  addProp(dish, { pos: [1.12, 0.44, 0.55], spin: [1.15, 0.35, 0.4], period: 8.0, amp: 0.055, phase: 3.6 });
-
-  /* nozzle bell, loose */
-  const bell2 = new THREE.Mesh(new THREE.CylinderGeometry(0.075, 0.028, 0.13, 18, 1, true), SHELL);
-  addProp(bell2, { pos: [0.30, -0.90, 0.20], spin: [0.4, 0.3, -0.9], period: 10.2, amp: 0.05, phase: 5.0 });
-
-  /* star tracker: a small barrel with a stray-light baffle */
-  const tracker = new THREE.Group();
-  tracker.add(new THREE.Mesh(new THREE.CylinderGeometry(0.030, 0.030, 0.07, 12), SHELL));
-  const baffle = new THREE.Mesh(new THREE.CylinderGeometry(0.040, 0.030, 0.06, 12, 1, true), DARK);
-  baffle.position.y = 0.062;
-  tracker.add(baffle);
-  addProp(tracker, { pos: [0.95, 0.50, -0.20], spin: [0.3, 0.4, 0.55], period: 7.4, amp: 0.05, phase: 1.2 });
-
-  /* the heat-shield tile — the one prop allowed a joke. It is a
-     spare that has already flown: one edge is charred. */
-  const tile = new THREE.Group();
-  tile.add(new THREE.Mesh(new THREE.CylinderGeometry(0.085, 0.085, 0.022, 6), SHELL));
-  const scorch = new THREE.Mesh(new THREE.CylinderGeometry(0.087, 0.070, 0.010, 6), CHAR);
-  scorch.position.y = -0.014;
-  tile.add(scorch);
-  addProp(tile, { pos: [1.15, -0.80, 0.60], spin: [1.30, 0.15, 0.30], period: 6.6, amp: 0.06, phase: 4.2 });
-
-  /* transfer-ellipse plate */
-  addProp(new THREE.Mesh(new THREE.PlaneGeometry(0.44, 0.30), transferMat()),
-    { pos: [-0.42, 0.55, -0.45], spin: [0, 0.28, 0.05], period: 12.0, amp: 0.04, phase: 0.9 });
-
-  function transferMat() {
-    const W = 440, H = 300;
-    const c = document.createElement('canvas');
-    c.width = W; c.height = H;
-    const g = c.getContext('2d');
-    g.fillStyle = '#0C1017';
-    rr(g, 3, 3, W - 6, H - 6, 20); g.fill();
-    g.strokeStyle = 'rgba(255,255,255,.13)'; g.lineWidth = 2;
-    rr(g, 4, 4, W - 8, H - 8, 20); g.stroke();
-
-    const cx = W * 0.46, cy = H * 0.54;
-    /* inner and outer circular orbits */
-    g.strokeStyle = 'rgba(255,255,255,.16)'; g.lineWidth = 2;
-    g.beginPath(); g.arc(cx, cy, 34, 0, 7); g.stroke();
-    g.beginPath(); g.arc(cx, cy, 108, 0, 7); g.stroke();
-    /* the transfer ellipse, tangent to both */
-    g.strokeStyle = '#4A9EE0'; g.lineWidth = 3;
-    g.beginPath(); g.ellipse(cx + 37, cy, 71, 62, 0, 0, Math.PI * 2); g.stroke();
-    g.fillStyle = '#8FE0F5';
-    g.beginPath(); g.arc(cx - 34, cy, 5, 0, 7); g.fill();
-    g.beginPath(); g.arc(cx + 108, cy, 5, 0, 7); g.fill();
-
-    g.fillStyle = '#8C95A1';
-    g.font = '500 21px "JetBrains Mono", monospace';
-    g.fillText('LEO → GEO', 24, 40);
-    g.fillStyle = '#E8EBEE';
-    g.font = '500 25px "JetBrains Mono", monospace';
-    g.fillText('Δv 3.89 km/s', 24, H - 28);
-    return new THREE.MeshBasicMaterial({ map: canvasTex(c), transparent: true });
-  }
-
-  function canvasTex(c) {
-    const t = new THREE.CanvasTexture(c);
-    t.anisotropy = 4;
-    t.colorSpace = THREE.SRGBColorSpace;
-    return t;
-  }
-
-  function rr(g, x, y, w, h, r) {
-    g.beginPath();
-    g.moveTo(x + r, y);
-    g.arcTo(x + w, y, x + w, y + h, r);
-    g.arcTo(x + w, y + h, x, y + h, r);
-    g.arcTo(x, y + h, x, y, r);
-    g.arcTo(x, y, x + w, y, r);
-    g.closePath();
-  }
 
   /* ── size ──────────────────────────────────────────────── */
   const resize = () => {
@@ -455,14 +507,6 @@ export function initEarth(canvas, { reducedMotion = false } = {}) {
     if (pass >= 1) {
       ship.position.x = SHIP_TO.x + Math.sin(t / 14) * 0.035;
       ship.position.y = SHIP_TO.y + Math.sin(t / 11 + 1.4) * 0.022;
-    }
-
-    for (const p of props) {
-      const a = Math.sin((t / p.period) * Math.PI * 2 + p.phase);
-      const e = a * a * a * 0.35 + a * 0.65;
-      p.mesh.position.y = p.base.y + e * p.amp;
-      p.mesh.position.x = p.base.x + Math.cos((t / (p.period * 1.37)) * Math.PI * 2 + p.phase) * p.amp * 0.4;
-      p.mesh.rotation.z += 0.0004;
     }
 
     renderer.render(scene, camera);
