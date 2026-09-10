@@ -9,7 +9,8 @@
    as the hero, because they are objects in the same room.
    ═══════════════════════════════════════════════════════════ */
 
-import { THREE, makeMaterials, makeHalo, buildQuadruped, box, cyl } from './kit.js?v=8b45094b';
+import { THREE, makeMaterials, makeHalo, buildQuadruped, sph } from './kit.js?v=09e6e1bf';
+import { CA, RESIDUES, TRIAD } from './lipase.js?v=09e6e1bf';
 
 /* ── shared scaffolding ──────────────────────────────────── */
 function stage(canvas, { fov = 30, at = [2.6, 0.9, 3.4], look = [0, 0, 0] } = {}) {
@@ -68,143 +69,125 @@ function quadruped(canvas) {
   };
 }
 
-/* ── card B: the console slab ────────────────────────────────
-   A hard-surface device tilted in space with the application's own
-   screen on its face, so the model is both an object in the scene
-   and an honest picture of the interface. The amber bar is on it
-   because the seeded providers are synthetic and hiding that would
-   be the exact fabrication the app exists to prevent. */
-function consoleSlab(canvas) {
-  const s = stage(canvas, { fov: 30, at: [2.1, 0.95, 3.6], look: [0, -0.02, 0] });
+/* ── card B: the target, and what the app refuses to do to it ──
+   Not a protein for decoration. The model is the seeded target with
+   the app's defining behaviour drawn on it:
+
+     · the real backbone of B. subtilis lipase A, from AlphaFold
+     · its catalytic triad picked out as the constraint set, which
+       the app suggests from annotations and will not apply on your
+       behalf, and will not let you mutate once you have set it
+     · the catalytic serine carrying two labels at once, Ser77 and
+       Ser108, because that residue has two numbers and refusing to
+       guess between them is the first thing the product does
+
+   Everything shown is read from the structure file. No score, no
+   ranking and no mutation code appears here, because those would be
+   predictions and this site does not invent them. */
+function protein(canvas) {
+  const s = stage(canvas, { fov: 30, at: [0, 0.15, 3.5], look: [0, 0, 0] });
 
   const halo = makeHalo(s.M.LIMB, { size: 3.6, strength: 0.17 });
   halo.position.set(-0.10, 0.02, -1.4);
   s.scene.add(halo);
 
-  const slab = new THREE.Group();
+  const group = new THREE.Group();
 
-  /* body and bezel */
-  const bodyMat = s.M.mat('#1B212A', { amb: 0.10, rimStr: 1.9 });
-  slab.add(box(2.08, 1.34, 0.075, bodyMat));
-  const back = box(1.30, 0.72, 0.05, s.M.STRUCT);
-  back.position.z = -0.062;
-  slab.add(back);
+  const at = (i) => new THREE.Vector3(CA[i * 3], CA[i * 3 + 1], CA[i * 3 + 2]);
+  const points = [];
+  for (let i = 0; i < RESIDUES; i++) points.push(at(i));
 
-  /* the screen itself */
-  const screen = new THREE.Mesh(
-    new THREE.PlaneGeometry(1.96, 1.22),
-    new THREE.MeshBasicMaterial({ map: screenTexture(), transparent: true })
+  /* The backbone as a tube through the alpha carbons. A CA trace of a
+     helix is itself a helix, so the secondary structure reads without
+     a cartoon renderer. */
+  const curve = new THREE.CatmullRomCurve3(points, false, 'catmullrom', 0.4);
+  const ribbon = new THREE.Mesh(
+    new THREE.TubeGeometry(curve, RESIDUES * 5, 0.026, 8, false),
+    s.M.mat(s.M.SIGNAL.clone(), { amb: 0.20, rimStr: 1.5 })
   );
-  screen.position.z = 0.0395;
-  slab.add(screen);
+  group.add(ribbon);
 
-  /* one anodised detail and a pair of feet, so it reads as hardware
-     rather than as a floating rectangle */
-  const strip = box(0.30, 0.035, 0.012, s.M.JOINT);
-  strip.position.set(-0.80, -0.625, 0.045);
-  slab.add(strip);
-  for (const sx of [-1, 1]) {
-    const foot = cyl(0.045, 0.16, s.M.SHELL, 12);
-    foot.rotation.z = 0;
-    foot.position.set(sx * 0.72, -0.75, -0.02);
-    slab.add(foot);
+  /* the constraint set: the three residues the app will not touch */
+  const LOCK = s.M.mat(s.M.LIMB.clone(), { amb: 0.45, rimStr: 1.1 });
+  const labels = [];
+  for (const t of TRIAD) {
+    const p = at(t.at - 1);                 /* file numbering is 1-based */
+    const node = sph(0.075, LOCK);
+    node.position.copy(p);
+    group.add(node);
+
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(0.115, 0.011, 6, 22), LOCK);
+    ring.position.copy(p);
+    group.add(ring);
+    labels.push({ ring });
   }
 
-  slab.rotation.set(0.10, -0.42, 0.03);
-  slab.scale.setScalar(0.72);
-  s.scene.add(slab);
+  /* The serine gets both of its numbers, side by side. This is the
+     product's worked example: one residue, two schemes, 31 apart. */
+  const ser = at(TRIAD[0].at - 1);
+  for (const [text, dy] of [['Ser77 · mature', 0.30], ['Ser108 · precursor', 0.16]]) {
+    const tag = makeLabel(text, '#8FE0F5');
+    tag.position.set(ser.x + 0.46, ser.y + dy, ser.z);
+    group.add(tag);
+  }
+  const leader = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.006, 0.006, 0.34, 4),
+    s.M.mat(s.M.LIMB.clone(), { amb: 0.6, rimStr: 0 })
+  );
+  leader.position.set(ser.x + 0.17, ser.y + 0.09, ser.z);
+  leader.rotation.z = -1.05;
+  group.add(leader);
+
+  group.rotation.set(0.1, -0.5, 0.15);
+  group.position.set(-0.30, -0.05, 0);
+  group.scale.setScalar(1.34);
+  s.scene.add(group);
 
   return {
     ...s,
     tick(t, active) {
-      slab.rotation.y = -0.42 + (active ? Math.sin(t * 0.45) * 0.14 : 0);
-      slab.rotation.x = 0.10 + (active ? Math.sin(t * 0.7) * 0.03 : 0);
+      group.rotation.y = -0.5 + (active ? Math.sin(t * 0.4) * 0.22 : 0);
+      for (const l of labels) l.ring.rotation.z += active ? 0.006 : 0;
     },
   };
 }
 
-/* The workbench, drawn rather than screenshotted, so it stays legible
-   at card size and carries no numbers this site cannot support. */
-function screenTexture() {
-  const W = 1024, H = 640;
+/* a flat mono tag that always faces the camera */
+function makeLabel(text, colour) {
+  const pad = 18, size = 34;
+  const m = document.createElement('canvas').getContext('2d');
+  m.font = `500 ${size}px "JetBrains Mono", monospace`;
+  const w = Math.ceil(m.measureText(text).width) + pad * 2;
+  const h = size + pad * 2;
+
   const c = document.createElement('canvas');
-  c.width = W; c.height = H;
+  c.width = w; c.height = h;
   const g = c.getContext('2d');
-
-  g.fillStyle = '#0C1017';
-  g.fillRect(0, 0, W, H);
-
-  /* title bar */
-  g.fillStyle = '#151B24';
-  g.fillRect(0, 0, W, 58);
-  g.fillStyle = '#8C95A1';
-  g.font = '500 22px "JetBrains Mono", monospace';
-  g.fillText('codon lab  ·  variant workbench', 26, 37);
-  g.fillStyle = '#4A9EE0';
-  g.fillText('10,450', W - 210, 37);
-  g.fillStyle = '#5A6470';
-  g.fillText('ranked', W - 120, 37);
-
-  /* the synthetic-data bar */
-  g.fillStyle = '#3A2A12';
-  g.fillRect(0, 58, W, 40);
-  g.fillStyle = '#E0A24A';
-  g.fillRect(0, 58, 5, 40);
-  g.font = '500 19px "JetBrains Mono", monospace';
-  g.fillText('synthetic providers — every number badged', 24, 85);
-
-  /* column heads */
-  const X = [30, 250, 430, 610, 800];
-  g.fillStyle = '#5A6470';
-  g.font = '500 17px "JetBrains Mono", monospace';
-  ['variant', 'ddG kcal/mol', 'agreement', 'rsa', 'rank'].forEach((h, i) => g.fillText(h, X[i], 132));
-  g.strokeStyle = 'rgba(255,255,255,.12)';
+  g.fillStyle = 'rgba(12,16,23,.88)';
+  g.strokeStyle = 'rgba(143,224,245,.34)';
   g.lineWidth = 2;
-  g.beginPath(); g.moveTo(24, 148); g.lineTo(W - 24, 148); g.stroke();
+  const r = 14;
+  g.beginPath();
+  g.moveTo(r, 1); g.arcTo(w - 1, 1, w - 1, h - 1, r); g.arcTo(w - 1, h - 1, 1, h - 1, r);
+  g.arcTo(1, h - 1, 1, 1, r); g.arcTo(1, 1, w - 1, 1, r); g.closePath();
+  g.fill(); g.stroke();
 
-  /* rows */
-  const rows = [
-    ['S77A', '-1.42', '2 / 3', '0.08', '01'],
-    ['L142V', '-1.18', '3 / 3', '0.11', '02'],
-    ['T96S', '-0.94', '2 / 3', '0.31', '03'],
-    ['A209G', '-0.71', '2 / 3', '0.44', '04'],
-    ['V54I', '-0.66', '1 / 3', '0.06', '05'],
-    ['N118D', '-0.52', '3 / 3', '0.52', '06'],
-    ['G163A', '-0.35', '2 / 3', '0.19', '07'],
-    ['I88L', '—', '—', '0.27', '08'],
-  ];
-  rows.forEach((r, i) => {
-    const y = 190 + i * 52;
-    if (i % 2 === 1) { g.fillStyle = 'rgba(255,255,255,.02)'; g.fillRect(24, y - 32, W - 48, 46); }
-    g.font = '500 20px "JetBrains Mono", monospace';
-    g.fillStyle = i === 0 ? '#E8EBEE' : '#A3ACB6';
-    g.fillText(r[0], X[0], y);
-    g.fillStyle = r[1] === '—' ? '#5A6470' : '#A3ACB6';
-    g.fillText(r[1], X[1], y);
-    /* the badge that marks an invented number */
-    if (r[1] !== '—') {
-      g.fillStyle = '#E0A24A';
-      g.beginPath(); g.arc(X[1] + 108, y - 12, 4, 0, 7); g.fill();
-    }
-    g.fillStyle = '#5A6470';
-    g.fillText(r[2], X[2], y);
-    g.fillText(r[3], X[3], y);
-    g.fillStyle = '#4A9EE0';
-    g.fillText(r[4], X[4], y);
-  });
+  g.fillStyle = colour;
+  g.font = `500 ${size}px "JetBrains Mono", monospace`;
+  g.textBaseline = 'middle';
+  g.fillText(text, pad, h / 2 + 1);
 
-  /* the left rule marking the row in focus */
-  g.fillStyle = '#4A9EE0';
-  g.fillRect(24, 158, 3, 46);
-
-  const t = new THREE.CanvasTexture(c);
-  t.anisotropy = 4;
-  t.colorSpace = THREE.SRGBColorSpace;
-  return t;
+  const tex = new THREE.CanvasTexture(c);
+  tex.anisotropy = 4;
+  tex.colorSpace = THREE.SRGBColorSpace;
+  const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false }));
+  sprite.renderOrder = 5;
+  sprite.scale.set((w / h) * 0.115, 0.115, 1);
+  return sprite;
 }
 
 /* ── public entry ────────────────────────────────────────── */
-const BUILDERS = { quadruped, console: consoleSlab };
+const BUILDERS = { quadruped, protein };
 
 export function initCardModel(canvas, kind) {
   const build = BUILDERS[kind];

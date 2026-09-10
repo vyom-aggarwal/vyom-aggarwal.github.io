@@ -264,6 +264,23 @@
 }
 .step__pair .card { margin-top: 0; }
 
+/* Prose inside the overlay body needs a measure and needs air between
+   paragraphs; without both, the panel reads as one slab. */
+.proj__body .beat__body,
+.proj__body .beat__note { max-width: var(--measure); }
+.proj__body .beat__body + .beat__body,
+.proj__body .beat__body + .beat__note { margin-top: var(--s-4); }
+
+/* the refusals read as prose, not as figures, so the columns are
+   proportioned for sentences and the cells wrap */
+.rtable--refusals th, .rtable--refusals td {
+  white-space: normal; text-align: left; vertical-align: top;
+  line-height: 1.6; padding: 14px var(--s-4);
+}
+.rtable--refusals td:first-child { width: 38%; color: var(--ink); }
+.rtable--refusals td:last-child { color: var(--ink-2); }
+.proj__body .tablewrap { margin-top: var(--s-4); }
+
 /* ═══ project B: invariants, not a sequence ════════════ */
 .inv { display: grid; gap: var(--s-4); }
 .inv__item {
