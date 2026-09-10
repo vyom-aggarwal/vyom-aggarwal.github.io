@@ -11,7 +11,11 @@
 
 .hero {
   position: relative;
-  min-height: calc(100svh - (var(--inset) * 2));
+  /* The scroll cue sits in a notch bitten out of the panel's bottom
+     edge, so for the cue to land on the bottom of the window the panel
+     has to reach it. Only the top inset and the two 1px borders come
+     off the viewport height; the bottom inset does not. */
+  min-height: calc(100svh - var(--inset) - 2px);
   padding: var(--gutter);
   display: grid;
   grid-template-columns: repeat(12, 1fr);
@@ -265,6 +269,27 @@
 @keyframes panel-in { from { transform: scale(0.985); } to { transform: none; } }
 @keyframes line-in  { from { opacity: 0; transform: translateY(0.24em); } to { opacity: 1; transform: none; } }
 @keyframes soft-in  { from { opacity: 0; } to { opacity: 1; } }
+
+/* ═══ short viewports ══════════════════════════════════
+   Below about 760px tall the four display lines plus the two copy
+   blocks no longer fit above the fold, and the scroll cue gets
+   pushed off the bottom of the window. Tighten the type and the
+   row rhythm rather than letting the cue disappear. */
+@media (max-height: 760px) and (min-width: 861px) {
+  .hero { row-gap: var(--s-4); }
+  .display { font-size: clamp(1.8rem, 0.3rem + 3.4vw, 3.4rem); }
+  .foot__lede { font-size: var(--fs-body); }
+  .telem > div { padding: 7px 0; }
+  .aside { padding-bottom: calc(var(--fs-word) * 0.5); }
+  /* the wordmark's band closes up as the hero shortens, so it has to
+     give way to the copy rather than sit on top of it */
+  :root { --fs-word: clamp(2.6rem, 0.4rem + 5.6vw, 5.6rem); }
+  .word .w-vyom { top: 56%; }
+}
+@media (max-height: 620px) and (min-width: 861px) {
+  .display { font-size: clamp(1.6rem, 0.3rem + 2.8vw, 2.8rem); }
+  .notch { display: none; }   /* nowhere honest to put it */
+}
 
 /* ═══ narrow ═══════════════════════════════════════════
    The panel goes full-bleed, the stagger flattens flush left,
