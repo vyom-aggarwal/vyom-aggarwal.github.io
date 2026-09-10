@@ -79,7 +79,7 @@ const PHASES = [
   }
 
   let rig = null;
-  import('./rig.js')
+  import('./rig.js?v=7dc2c391')
     .then(({ initRig }) => { rig = initRig(canvas, { reducedMotion }); update(); })
     .catch(() => { /* beats and table still carry the whole story */ });
 

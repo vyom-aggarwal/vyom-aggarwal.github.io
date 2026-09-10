@@ -6,7 +6,7 @@
    from kit.js, which the research stage shares.
    ═══════════════════════════════════════════════════════════ */
 
-import { THREE, makeMaterials, makeHalo, buildQuadruped, box } from './kit.js';
+import { THREE, makeMaterials, makeHalo, buildQuadruped, box } from './kit.js?v=7dc2c391';
 
 /* seed 0's own learning curve, rollout/ep_rew_mean sampled to 40
    points from logs/seed_0/progress.csv in the research repo. Real
