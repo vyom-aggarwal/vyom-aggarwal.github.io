@@ -94,42 +94,12 @@
 .display > span:nth-child(4) { margin-left: 4%; }
 .display em { font-style: normal; color: var(--signal); }
 
-/* Telemetry, not a metric. Three labelled lines on one baseline
-   grid; padding-right clears the social rail floating over this
-   column. */
-.telem {
-  grid-column: 8 / -1; align-self: center;
-  position: relative; z-index: 4; padding-right: 62px;
-  font-family: var(--font-mono); font-size: var(--fs-mono);
-  letter-spacing: var(--track-mono);
-}
-.telem > div {
-  display: grid; grid-template-columns: 11ch 1fr;
-  gap: var(--s-3); padding: 9px 0;
-  border-top: 1px solid var(--hair);
-}
-.telem > div:last-child { border-bottom: 1px solid var(--hair); }
-.telem dt {
-  color: var(--signal); text-transform: uppercase;
-  font-size: var(--fs-micro); letter-spacing: var(--track-wide);
-  padding-top: 2px;
-}
-.telem dd { margin: 0; color: var(--ink); }
-.telem dd i { display: block; font-style: normal; color: var(--ink-3); margin-top: 3px; }
-
 /* ═══ 3 · bottom band ═══════════════════════════════════ */
 .foot { grid-column: 1 / 6; align-self: end; position: relative; z-index: 4; }
 .foot__lede { max-width: 42ch; font-size: var(--fs-lede); color: var(--ink-2); }
 .foot__lede em { font-style: normal; color: var(--signal); }
 .foot__cta { display: flex; gap: 12px; margin-top: var(--s-4); flex-wrap: wrap; }
 
-.aside {
-  grid-column: 9 / -1; align-self: end; text-align: right;
-  position: relative; z-index: 4;
-  font-size: var(--fs-sm); color: var(--ink-2); max-width: 34ch; margin-left: auto;
-  /* clears the AGGARWAL wordmark, which sits under this column */
-  padding-bottom: calc(var(--fs-word) * 0.62);
-}
 
 /* ═══ the window ════════════════════════════════════════
    The panel is no longer a card with an object on it. It is a
@@ -258,7 +228,7 @@
   .js .display > span:nth-child(2) { animation-delay: 0.23s; }
   .js .display > span:nth-child(3) { animation-delay: 0.30s; }
   .js .display > span:nth-child(4) { animation-delay: 0.37s; }
-  .js .bar, .js .telem, .js .foot, .js .aside, .js .rail, .js .notch {
+  .js .bar, .js .foot, .js .rail, .js .notch {
     animation: soft-in 0.5s var(--ease) both; animation-delay: 0.34s;
   }
   .js .word, .js .stage { animation: soft-in 0.7s var(--ease) both; animation-delay: 0.52s; }
@@ -279,8 +249,6 @@
   .hero { row-gap: var(--s-4); }
   .display { font-size: clamp(1.8rem, 0.3rem + 3.4vw, 3.4rem); }
   .foot__lede { font-size: var(--fs-body); }
-  .telem > div { padding: 7px 0; }
-  .aside { padding-bottom: calc(var(--fs-word) * 0.5); }
   /* the wordmark's band closes up as the hero shortens, so it has to
      give way to the copy rather than sit on top of it */
   :root { --fs-word: clamp(2.6rem, 0.4rem + 5.6vw, 5.6rem); }
@@ -311,9 +279,6 @@
   /* the window keeps filling the panel; it does not become a card */
   .stage  { position: absolute; inset: 0; }
   .foot   { order: 4; align-self: stretch; }
-  .telem  { order: 5; align-self: stretch; padding-right: 0; }
-  .aside  { order: 6; align-self: stretch; text-align: left;
-            margin-left: 0; max-width: none; padding-bottom: 0; }
   .word   { order: 7; align-self: stretch; }
 
   .bar .btn--solid { margin-left: auto; }

@@ -12,7 +12,7 @@
    HUD says "Schematic" so the two are never confused.
    ═══════════════════════════════════════════════════════════ */
 
-import { THREE, makeMaterials, makeHalo, buildQuadruped } from './kit.js?v=3687b2c8';
+import { THREE, makeMaterials, makeHalo, buildQuadruped } from './kit.js?v=b53dc93b';
 
 const lerp = (a, b, t) => a + (b - a) * t;
 const clamp01 = (v) => Math.min(Math.max(v, 0), 1);
@@ -69,7 +69,10 @@ export function initRig(canvas, { reducedMotion = false } = {}) {
   legs[LOCKED].kneeG.add(mark);
 
   const state = { speed: 1, progress: 0 };
-  let gaitPhase = 0;
+  /* The slider sets a target; the loop eases toward it. Without this
+     a click on a tick teleports the gait, the fault and the body roll
+     all at once, which reads as a cut rather than as a trial running. */
+  let target = 0;
 
   /* ── ground plane: a thin rule the feet travel over, so the
      forward motion has something to be relative to ────────── */
@@ -127,7 +130,18 @@ export function initRig(canvas, { reducedMotion = false } = {}) {
   }
 
   function setProgress(p) {
-    state.progress = clamp01(p);
+    target = clamp01(p);
+  }
+
+  /* Eased on wall-clock time, not on frame count: a per-frame fraction
+     crawls whenever the frame rate drops, which made a jump to another
+     step look like it had stalled. TAU is the time constant, so the
+     move is essentially finished in about three of them. */
+  const TAU = 0.20;
+  function advance(dt) {
+    const d = target - state.progress;
+    const k = 1 - Math.exp(-Math.min(dt, 0.25) / TAU);
+    state.progress += Math.abs(d) < 0.0005 ? d : d * k;
     state.speed = speedFor(state.progress);
     /* the locked joint turns from signal blue to the fault colour */
     const f = ramp(state.progress, 0.38, 0.46);
@@ -154,9 +168,13 @@ export function initRig(canvas, { reducedMotion = false } = {}) {
 
   const frame = (now) => {
     raf = requestAnimationFrame(frame);
-    if (now - last < 33) return;
+    /* 60fps here: this one is driven by a slider and a capped rate
+       reads as stepping rather than sliding */
+    if (now - last < 15) return;
+    const dt = last ? (now - last) / 1000 : 0.016;
     last = now;
     const t = (now - t0) / 1000;
+    advance(dt);
     /* the ground slides to read as forward travel */
     ground.position.x = -((t * 0.42 * state.speed) % 0.22);
     mark.quaternion.copy(camera.quaternion);
