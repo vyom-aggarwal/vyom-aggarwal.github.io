@@ -20,11 +20,29 @@
 <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
 
 <link rel="preload" href="assets/fonts/Archivo-var.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/css/tokens.css?v=7dc2c391">
-<link rel="stylesheet" href="assets/css/base.css?v=7dc2c391">
-<link rel="stylesheet" href="assets/css/hero.css?v=7dc2c391">
-<link rel="stylesheet" href="assets/css/sections.css?v=7dc2c391">
+<link rel="stylesheet" href="assets/css/tokens.css?v=deff3f92">
+<link rel="stylesheet" href="assets/css/base.css?v=deff3f92">
+<link rel="stylesheet" href="assets/css/hero.css?v=deff3f92">
+<link rel="stylesheet" href="assets/css/projects.css?v=deff3f92">
+<link rel="stylesheet" href="assets/css/sections.css?v=deff3f92">
 
+<noscript><style>
+  /* The project write-ups exist only inside these dialogs, so without
+     scripting they are shown inline instead of hidden. A crawler that
+     ignores scripts still reads every word. */
+  .proj:not([open]) {
+    display: block; position: static; width: auto; max-width: none;
+    max-height: none; margin: var(--s-4) 0 0; box-shadow: none;
+  }
+  .proj__inner { max-height: none; }
+  .proj__close, .stepper { display: none; }
+  .steps { height: auto !important; }
+  .step {
+    position: static; opacity: 1; visibility: visible;
+    border-top: 1px solid var(--hair);
+  }
+  .nojs-note { display: block; }
+</style></noscript>
 <script>document.documentElement.classList.add('js');</script>
 </head>
 
@@ -219,44 +237,97 @@
   </section>
 </div>
 
-<!-- ═══════════════ 02 · RESEARCH ═══════════════ -->
-<div class="panel panel--stage">
+<!-- ═══════════════ 02 · PROJECTS ═══════════════ -->
+<div class="panel">
   <section class="section" id="research">
+    <span class="u-anchor" id="projects" aria-hidden="true"></span>
+
     <div class="section__head">
-      <p class="section__no">[ <b>02</b> / 06 ] · Current research · UC Santa Cruz AIEA Lab</p>
-      <h2 class="section__title">Teaching a broken robot <em>to keep walking</em>.</h2>
-      <p class="section__lede">Fault Recovery in RL Locomotion Through Online Residual Adaptation —
-        can a small correction module, updated <em>during</em> execution, restore a
-        quadruped's gait after a hardware fault without retraining the policy underneath?</p>
+      <p class="section__no">[ <b>02</b> / 06 ]</p>
+      <h2 class="section__title">Two projects, both built <em>instrument-first</em>.</h2>
+      <p class="section__lede">Each one spent its first months on the measurement rather than on the
+        result, because a number you cannot defend is worse than no number at all.</p>
     </div>
 
-    <!-- scroll-driven stage: scroll position is the trial timeline, steps 0-500 -->
-    <div class="rig" id="rigStage">
-      <div class="rig__pin">
-        <canvas class="rig__canvas" id="researchRig" aria-hidden="true"></canvas>
+    <ul class="launcher">
+      <li>
+        <button class="pcard" type="button" aria-haspopup="dialog" data-open="fault-tolerant-control">
+          <span class="pcard__stage">
+            <img class="pcard__poster" src="assets/img/card-quadruped.webp?v=574f46b7" alt="" width="720" height="450" loading="lazy" decoding="async">
+            <canvas class="pcard__canvas" data-model="quadruped" aria-hidden="true"></canvas>
+          </span>
+          <span class="pcard__meta">
+            <span class="pcard__state"><i></i>Baseline complete · adaptation not built</span>
+            <span class="pcard__title">Fault-tolerant control</span>
+            <span class="pcard__line">Keeping a machine mission-capable after an actuator fails,
+              measured on a simulated quadruped.</span>
+            <span class="pcard__chips"><b>10/10 seeds</b><b>5 fault families</b><b>1.2–82.3% recovery</b></span>
+          </span>
+        </button>
+      </li>
+      <li>
+        <button class="pcard" type="button" aria-haspopup="dialog" data-open="codon-lab">
+          <span class="pcard__stage">
+            <img class="pcard__poster" src="assets/img/card-console.webp?v=2b29eb1b" alt="" width="720" height="450" loading="lazy" decoding="async">
+            <canvas class="pcard__canvas" data-model="console" aria-hidden="true"></canvas>
+          </span>
+          <span class="pcard__meta">
+            <span class="pcard__state"><i></i>Phases 1–9 built · 2 clauses outstanding</span>
+            <span class="pcard__title">Codon Lab</span>
+            <span class="pcard__line">Turns a plain-language protein engineering goal into a ranked,
+              defensible list of mutations — and refuses to guess when it does not know.</span>
+            <span class="pcard__chips"><b>10,450 ranked variants</b><b>263 gate checks</b><b>620 tests</b></span>
+          </span>
+        </button>
+      </li>
+    </ul>
 
-        <div class="hud" data-tone="ok" aria-hidden="true">
-          <div class="hud__status"><i></i><span data-hud="status">Nominal gait</span></div>
-          <div class="hud__detail" data-hud="detail">base policy · healthy</div>
-          <div class="hud__sep"></div>
-          <div class="hud__row"><span class="hud__k">Fwd vel</span><span class="hud__v"><b data-hud="vel">0.50</b> m/s</span></div>
-          <div class="hud__row"><span class="hud__k">Step</span><span class="hud__v" data-hud="step">000</span></div>
-          <div class="hud__row"><span class="hud__k">Control</span><span class="hud__v">60 Hz</span></div>
-          <div class="hud__row"><span class="hud__k">Mode</span><span class="hud__v">Schematic</span></div>
+    <p class="nojs-note note">Both projects are shown in full below.</p>
+
+    <!-- ── Project A ── -->
+    <dialog class="proj" id="project-fault-tolerant-control" aria-labelledby="ftc-title">
+      <div class="proj__inner">
+        <header class="proj__head">
+          <p class="proj__eyebrow">Project A · UC Santa Cruz AIEA Lab</p>
+          <h2 class="proj__title" id="ftc-title">Fault Recovery in RL Locomotion Through Online Residual Adaptation</h2>
+          <p class="proj__lede">Can a small correction module, updated <em>during</em> execution, restore a
+            quadruped's gait after a hardware fault without retraining the policy underneath?</p>
+          <button class="proj__close" type="button" data-close><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3l10 10M13 3L3 13"/></svg><span class="u-sr">Close project</span></button>
+        </header>
+
+        <div class="stepper">
+          <div class="stepper__bar">
+            <p class="stepper__pos"><b data-step-num>01</b> / 06</p>
+            <p class="stepper__name" data-step-name>Premise</p>
+            <div class="stepper__ctl">
+              <button type="button" data-step-prev aria-label="Previous step" disabled><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 2 4 8l6 6"/></svg></button>
+              <button type="button" data-step-next aria-label="Next step"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 2l6 6-6 6"/></svg></button>
+            </div>
+          </div>
+          <input class="stepper__range" type="range" min="1" max="6" step="1" value="1"
+                 aria-label="Research step" aria-valuetext="Step 1 of 6, Premise" data-step-range>
+          <ol class="stepper__ticks">
+          <li><button type="button" data-step-go="1" aria-current="true">Premise</button></li>
+          <li><button type="button" data-step-go="2">Apparatus</button></li>
+          <li><button type="button" data-step-go="3">Injection</button></li>
+          <li><button type="button" data-step-go="4">Method</button></li>
+          <li><button type="button" data-step-go="5">Measurement</button></li>
+          <li><button type="button" data-step-go="6">Finding</button></li>
+          </ol>
         </div>
 
-        <div class="beats">
-
-          <article class="beat is-active">
+        <div class="steps" data-steps>
+      <article class="step is-active" data-step="1" aria-label="Step 1 of 6, Premise">
+        <div class="beat">
             <p class="beat__no">01 — Premise</p>
             <h3 class="beat__title">Policies are trained on robots that <em>never break</em>.</h3>
             <p class="beat__body">In the real world motors weaken, joints seize, and sensors start
               reporting values that aren't true. A locomotion policy trained only under ideal
               conditions has never once been shown what failure feels like — so it has no
-              response to it.</p>
-          </article>
-
-          <article class="beat">
+              response to it.</p></div>
+      </article>
+      <article class="step" data-step="2" aria-label="Step 2 of 6, Apparatus">
+        <div class="beat">
             <p class="beat__no">02 — Apparatus</p>
             <h3 class="beat__title">A quadruped you can break <em>on purpose</em>.</h3>
             <p class="beat__body">Twelve revolute joints in PyBullet, physics at 240&nbsp;Hz stepped
@@ -264,10 +335,23 @@
               all ten converged to a usable gait, so every one of them is in the experiment.</p>
             <div class="beat__meta">
               <span>34-dim observation</span><span>12-dim action</span><span>0.5 m/s target</span><span>~8.4 h laptop CPU</span>
-            </div>
-          </article>
-
-          <article class="beat">
+            </div></div>
+        <article class="card">
+        <p class="card__k">Training reliability</p>
+        <dl class="spec">
+          <div><dt>Seeds attempted</dt><dd>10 @ 1.5M</dd></div>
+          <div><dt>Converged</dt><dd>10 / 10 · 100%</dd></div>
+          <div><dt>Excluded</dt><dd>None</dd></div>
+          <div><dt>Commanded</dt><dd>0.500 m/s</dd></div>
+          <div><dt>Wall clock</dt><dd>~8.4 h</dd></div>
+        </dl>
+        <p class="note">Every seed reached a usable gait on this run, so none were held out
+          and all ten are aggregated above — the convergence rate is a reported result either
+          way, since it characterises how reliably this setup produces a usable policy.</p>
+      </article>
+      </article>
+      <article class="step" data-step="3" aria-label="Step 3 of 6, Injection">
+        <div class="beat">
             <p class="beat__no">03 — Injection</p>
             <h3 class="beat__title">At step 200, <em>something fails</em>.</h3>
             <p class="beat__body">Five fault families on a matched seed set, so every fault type is
@@ -276,20 +360,20 @@
               knows.</p>
             <div class="beat__meta">
               <span>torque_limit</span><span>joint_lock</span><span>actuation_delay</span><span>sensor_dropout</span><span>sensor_noise</span>
-            </div>
-          </article>
-
-          <article class="beat">
+            </div></div>
+      </article>
+      <article class="step" data-step="4" aria-label="Step 4 of 6, Method">
+        <div class="beat">
             <p class="beat__no">04 — Method</p>
             <h3 class="beat__title">Correct <em>around</em> the fault, don't retrain through it.</h3>
             <p class="beat__body">A small residual module sits between the frozen base policy and the
               actuators, updating online. The seized joint stays seized — the correction
               redistributes the gait around it. Measured against two bounds: no adaptation, and full
               retraining.</p>
-            <p class="beat__note">Not built yet — this is the hypothesis the apparatus exists to test.</p>
-          </article>
-
-          <article class="beat">
+            <p class="beat__note">Not built yet — this is the hypothesis the apparatus exists to test.</p></div>
+      </article>
+      <article class="step" data-step="5" aria-label="Step 5 of 6, Measurement">
+        <div class="beat">
             <p class="beat__no">05 — Measurement</p>
             <h3 class="beat__title">First, build an instrument <em>you can trust</em>.</h3>
             <p class="beat__body">The original recovery criterion latched onto the first instantaneous
@@ -298,10 +382,24 @@
               velocity smoothed over a 30-step causal window, <b>degradation has to be observed before
               recovery can be</b>, the speed must hold for 30 consecutive steps, and a trial that falls
               is never scored as recovered.</p>
-            <p class="beat__note">Every recovery number predating that change was discarded.</p>
-          </article>
-
-          <article class="beat">
+            <p class="beat__note">Every recovery number predating that change was discarded.</p></div>
+        <article class="card">
+        <p class="card__k">Build status</p>
+        <ul class="checklist">
+          <li data-state="done"><i></i>Fault-injectable environment</li>
+          <li data-state="done"><i></i>PPO base policy · 10 seeds</li>
+          <li data-state="done"><i></i>Recovery criterion rebuilt</li>
+          <li data-state="done"><i></i>Baseline A evaluation</li>
+          <li data-state="done"><i></i>Across-seed aggregation</li>
+          <li data-state="partial"><i></i>Severity sweep · built, not run</li>
+          <li data-state="todo"><i></i>H3 held-out fault split</li>
+          <li data-state="todo"><i></i>Residual adaptation module</li>
+          <li data-state="todo"><i></i>Baseline B · full retraining</li>
+        </ul>
+      </article>
+      </article>
+      <article class="step" data-step="6" aria-label="Step 6 of 6, Finding">
+        <div class="beat">
             <p class="beat__no">06 — Finding</p>
             <h3 class="beat__title">The faults <em>separate cleanly</em>.</h3>
             <p class="beat__body">Unadapted recovery runs from <b>1.2% on actuation_delay</b> to
@@ -309,16 +407,8 @@
               sensor-side faults, with no overlap — which makes the physics/sensor distinction a
               measured property of the system rather than a labelling convention, and a defensible
               axis for the H3 generalization split.</p>
-            <p class="beat__note">Real headroom for an adaptation method to demonstrate an effect.</p>
-          </article>
-
-        </div>
-
-        <div class="rig__track" aria-hidden="true"><i></i></div>
-      </div>
-    </div>
-
-    <div class="tablewrap">
+            <p class="beat__note">Real headroom for an adaptation method to demonstrate an effect.</p></div>
+        <div class="tablewrap">
       <table class="rtable">
         <caption>Baseline A · no adaptation · 10 seeds × 100 trials · ± is spread across seeds, shown where the aggregation reports one</caption>
         <thead>
@@ -340,30 +430,14 @@
         </tbody>
       </table>
     </div>
-    <p class="note" style="max-width: var(--measure)">Recovery is <b>conditional on degradation</b> — of the trials
+        <p class="note" style="max-width: var(--measure)">Recovery is <b>conditional on degradation</b> — of the trials
       where the fault measurably slowed the robot, the fraction that returned to pre-fault speed
       and held it. Trials the fault never affected are counted under Degraded rather than scored
       as recoveries. <b>torque_limit</b> and <b>joint_lock</b> are the highest-power test cases:
       recovery sits mid-range at 43.1% and 53.7%, so an adaptation method has room to move it
       without running into a floor or a ceiling. <b>actuation_delay</b> is the severe end —
       it topples the robot in 78.5% of trials and almost never recovers.</p>
-
-    <div class="research__grid">
-      <article class="card">
-        <p class="card__k">Training reliability</p>
-        <dl class="spec">
-          <div><dt>Seeds attempted</dt><dd>10 @ 1.5M</dd></div>
-          <div><dt>Converged</dt><dd>10 / 10 · 100%</dd></div>
-          <div><dt>Excluded</dt><dd>None</dd></div>
-          <div><dt>Commanded</dt><dd>0.500 m/s</dd></div>
-          <div><dt>Wall clock</dt><dd>~8.4 h</dd></div>
-        </dl>
-        <p class="note">Every seed reached a usable gait on this run, so none were held out
-          and all ten are aggregated above — the convergence rate is a reported result either
-          way, since it characterises how reliably this setup produces a usable policy.</p>
-      </article>
-
-      <article class="card">
+        <div class="step__pair"><article class="card">
         <p class="card__k">Per-seed recovery range</p>
         <dl class="spec">
           <div><dt>actuation_delay</dt><dd>0 – 4%</dd></div>
@@ -375,28 +449,117 @@
         <p class="note"><b>actuation_delay</b> is narrow only because it sits on the floor
           — every seed fails it. The other four spread 20 to 30 points, none of them wide
           enough to trip the 40-point flag, so no fault is strongly seed-dependent on this run.</p>
-      </article>
-
-      <article class="card">
-        <p class="card__k">Build status</p>
-        <ul class="checklist">
-          <li data-state="done"><i></i>Fault-injectable environment</li>
-          <li data-state="done"><i></i>PPO base policy · 10 seeds</li>
-          <li data-state="done"><i></i>Recovery criterion rebuilt</li>
-          <li data-state="done"><i></i>Baseline A evaluation</li>
-          <li data-state="done"><i></i>Across-seed aggregation</li>
-          <li data-state="partial"><i></i>Severity sweep · built, not run</li>
-          <li data-state="todo"><i></i>H3 held-out fault split</li>
-          <li data-state="todo"><i></i>Residual adaptation module</li>
-          <li data-state="todo"><i></i>Baseline B · full retraining</li>
-        </ul>
-      </article>
-    </div>
-
-    <a class="repo" href="https://github.com/vyom-aggarwal/fault-recovery-quadruped-rl" target="_blank" rel="noopener">
+      </article></div>
+        <a class="repo" href="https://github.com/vyom-aggarwal/fault-recovery-quadruped-rl" target="_blank" rel="noopener">
       <span class="repo__k">Repository · reproducible from a clean clone</span>
       <span class="repo__v">github.com/vyom-aggarwal/fault-recovery-quadruped-rl</span>
     </a>
+      </article>
+        </div>
+      </div>
+    </dialog>
+
+    <!-- ── Project B ── -->
+    <dialog class="proj" id="project-codon-lab" aria-labelledby="cl-title">
+      <div class="proj__inner">
+        <header class="proj__head">
+          <p class="proj__eyebrow">Project B · Protein design copilot</p>
+          <h2 class="proj__title" id="cl-title">Codon Lab</h2>
+          <p class="proj__lede">Turns a plain-language protein engineering goal into a ranked, defensible
+            list of specific mutations — and <em>refuses to guess</em> when it does not know.</p>
+          <button class="proj__close" type="button" data-close><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3l10 10M13 3L3 13"/></svg><span class="u-sr">Close project</span></button>
+        </header>
+
+        <div class="proj__body">
+          <p class="beat__body">The models that could help a wet-lab protein engineer are Python repos
+            with CUDA requirements, not tools. So bench scientists either do not use them, or run a
+            colleague's notebook once and never trust the output enough to spend $4,000 of ordering
+            budget on it. <b>The gap is not capability. It is trust.</b></p>
+
+          <h3 class="proj__sub">Three <em>invariants</em>.</h3>
+          <div class="inv">
+            <article class="inv__item">
+              <p class="inv__no">01 — Parse, then confirm</p>
+              <p class="inv__title">Never silently interpret.</p>
+              <p class="inv__body">The user types a goal in English. It is parsed into an explicit
+                structured objective and shown back as editable chips. <b>Nothing runs until the user
+                confirms that parse.</b> The gate lives in the service layer rather than on a screen,
+                because the job queue is a second caller, and a check that lives only in the UI is a
+                check the API does not have.</p>
+              <p class="inv__body">The parser has no scientific authority. Every field is optional, and
+                an absent field means not stated, never a default. A parse that quietly filled in
+                50 °C because thermostability usually means about that would be indistinguishable, on
+                screen, from a number the scientist chose.</p>
+            </article>
+            <article class="inv__item">
+              <p class="inv__no">02 — Provenance</p>
+              <p class="inv__title">Every number is traceable.</p>
+              <p class="inv__body">Any score traces to which model, which version, which weights hash,
+                which inputs, which run, at what time — <b>in two clicks, counted literally</b>.
+                Enforced in the database, where the model version and the run are both non-null, and in
+                the type system: a predictor returns a value carrying no run and no model version, so it
+                is structurally incapable of producing an untraceable number.</p>
+              <p class="inv__body">The weights hash is taken over the checkpoint bytes actually loaded,
+                never a placeholder. A made-up hash is indistinguishable from a real one in a provenance
+                trail, which turns the whole claim into a lie.</p>
+            </article>
+            <article class="inv__item">
+              <p class="inv__no">03 — Fabrication</p>
+              <p class="inv__title">Never invent a scientific number.</p>
+              <p class="inv__body">Exactly one module is permitted to invent a number, and it declares
+                itself. That single flag raises a persistent amber bar and badges <b>every individual
+                number</b> with a footnoted mark. Unavailable means an em dash with a tooltip explaining
+                why — never an imputed value, never a blank that could pass for zero. A predictor that
+                cannot run says so and produces nothing; it never falls back to another provider.</p>
+            </article>
+          </div>
+
+          <h3 class="proj__sub">No claim rests on a <em>rank statistic</em> alone.</h3>
+          <p class="beat__body">Agreement with published solvent-accessibility output was supposed to
+            validate the van der Waals radii set. It cannot. A correlation statistic is invariant to the
+            transform that produces the error it is meant to catch: swapping the radii set for a uniform
+            radius moved <b>8 residues across a region boundary</b> while raising correlation to
+            r = 0.998. The test would have passed more convincingly while the answer got worse.</p>
+          <p class="beat__note">So the scorecard reports a rank metric <b>and</b> an error metric
+            <b>and</b> a bias term. A predictor offset by a constant +2 kcal/mol scores Spearman
+            1.0000 and precision@10 of 1.0 while being useless for the decision the user is actually
+            making. The gate constructs exactly that predictor and asserts it is caught only by the
+            bias term, at −2.00 kcal/mol.</p>
+
+          <h3 class="proj__sub">What is <em>not</em> verified.</h3>
+          <p class="beat__body">Tracked as carefully as the code, because on this project the
+            distinction is the product.</p>
+          <ul class="unverified">
+            <li><b>Frame rate.</b> Constant work per scroll update is asserted in CI — 10,000 rows mount
+              the same number of table rows as 100. Measured once in a real browser on a 10,450-row
+              ranking: 32 rows, 772 DOM nodes, 0.8 ms for a synchronous scroll. That is the property
+              60 fps rests on. It is not a frame rate, and none is claimed.</li>
+            <li><b>The structure viewer.</b> It reports ready and its coordinates come from our own API,
+              but everything it draws goes to a canvas. Nothing about the image is verified.</li>
+            <li><b>The language-model goal parser has never run against the live API.</b> No key is
+              configured, so every parse falls back to the deterministic rule parser and is badged
+              as such.</li>
+            <li><b>Absolute stability accuracy.</b> The predictor's position mapping and sign convention
+              are checked; its values are compared against no external benchmark.</li>
+            <li><b>No screen has been looked at by a human.</b> Rendering was verified by reading the DOM
+              and by driving it in a real browser. That establishes correct, not good.</li>
+          </ul>
+
+          <h3 class="proj__sub">Known gaps.</h3>
+          <ul class="unverified">
+            <li><b>Primers and the one-page PDF are not built.</b> The blocker is gone and the chemistry
+              is decided; the designer itself remains.</li>
+            <li><b>A run abandoned mid-flight stays running forever.</b> Nothing reaps it, and the
+              idempotency index then blocks an identical re-run.</li>
+            <li><b>Uncertainty intervals.</b> The stability predictor has no per-variant uncertainty to
+              give, so it reports the point estimate with the reason stated rather than dressing a
+              benchmark error as a per-variant interval. The requirement is formally unmet, visibly.</li>
+          </ul>
+
+          <p class="privnote">Repository is private. Available on request.</p>
+        </div>
+      </div>
+    </dialog>
   </section>
 </div>
 
@@ -618,7 +781,8 @@
 }
 </script>
 
-<script type="module" src="assets/js/hero.js?v=7dc2c391"></script>
-<script type="module" src="assets/js/sections.js?v=7dc2c391"></script>
+<script type="module" src="assets/js/hero.js?v=deff3f92"></script>
+<script type="module" src="assets/js/projects.js?v=deff3f92"></script>
+<script type="module" src="assets/js/sections.js?v=deff3f92"></script>
 </body>
 </html>

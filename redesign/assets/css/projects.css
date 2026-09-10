@@ -1,0 +1,319 @@
+/* ═══════════════════════════════════════════════════════════
+   PROJECTS — the launcher and the two project overlays.
+
+   A card is a door, not a summary: title, one line of framing,
+   three stat chips, a state label. Everything else lives behind
+   it, in the dialog, in the HTML, where a crawler can still
+   reach it.
+   ═══════════════════════════════════════════════════════════ */
+
+.u-anchor { display: block; height: 0; }
+
+/* ═══ the launcher ═════════════════════════════════════ */
+.launcher {
+  display: grid; gap: var(--s-4);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.pcard {
+  display: flex; flex-direction: column; width: 100%; height: 100%;
+  padding: 0; overflow: hidden; cursor: pointer; text-align: left;
+  background: var(--panel);
+  border: 1px solid var(--hair);
+  border-radius: var(--r-card);
+  transition: border-color var(--dur) var(--ease),
+              transform var(--dur) var(--ease),
+              box-shadow var(--dur) var(--ease);
+}
+/* Focus gets exactly what hover gets, plus the ring. A keyboard
+   visitor should not be the poor relation. */
+.pcard:hover,
+.pcard:focus-visible {
+  border-color: var(--signal-line);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lift);
+}
+.pcard:focus-visible { outline: 2px solid var(--limb); outline-offset: 3px; }
+
+.pcard__stage {
+  position: relative; display: block;
+  aspect-ratio: 16 / 10; background: var(--window);
+  border-bottom: 1px solid var(--hair);
+}
+.pcard__poster, .pcard__canvas {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover;
+}
+.pcard__canvas { opacity: 0; transition: opacity 0.45s var(--ease); }
+.pcard__canvas.is-live { opacity: 1; }
+
+.pcard__meta {
+  display: flex; flex-direction: column; gap: 10px;
+  padding: var(--s-5);
+}
+.pcard__state {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--font-mono); font-size: var(--fs-micro);
+  text-transform: uppercase; letter-spacing: var(--track-wide);
+  color: var(--ink-3);
+}
+.pcard__state i {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--signal);
+  box-shadow: 0 0 0 3px var(--signal-soft);
+}
+.pcard__title {
+  font-size: var(--fs-h3); font-weight: var(--wt-display);
+  letter-spacing: var(--track-tight); color: var(--ink);
+}
+.pcard__line { color: var(--ink-2); font-size: var(--fs-sm); line-height: 1.55; }
+.pcard__chips { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 4px; }
+.pcard__chips b {
+  padding: 5px 10px; border-radius: var(--r-pill);
+  border: 1px solid var(--hair); background: var(--raised);
+  font-family: var(--font-mono); font-weight: 400;
+  font-size: var(--fs-micro); letter-spacing: var(--track-mono);
+  color: var(--ink-3);
+}
+.pcard:hover .pcard__chips b,
+.pcard:focus-visible .pcard__chips b { border-color: var(--signal-line); color: var(--ink-2); }
+
+/* ═══ the overlay ══════════════════════════════════════ */
+.proj {
+  width: min(1180px, calc(100vw - var(--s-5)));
+  max-width: none;
+  max-height: calc(100svh - var(--s-5));
+  padding: 0; border: 0; overflow: hidden;
+  background: var(--panel);
+  border-radius: var(--r-panel);
+  box-shadow: 0 60px 140px -40px rgb(0 0 0 / 0.9);
+  color: var(--ink-2);
+}
+.proj::backdrop {
+  /* the Earth stays faintly visible behind it */
+  background: rgb(0 0 0 / 0.72);
+  -webkit-backdrop-filter: blur(12px);
+          backdrop-filter: blur(12px);
+}
+.proj:not([open]) { display: none; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .proj[open] { animation: proj-in 0.28s var(--ease); }
+  .proj[open]::backdrop { animation: fade-in 0.28s var(--ease); }
+}
+@keyframes proj-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+/* Under reduced motion it simply appears. No scale, no slide. */
+
+.proj__inner {
+  display: flex; flex-direction: column;
+  max-height: calc(100svh - var(--s-5));
+}
+
+.proj__head {
+  position: relative;
+  padding: var(--s-6) var(--s-6) var(--s-5);
+  border-bottom: 1px solid var(--hair);
+  padding-right: calc(var(--s-6) + 60px);
+}
+.proj__eyebrow {
+  font-family: var(--font-mono); font-size: var(--fs-micro);
+  text-transform: uppercase; letter-spacing: var(--track-wide);
+  color: var(--signal); margin-bottom: var(--s-3);
+}
+.proj__title {
+  font-size: var(--fs-h3); letter-spacing: var(--track-tight);
+  color: var(--ink); max-width: 46ch;
+}
+.proj__lede {
+  margin-top: var(--s-3); color: var(--ink-2);
+  font-size: var(--fs-sm); line-height: 1.6; max-width: var(--measure);
+}
+.proj__lede em { font-style: normal; color: var(--signal); }
+
+.proj__close {
+  position: absolute; top: var(--s-5); right: var(--s-5);
+  width: 44px; height: 44px;              /* the minimum target, exactly */
+  display: grid; place-items: center; cursor: pointer;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--hair); background: var(--raised);
+  color: var(--ink-2);
+  transition: color var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease);
+}
+.proj__close:hover { color: var(--ink); border-color: var(--hair-2); }
+.proj__close svg { width: 17px; height: 17px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+
+.proj__body {
+  padding: var(--s-6);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ═══ the stepper ══════════════════════════════════════ */
+.stepper { padding: var(--s-5) var(--s-6) 0; }
+.stepper__bar {
+  display: flex; align-items: baseline; gap: var(--s-4);
+  margin-bottom: var(--s-4);
+}
+.stepper__pos {
+  font-family: var(--font-mono); font-size: var(--fs-mono);
+  letter-spacing: var(--track-wide); color: var(--ink-3);
+}
+.stepper__pos b { color: var(--signal); font-weight: 500; }
+.stepper__name { color: var(--ink); font-weight: 600; }
+.stepper__ctl { margin-left: auto; display: flex; gap: 8px; }
+.stepper__ctl button {
+  width: 44px; height: 44px; display: grid; place-items: center;
+  border-radius: var(--r-pill); cursor: pointer;
+  border: 1px solid var(--hair); background: var(--raised); color: var(--ink-2);
+}
+.stepper__ctl button:hover:not(:disabled) { color: var(--ink); border-color: var(--hair-2); }
+.stepper__ctl button:disabled { opacity: 0.35; cursor: default; }
+.stepper__ctl svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 1.9; }
+
+/* A real range input, styled. Dragging it, clicking a tick and the
+   buttons all drive the same value. */
+.stepper__range {
+  -webkit-appearance: none; appearance: none;
+  display: block; width: 100%; height: 26px; margin: 0;
+  background: transparent; cursor: grab;
+}
+.stepper__range:active { cursor: grabbing; }
+.stepper__range::-webkit-slider-runnable-track {
+  height: 2px; background: var(--hair-2); border-radius: 2px;
+}
+.stepper__range::-moz-range-track {
+  height: 2px; background: var(--hair-2); border-radius: 2px;
+}
+.stepper__range::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 18px; height: 18px; margin-top: -8px;
+  border-radius: 50%; background: var(--signal);
+  border: 3px solid var(--panel);
+  box-shadow: 0 0 0 1px var(--signal);
+}
+.stepper__range::-moz-range-thumb {
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--signal); border: 3px solid var(--panel);
+  box-shadow: 0 0 0 1px var(--signal);
+}
+.stepper__range:focus-visible { outline: 2px solid var(--limb); outline-offset: 4px; border-radius: 4px; }
+
+.stepper__ticks {
+  display: grid; grid-template-columns: repeat(6, 1fr);
+  gap: 4px; margin-top: 6px;
+}
+.stepper__ticks button {
+  width: 100%; padding: 6px 2px; cursor: pointer; text-align: center;
+  font-family: var(--font-mono); font-size: var(--fs-micro);
+  letter-spacing: var(--track-mono); color: var(--ink-3);
+  border-radius: 6px;
+}
+.stepper__ticks button:hover { color: var(--ink-2); }
+.stepper__ticks button[aria-current='true'] { color: var(--signal); }
+
+/* ═══ the step panes ═══════════════════════════════════
+   The pane's height is measured from the tallest step when the
+   dialog opens, so dragging the slider never makes the dialog
+   jump. A step taller than the space available scrolls inside
+   the pane rather than losing anything. */
+.steps { position: relative; }
+.step {
+  position: absolute; inset: 0; overflow-y: auto;
+  padding: var(--s-5) var(--s-6) var(--s-6);
+  opacity: 0; visibility: hidden;
+  transition: opacity var(--dur) var(--ease);
+}
+.step.is-active { opacity: 1; visibility: visible; position: relative; }
+/* laid out in the flow but not shown, purely so its own height can be
+   read back when the tallest step is measured */
+.step.is-measuring {
+  position: static; visibility: hidden; opacity: 0;
+  height: auto; overflow: visible;
+}
+@media (prefers-reduced-motion: reduce) { .step { transition: none; } }
+
+.step .beat__no {
+  font-family: var(--font-mono); font-size: var(--fs-mono);
+  letter-spacing: var(--track-wide); color: var(--signal);
+  margin-bottom: var(--s-3);
+}
+.step .beat__title {
+  font-size: var(--fs-h3); color: var(--ink); margin-bottom: var(--s-3);
+  letter-spacing: var(--track-tight);
+}
+.step .beat__title em { font-style: normal; color: var(--signal); }
+.step .beat__body { color: var(--ink-2); font-size: var(--fs-sm); line-height: 1.7; max-width: var(--measure); }
+.step .beat__body b { color: var(--ink); font-weight: 600; }
+.step .beat__meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: var(--s-4); }
+.step .beat__meta span {
+  padding: 5px 10px; border-radius: var(--r-pill);
+  border: 1px solid var(--hair); background: var(--raised);
+  font-family: var(--font-mono); font-size: var(--fs-micro); color: var(--ink-3);
+}
+.step .beat__note {
+  margin-top: var(--s-4); padding-left: 12px;
+  border-left: 2px solid var(--signal);
+  font-size: var(--fs-sm); color: var(--ink-3); max-width: var(--measure);
+}
+.step .card { margin-top: var(--s-5); }
+.step .tablewrap { margin-top: var(--s-5); }
+.step .repo { margin-top: var(--s-5); }
+.step__pair {
+  display: grid; gap: var(--s-4); margin-top: var(--s-5);
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+.step__pair .card { margin-top: 0; }
+
+/* ═══ project B: invariants, not a sequence ════════════ */
+.inv { display: grid; gap: var(--s-4); }
+.inv__item {
+  background: var(--raised); border: 1px solid var(--hair);
+  border-radius: var(--r-card); padding: var(--s-5);
+}
+.inv__no {
+  font-family: var(--font-mono); font-size: var(--fs-micro);
+  text-transform: uppercase; letter-spacing: var(--track-wide);
+  color: var(--signal); margin-bottom: var(--s-3);
+}
+.inv__title { font-size: var(--fs-body); color: var(--ink); margin-bottom: var(--s-3); font-weight: 600; }
+.inv__body { color: var(--ink-2); font-size: var(--fs-sm); line-height: 1.7; max-width: var(--measure); }
+.inv__body b { color: var(--ink); font-weight: 600; }
+.inv__body + .inv__body { margin-top: var(--s-3); }
+
+.proj__sub {
+  margin-top: var(--s-7); margin-bottom: var(--s-4);
+  font-size: var(--fs-h3); color: var(--ink); letter-spacing: var(--track-tight);
+}
+.proj__sub em { font-style: normal; color: var(--signal); }
+
+.unverified { border-top: 1px solid var(--hair); }
+.unverified li {
+  padding: var(--s-4) 0; border-bottom: 1px solid var(--hair);
+  color: var(--ink-2); font-size: var(--fs-sm); line-height: 1.7;
+  max-width: var(--measure);
+}
+.unverified b { color: var(--ink); font-weight: 600; display: block; margin-bottom: 4px; }
+
+.privnote {
+  margin-top: var(--s-5); padding: var(--s-4) var(--s-5);
+  border: 1px dashed var(--hair-2); border-radius: var(--r-card);
+  font-family: var(--font-mono); font-size: var(--fs-mono);
+  color: var(--ink-3); letter-spacing: var(--track-mono);
+}
+
+/* ═══ no JavaScript ════════════════════════════════════
+   The dialogs are the only place this content exists, so without
+   JS they are shown inline rather than hidden. A crawler that
+   ignores scripts still reads every word. */
+.nojs-note { display: none; }
+
+/* ═══ narrow ═══════════════════════════════════════════ */
+@media (max-width: 860px) {
+  .launcher { grid-template-columns: 1fr; }
+  .proj { width: 100vw; max-height: 100svh; border-radius: 0; }
+  .proj__inner { max-height: 100svh; }
+  .proj__head, .stepper, .step, .proj__body { padding-left: var(--s-4); padding-right: var(--s-4); }
+  .proj__head { padding-right: calc(var(--s-4) + 56px); }
+  .proj__close { top: var(--s-4); right: var(--s-4); }
+  .stepper__ticks { display: none; }   /* six labels do not fit; the range and the buttons remain */
+}
