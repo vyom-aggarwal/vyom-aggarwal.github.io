@@ -12,7 +12,7 @@
    instead of being baked into the image. See img/CREDITS.md.
    ═══════════════════════════════════════════════════════════ */
 
-import * as THREE from './three.module.min.js?v=3687b2c8';
+import * as THREE from './three.module.min.js?v=b53dc93b';
 
 const css = (name, fallback) => {
   const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();

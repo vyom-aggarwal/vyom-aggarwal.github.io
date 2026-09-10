@@ -23,7 +23,7 @@ function wakeCard(cardEl, on) {
   if (!on) return;
 
   models.set(canvas, { setActive() {} });      /* claim the slot, once */
-  (cardModule || (cardModule = import('./cards.js?v=3687b2c8')))
+  (cardModule || (cardModule = import('./cards.js?v=b53dc93b')))
     .then(({ initCardModel }) => {
       const rig = initCardModel(canvas, canvas.dataset.model);
       if (!rig) return;
@@ -61,20 +61,45 @@ function startSim(slug, d) {
 
   const kind = canvas.dataset.sim;
   const load = kind === 'fault'
-    ? import('./rig.js?v=3687b2c8').then(({ initRig }) => initRig(canvas, { reducedMotion: reduced }))
-    : import('./cards.js?v=3687b2c8').then(({ initCardModel }) => initCardModel(canvas, 'scan'));
+    ? import('./rig.js?v=b53dc93b').then(({ initRig }) => initRig(canvas, { reducedMotion: reduced }))
+    : import('./cards.js?v=b53dc93b').then(({ initCardModel }) => initCardModel(canvas, 'scan'));
 
   load.then((rig) => {
     sims.set(slug, rig);
-    if (kind === 'fault') {
-      const st = steppers.get(slug);
-      if (st) paintSim(slug, st.current);
-    }
+    rig.start?.();
+    if (kind !== 'fault') return;
+
+    const st = steppers.get(slug);
+    if (st) paintSim(slug, st.current);
+
+    /* The simulation eases toward the target, so the numbers have to be
+       read from it each frame rather than written once per input. */
+    const hud = d.querySelector('.simhud');
+    const vel = d.querySelector('[data-sim-vel]');
+    const stp = d.querySelector('[data-sim-step]');
+    const tick = () => {
+      if (openSlug !== slug) { rig._hud = 0; return; }
+      const p = rig.state?.progress ?? 0;
+      vel.textContent = (0.5 * (rig.state?.speed ?? 1)).toFixed(2);
+      stp.textContent = String(Math.round(p * 500)).padStart(3, '0');
+      let phase = SIM_PHASES[0];
+      for (const ph of SIM_PHASES) if (p >= ph.at) phase = ph;
+      if (hud.dataset.tone !== phase.tone) {
+        hud.dataset.tone = phase.tone;
+        d.querySelector('[data-sim-status]').textContent = phase.status;
+        d.querySelector('[data-sim-detail]').textContent = phase.detail;
+      }
+      rig._hud = requestAnimationFrame(tick);
+    };
+    rig._hud = requestAnimationFrame(tick);
   }).catch(() => { /* the write-up carries the whole story without it */ });
 }
 
 function stopSim(slug) {
-  sims.get(slug)?.stop?.();
+  const rig = sims.get(slug);
+  if (!rig) return;
+  if (rig._hud) cancelAnimationFrame(rig._hud);
+  rig.stop?.();
 }
 
 /* Project A's simulation is driven by the step, not by scroll: the six
@@ -88,15 +113,6 @@ function paintSim(slug, step) {
   const p = (step - 1) / 5;
   rig.setProgress(p);
 
-  let phase = SIM_PHASES[0];
-  for (const ph of SIM_PHASES) if (p >= ph.at) phase = ph;
-  const hud = d.querySelector('.simhud');
-  if (!hud) return;
-  hud.dataset.tone = phase.tone;
-  d.querySelector('[data-sim-status]').textContent = phase.status;
-  d.querySelector('[data-sim-detail]').textContent = phase.detail;
-  d.querySelector('[data-sim-vel]').textContent = (0.5 * (rig.state?.speed ?? 1)).toFixed(2);
-  d.querySelector('[data-sim-step]').textContent = String(Math.round(p * 500)).padStart(3, '0');
 }
 
 /* ═══ the overlay ══════════════════════════════════════════ */
@@ -221,13 +237,23 @@ for (const [slug, d] of dialogs) {
   const next = d.querySelector('[data-step-next]');
   const ticks = Array.from(d.querySelectorAll('[data-step-go]'));
 
+  /* The track runs the trial's own 0-500 steps rather than 1-6, so the
+     thumb moves continuously and the simulation follows the drag
+     instead of jumping between six positions. Six detents still exist:
+     the content pane switches at the nearest one, and releasing the
+     thumb settles onto it. */
+  const DETENTS = 6;
+  const SPAN = Number(range.max);            /* 500 */
+  const detentAt = (n) => Math.round(((n - 1) / (DETENTS - 1)) * SPAN);
+  const nearest = (v) => Math.min(DETENTS, Math.max(1, Math.round((v / SPAN) * (DETENTS - 1)) + 1));
+
   let current = 1;
 
-  /* Measure the tallest step and hold that height, so dragging the
-     slider never makes the dialog jump. Measured, not guessed: each
-     step is laid out static and hidden in turn and its own height
-     read back. Anything taller than the space available scrolls
-     inside the pane rather than being cut. */
+  /* Measure the tallest step and hold that height, so moving the slider
+     never makes the dialog jump. Measured, not guessed: each step is
+     laid out static and hidden in turn and its own height read back.
+     Anything taller than the space available scrolls inside the pane
+     rather than being cut. */
   const measure = () => {
     pane.style.height = 'auto';
     let tallest = 0;
@@ -238,20 +264,19 @@ for (const [slug, d] of dialogs) {
       s.classList.remove('is-measuring');
       s.classList.toggle('is-active', wasActive);
     }
-    /* What is left after the header and the stepper, not a guessed
-       fraction of the viewport: a fraction overflowed the dialog on a
-       900px-tall window. */
+    /* What is left after the header, the stage and the stepper, not a
+       guessed fraction of the viewport. */
     pane.style.height = '0px';
     const chrome = inner.scrollHeight;
     const room = Math.max(240, Math.round(innerHeight * 0.94) - chrome);
     pane.style.height = Math.min(tallest, room) + 'px';
   };
 
-  const go = (n, push = true) => {
+  const go = (n, push = true, moveThumb = true) => {
     current = Math.min(Math.max(Number(n) || 1, 1), steps.length);
     steps.forEach((s) => s.classList.toggle('is-active', Number(s.dataset.step) === current));
     ticks.forEach((t) => t.setAttribute('aria-current', String(Number(t.dataset.stepGo) === current)));
-    range.value = String(current);
+    if (moveThumb) range.value = String(detentAt(current));
     range.setAttribute('aria-valuetext', `Step ${current} of ${steps.length}, ${STEP_NAMES[current - 1]}`);
     num.textContent = String(current).padStart(2, '0');
     name.textContent = STEP_NAMES[current - 1];
@@ -259,7 +284,7 @@ for (const [slug, d] of dialogs) {
     next.disabled = current === steps.length;
     pane.scrollTop = 0;
     steps[current - 1].scrollTop = 0;
-    paintSim(slug, current);
+    if (moveThumb) paintSim(slug, current);
 
     if (push && openSlug === slug) {
       const hash = `#project/${slug}` + (current > 1 ? `/${current}` : '');
@@ -267,15 +292,33 @@ for (const [slug, d] of dialogs) {
     }
   };
 
-  range.addEventListener('input', () => go(range.value));
+  /* Runs on every input event, including mid-drag: the simulation
+     follows the thumb continuously, and the written content switches
+     only when the nearest detent changes. */
+  const scrub = (raw) => {
+    const v = Math.min(Math.max(Number(raw) || 0, 0), SPAN);
+    paintSim(slug, 1 + (v / SPAN) * (DETENTS - 1));
+    const n = nearest(v);
+    if (n !== current) go(n, true, false);
+  };
+
+  range.addEventListener('input', () => scrub(range.value));
+  /* settle onto the nearest detent when the thumb is let go */
+  const settle = () => go(nearest(Number(range.value)));
+  range.addEventListener('change', settle);
+  range.addEventListener('pointerup', settle);
   prev.addEventListener('click', () => go(current - 1));
   next.addEventListener('click', () => go(current + 1));
   ticks.forEach((t) => t.addEventListener('click', () => go(t.dataset.stepGo)));
 
-  /* Home and End on top of what the range already gives us */
+  /* A 500-unit track would make the arrow keys crawl, so they move a
+     whole step, which is what the control means. */
   range.addEventListener('keydown', (e) => {
-    if (e.key === 'Home') { e.preventDefault(); go(1); }
-    if (e.key === 'End') { e.preventDefault(); go(steps.length); }
+    const k = e.key;
+    if (k === 'Home') { e.preventDefault(); go(1); }
+    else if (k === 'End') { e.preventDefault(); go(steps.length); }
+    else if (k === 'ArrowRight' || k === 'ArrowUp' || k === 'PageUp') { e.preventDefault(); go(current + 1); }
+    else if (k === 'ArrowLeft' || k === 'ArrowDown' || k === 'PageDown') { e.preventDefault(); go(current - 1); }
   });
 
   /* horizontal swipe on the content pane */
