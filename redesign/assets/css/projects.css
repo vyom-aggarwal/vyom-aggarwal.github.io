@@ -273,12 +273,14 @@
 
 /* the refusals read as prose, not as figures, so the columns are
    proportioned for sentences and the cells wrap */
-.rtable--refusals th, .rtable--refusals td {
+.proj .rtable--refusals th,
+.proj .rtable--refusals td {
   white-space: normal; text-align: left; vertical-align: top;
   line-height: 1.6; padding: 14px var(--s-4);
 }
-.rtable--refusals td:first-child { width: 38%; color: var(--ink); }
-.rtable--refusals td:last-child { color: var(--ink-2); }
+.proj .rtable--refusals td:first-child { width: 38%; color: var(--ink); }
+.proj .rtable--refusals td:last-child { color: var(--ink-2); }
+.proj .rtable--refusals { table-layout: fixed; }
 .proj__body .tablewrap { margin-top: var(--s-4); }
 
 /* ═══ project B: invariants, not a sequence ════════════ */
