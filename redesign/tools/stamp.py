@@ -92,7 +92,25 @@ def main():
     print("build stamp %s" % code)
     for name in changed:
         print("  stamped", name)
-    return 0
+
+    # An image nothing points at is usually the tell that a rename half
+    # landed: the new file was written, the reference still names the
+    # old one. That shipped once, as a screenshot of an interface on a
+    # card whose model had already been replaced.
+    sources = [html]
+    sources += [j.read_text(encoding="utf-8") for j in JS.glob("*.js")]
+    sources += [c.read_text(encoding="utf-8") for c in CSS.glob("*.css")]
+    blob = "\n".join(sources)
+    orphans = [img.name for img in sorted(IMG.iterdir())
+               if img.suffix in (".webp", ".png", ".jpg", ".svg") and img.name not in blob]
+    missing = [m for m in set(re.findall(r"assets/img/([A-Za-z0-9._-]+\.(?:webp|png|jpg|svg))", blob))
+               if not (IMG / m).exists()]
+
+    for m in missing:
+        print("  MISSING  %s is referenced but not on disk" % m)
+    for o in orphans:
+        print("  ORPHAN   %s is on disk but nothing references it" % o)
+    return 1 if missing else 0
 
 
 if __name__ == "__main__":
