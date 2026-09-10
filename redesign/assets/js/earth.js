@@ -184,7 +184,7 @@ export function initEarth(canvas, { reducedMotion = false } = {}) {
   const globe = new THREE.Group();
   globe.position.set(1.02, -0.86, 0);
 
-  const tex = new THREE.TextureLoader().load('assets/img/earth-2k.webp');
+  const tex = new THREE.TextureLoader().load('assets/img/earth-2k.webp?v=e23b511c');
   tex.colorSpace = THREE.SRGBColorSpace;
   tex.anisotropy = 4;
 
