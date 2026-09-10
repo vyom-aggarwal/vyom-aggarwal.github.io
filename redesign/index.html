@@ -20,11 +20,11 @@
 <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
 
 <link rel="preload" href="assets/fonts/Archivo-var.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/css/tokens.css?v=a01bffa0">
-<link rel="stylesheet" href="assets/css/base.css?v=a01bffa0">
-<link rel="stylesheet" href="assets/css/hero.css?v=a01bffa0">
-<link rel="stylesheet" href="assets/css/projects.css?v=a01bffa0">
-<link rel="stylesheet" href="assets/css/sections.css?v=a01bffa0">
+<link rel="stylesheet" href="assets/css/tokens.css?v=d40bb7a4">
+<link rel="stylesheet" href="assets/css/base.css?v=d40bb7a4">
+<link rel="stylesheet" href="assets/css/hero.css?v=d40bb7a4">
+<link rel="stylesheet" href="assets/css/projects.css?v=d40bb7a4">
+<link rel="stylesheet" href="assets/css/sections.css?v=d40bb7a4">
 
 <noscript><style>
   /* The project write-ups exist only inside these dialogs, so without
@@ -296,6 +296,17 @@
           <button class="proj__close" type="button" data-close><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3l10 10M13 3L3 13"/></svg><span class="u-sr">Close project</span></button>
         </header>
 
+
+        <div class="proj__stage">
+          <canvas class="proj__canvas" data-sim="fault" aria-hidden="true"></canvas>
+          <div class="simhud" data-tone="ok" aria-hidden="true">
+            <i class="simhud__dot"></i>
+            <b data-sim-status>Nominal gait</b>
+            <span data-sim-detail>base policy · healthy</span>
+            <span class="simhud__v"><b data-sim-vel>0.50</b> m/s</span>
+            <span class="simhud__v">step <b data-sim-step>000</b></span>
+          </div>
+        </div>
         <div class="stepper">
           <div class="stepper__bar">
             <p class="stepper__pos"><b data-step-num>01</b> / 06</p>
@@ -473,6 +484,10 @@
           <button class="proj__close" type="button" data-close><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3l10 10M13 3L3 13"/></svg><span class="u-sr">Close project</span></button>
         </header>
 
+
+        <div class="proj__stage">
+          <canvas class="proj__canvas" data-sim="scan" aria-hidden="true"></canvas>
+        </div>
         <div class="proj__body">
           <p class="beat__body">The models that could help a wet-lab protein engineer — ESM,
             ProteinMPNN, ThermoMPNN, RFdiffusion, AlphaFold — are Python repositories with CUDA
@@ -813,8 +828,8 @@
 }
 </script>
 
-<script type="module" src="assets/js/hero.js?v=a01bffa0"></script>
-<script type="module" src="assets/js/projects.js?v=a01bffa0"></script>
-<script type="module" src="assets/js/sections.js?v=a01bffa0"></script>
+<script type="module" src="assets/js/hero.js?v=d40bb7a4"></script>
+<script type="module" src="assets/js/projects.js?v=d40bb7a4"></script>
+<script type="module" src="assets/js/sections.js?v=d40bb7a4"></script>
 </body>
 </html>

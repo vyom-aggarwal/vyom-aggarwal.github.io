@@ -23,15 +23,80 @@ function wakeCard(cardEl, on) {
   if (!on) return;
 
   models.set(canvas, { setActive() {} });      /* claim the slot, once */
-  (cardModule || (cardModule = import('./cards.js?v=a01bffa0')))
+  (cardModule || (cardModule = import('./cards.js?v=d40bb7a4')))
     .then(({ initCardModel }) => {
       const rig = initCardModel(canvas, canvas.dataset.model);
       if (!rig) return;
       models.set(canvas, rig);
       rig.setActive(true);
       canvas.classList.add('is-live');
+      /* The poster is transparent-backed, so leaving it under a live
+         canvas shows a second, static copy of the model through the
+         gaps and the animation reads as a ghost. Drop it. */
+      const poster = cardEl.querySelector('.pcard__poster');
+      if (poster) setTimeout(() => { poster.hidden = true; }, 450);
     })
     .catch(() => { /* the poster is already correct */ });
+}
+
+/* ═══ the in-dialog simulations ════════════════════════════
+   One live context at a time. It is created when a dialog opens
+   and stopped when it closes, so the hero, the cards and the
+   overlays never all hold a WebGL context at once. */
+const SIM_PHASES = [
+  { at: 0.00, status: 'Nominal gait',        detail: 'base policy · healthy',       tone: 'ok' },
+  { at: 0.38, status: 'Fault injected',      detail: 'joint_lock · random joint',   tone: 'bad' },
+  { at: 0.52, status: 'Residual engaged',    detail: 'correcting around the fault', tone: 'warn' },
+  { at: 0.67, status: 'Speed held 30 steps', detail: 'scored: recovered',           tone: 'ok' },
+];
+
+const sims = new Map();
+
+function startSim(slug, d) {
+  if (reduced || sims.has(slug)) { sims.get(slug)?.start?.(); return; }
+  const canvas = d.querySelector('.proj__canvas');
+  if (!canvas) return;
+
+  sims.set(slug, { start() {}, stop() {} });      /* claim the slot once */
+
+  const kind = canvas.dataset.sim;
+  const load = kind === 'fault'
+    ? import('./rig.js?v=d40bb7a4').then(({ initRig }) => initRig(canvas, { reducedMotion: reduced }))
+    : import('./cards.js?v=d40bb7a4').then(({ initCardModel }) => initCardModel(canvas, 'scan'));
+
+  load.then((rig) => {
+    sims.set(slug, rig);
+    if (kind === 'fault') {
+      const st = steppers.get(slug);
+      if (st) paintSim(slug, st.current);
+    }
+  }).catch(() => { /* the write-up carries the whole story without it */ });
+}
+
+function stopSim(slug) {
+  sims.get(slug)?.stop?.();
+}
+
+/* Project A's simulation is driven by the step, not by scroll: the six
+   steps are the trial timeline, so step 3 lands just past the fault and
+   step 4 just past the correction. */
+function paintSim(slug, step) {
+  const rig = sims.get(slug);
+  const d = dialogs.get(slug);
+  if (!rig || !d || typeof rig.setProgress !== 'function') return;
+
+  const p = (step - 1) / 5;
+  rig.setProgress(p);
+
+  let phase = SIM_PHASES[0];
+  for (const ph of SIM_PHASES) if (p >= ph.at) phase = ph;
+  const hud = d.querySelector('.simhud');
+  if (!hud) return;
+  hud.dataset.tone = phase.tone;
+  d.querySelector('[data-sim-status]').textContent = phase.status;
+  d.querySelector('[data-sim-detail]').textContent = phase.detail;
+  d.querySelector('[data-sim-vel]').textContent = (0.5 * (rig.state?.speed ?? 1)).toFixed(2);
+  d.querySelector('[data-sim-step]').textContent = String(Math.round(p * 500)).padStart(3, '0');
 }
 
 /* ═══ the overlay ══════════════════════════════════════════ */
@@ -84,8 +149,11 @@ function open(slug, step, { push = true } = {}) {
   if (typeof d.showModal === 'function') d.showModal();
   else { d.setAttribute('open', ''); d.setAttribute('role', 'dialog'); d.setAttribute('aria-modal', 'true'); }
 
+  startSim(slug, d);
+
   const st = steppers.get(slug);
   if (st) { st.measure(); st.go(step || 1, false); }
+  else paintSim(slug, 1);
 
   /* focus the close button: it is the one control every visitor
      needs and it is at a predictable place */
@@ -98,7 +166,10 @@ function open(slug, step, { push = true } = {}) {
 function close({ pop = true, restore = true } = {}) {
   if (!openSlug) return;
   const d = dialogs.get(openSlug);
+  const openSlugWas = openSlug;
   openSlug = null;
+
+  stopSim(openSlugWas);
 
   if (typeof d.close === 'function' && d.open) d.close();
   else d.removeAttribute('open');
@@ -188,6 +259,7 @@ for (const [slug, d] of dialogs) {
     next.disabled = current === steps.length;
     pane.scrollTop = 0;
     steps[current - 1].scrollTop = 0;
+    paintSim(slug, current);
 
     if (push && openSlug === slug) {
       const hash = `#project/${slug}` + (current > 1 ? `/${current}` : '');
