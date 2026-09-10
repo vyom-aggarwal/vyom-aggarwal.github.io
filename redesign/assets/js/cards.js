@@ -9,7 +9,7 @@
    as the hero, because they are objects in the same room.
    ═══════════════════════════════════════════════════════════ */
 
-import { THREE, makeMaterials, makeHalo, buildQuadruped, box, cyl } from './kit.js?v=deff3f92';
+import { THREE, makeMaterials, makeHalo, buildQuadruped, box, cyl } from './kit.js?v=8b45094b';
 
 /* ── shared scaffolding ──────────────────────────────────── */
 function stage(canvas, { fov = 30, at = [2.6, 0.9, 3.4], look = [0, 0, 0] } = {}) {

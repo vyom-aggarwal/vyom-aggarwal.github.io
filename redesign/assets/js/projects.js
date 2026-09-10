@@ -23,7 +23,7 @@ function wakeCard(cardEl, on) {
   if (!on) return;
 
   models.set(canvas, { setActive() {} });      /* claim the slot, once */
-  (cardModule || (cardModule = import('./cards.js?v=deff3f92')))
+  (cardModule || (cardModule = import('./cards.js?v=8b45094b')))
     .then(({ initCardModel }) => {
       const rig = initCardModel(canvas, canvas.dataset.model);
       if (!rig) return;
@@ -44,6 +44,12 @@ let openSlug = null;
 let restoreTo = null;      /* the card that opened it */
 let lockedAt = 0;
 
+/* Closing pops a history entry, and the browser's own scroll
+   restoration for that entry lands before ours does, which sent the
+   page back to the top. We restore the position by hand, so take the
+   browser out of it. */
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+
 function lockScroll() {
   lockedAt = window.scrollY;
   document.body.style.position = 'fixed';
@@ -55,8 +61,12 @@ function unlockScroll() {
   document.body.style.position = '';
   document.body.style.top = '';
   document.body.style.width = '';
-  /* restore exactly, and without a smooth-scroll animation */
-  window.scrollTo({ top: lockedAt, behavior: 'auto' });
+  /* restore exactly, and without a smooth-scroll animation. Applied
+     again on the next frame because the history pop lands after this
+     call returns. */
+  const y = lockedAt;
+  window.scrollTo({ top: y, behavior: 'auto' });
+  requestAnimationFrame(() => window.scrollTo({ top: y, behavior: 'auto' }));
 }
 
 function open(slug, step, { push = true } = {}) {
@@ -131,6 +141,7 @@ for (const [slug, d] of dialogs) {
   const range = d.querySelector('[data-step-range]');
   if (!range) continue;
 
+  const inner = d.querySelector('.proj__inner');
   const pane = d.querySelector('[data-steps]');
   const steps = Array.from(pane.querySelectorAll('.step'));
   const num = d.querySelector('[data-step-num]');
@@ -156,7 +167,12 @@ for (const [slug, d] of dialogs) {
       s.classList.remove('is-measuring');
       s.classList.toggle('is-active', wasActive);
     }
-    const room = Math.round(innerHeight * 0.58);
+    /* What is left after the header and the stepper, not a guessed
+       fraction of the viewport: a fraction overflowed the dialog on a
+       900px-tall window. */
+    pane.style.height = '0px';
+    const chrome = inner.scrollHeight;
+    const room = Math.max(240, Math.round(innerHeight * 0.94) - chrome);
     pane.style.height = Math.min(tallest, room) + 'px';
   };
 
