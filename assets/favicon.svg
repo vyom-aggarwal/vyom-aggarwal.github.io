@@ -1,23 +1,24 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <!-- VA lettermark — V and A set side by side, square caps and mitred
-       joins to match Archivo 800. Tab-icon lockup; the bare mark is used
-       in the page itself. -->
-  <style>
-    .tile { fill: #0d0f11; }
-    .mark { stroke: #ff5c2b; }
-    @media (prefers-color-scheme: light) {
-      .tile { fill: #f5f3ef; }
-      .mark { stroke: #e2431a; }
-    }
-  </style>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Vyom Aggarwal">
+  <!--
+    The mark: a V lit the way every object on this site is lit — one
+    cyan source from the upper left, one blue body. The facet where the
+    light lands is the same --limb the planet's edge uses, so the logo
+    and the scene share a light.
 
-  <rect class="tile" width="64" height="64" rx="14"/>
+    Built to survive 16px: one closed shape, no strokes, no detail
+    below two pixels, and a dark tile so it reads on light and dark
+    browser chrome alike.
+  -->
+  <defs>
+    <linearGradient id="v" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#57A8E6"/>
+      <stop offset="1" stop-color="#3A80B8"/>
+    </linearGradient>
+  </defs>
 
-  <svg x="10" y="10" width="44" height="44" viewBox="0 0 64 64">
-    <g class="mark" fill="none" stroke-width="9" stroke-linejoin="miter" stroke-miterlimit="6">
-      <path d="M6 18 L18 46 L30 18" stroke-linecap="square"/>
-      <path d="M34 46 L46 18 L58 46" stroke-linecap="square"/>
-      <path d="M38.5 35.5 H53.5" stroke-linecap="butt"/>
-    </g>
-  </svg>
+  <rect width="32" height="32" rx="7.5" fill="#0B0F14"/>
+  <rect x=".5" y=".5" width="31" height="31" rx="7" fill="none" stroke="#fff" stroke-opacity=".10"/>
+
+  <path d="M5.5 6.5 H10.8 L16 19.6 L21.2 6.5 H26.5 L17.9 26 H14.1 Z" fill="url(#v)"/>
+  <path d="M5.5 6.5 H10.8 L13.1 12.3 H7.8 Z" fill="#8FE0F5"/>
 </svg>

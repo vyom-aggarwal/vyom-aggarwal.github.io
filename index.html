@@ -1,190 +1,181 @@
 <!doctype html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 
-<title>Vyom Aggarwal — Robotics, Machine Learning &amp; Mathematics</title>
-<meta name="description" content="Vyom Aggarwal is a 15-year-old student researcher working on robotics, machine learning, and the mathematics underneath.">
+<title>Vyom Aggarwal — Control, Machine Learning &amp; Mathematics</title>
+<meta name="description" content="Vyom Aggarwal is a 15-year-old student researcher working on fault-tolerant control — keeping a system stable after an actuator fails — and the mathematics underneath.">
 <meta name="author" content="Vyom Aggarwal">
 <link rel="canonical" href="https://vyom-aggarwal.github.io/">
 
-<meta name="theme-color" content="#08090a" media="(prefers-color-scheme: dark)">
-<meta name="theme-color" content="#f5f3ef" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0A0D11">
 
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://vyom-aggarwal.github.io/">
-<meta property="og:title" content="Vyom Aggarwal — Robotics, Machine Learning &amp; Mathematics">
-<meta property="og:description" content="15-year-old machine learning &amp; robotics researcher who is currently a high school sophomore.">
+<meta property="og:title" content="Vyom Aggarwal — Control, Machine Learning &amp; Mathematics">
+<meta property="og:description" content="15-year-old student researcher building control and machine-learning systems for environments that do not forgive failure. High school sophomore, class of 2029.">
 <meta name="twitter:card" content="summary_large_image">
 
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/img/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400..900&family=Inter:wght@400;500;600&family=Instrument+Serif:ital@1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preload" href="assets/fonts/Archivo-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/css/tokens.css?v=8f3d805d">
+<link rel="stylesheet" href="assets/css/base.css?v=8f3d805d">
+<link rel="stylesheet" href="assets/css/hero.css?v=8f3d805d">
+<link rel="stylesheet" href="assets/css/projects.css?v=8f3d805d">
+<link rel="stylesheet" href="assets/css/sections.css?v=8f3d805d">
 
-<link rel="stylesheet" href="assets/css/tokens.css">
-<link rel="stylesheet" href="assets/css/base.css">
-<link rel="stylesheet" href="assets/css/shell.css">
-<link rel="stylesheet" href="assets/css/tiles.css">
-<link rel="stylesheet" href="assets/css/research.css">
-
-<script>
-  /* Set theme + js flag before first paint to avoid a flash. */
-  (function () {
-    var r = document.documentElement;
-    r.classList.add('js');
-    try {
-      var saved = localStorage.getItem('va-theme');
-      var sys = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
-      r.dataset.theme = saved || sys;
-    } catch (e) { r.dataset.theme = 'dark'; }
-  })();
-</script>
-<noscript><style>.preloader{display:none !important}</style></noscript>
+<noscript><style>
+  /* The project write-ups exist only inside these dialogs, so without
+     scripting they are shown inline instead of hidden. A crawler that
+     ignores scripts still reads every word. */
+  .proj:not([open]) {
+    display: block; position: static; width: auto; max-width: none;
+    max-height: none; margin: var(--s-4) 0 0; box-shadow: none;
+  }
+  .proj__inner { max-height: none; }
+  .proj__close, .stepper { display: none; }
+  .steps { height: auto !important; }
+  .step {
+    position: static; opacity: 1; visibility: visible;
+    border-top: 1px solid var(--hair);
+  }
+  .nojs-note { display: block; }
+</style></noscript>
+<script>document.documentElement.classList.add('js');</script>
 </head>
 
 <body>
 
 <a class="skip-link" href="#main">Skip to content</a>
-
-<!-- ══ preloader (CSS-driven; lifts itself even if JS fails) ══ -->
-<div class="preloader" aria-hidden="true">
-  <div class="preloader__inner">
-    <span class="preloader__mark">VA</span>
-    <span class="preloader__bar"><i></i></span>
-  </div>
-</div>
-
 <div class="grain" aria-hidden="true"></div>
 
-<div class="cursor" id="cursor" aria-hidden="true">
-  <div class="cursor__dot"></div>
-  <div class="cursor__ring"><span class="cursor__label"></span></div>
-</div>
+<main id="main">
 
-<!-- ══════════════ CONSOLE (fixed sidebar / mobile top bar) ══════════════ -->
-<header class="console" id="console">
+<!-- ═══════════════ 01 · OVERVIEW ═══════════════ -->
+<div class="panel panel--window">
+  <section class="hero" id="overview">
 
-  <a class="ident" href="#overview" data-magnetic>
-    <span class="ident__mark" aria-hidden="true">
-      <!-- VA lettermark — V and A set side by side -->
-      <svg viewBox="0 0 64 64">
-        <g fill="none" stroke-width="8" stroke-linejoin="miter" stroke-miterlimit="6">
-          <path d="M6 18 L18 46 L30 18" stroke-linecap="square"/>
-          <path d="M34 46 L46 18 L58 46" stroke-linecap="square"/>
-          <path d="M38.5 35.5 H53.5" stroke-linecap="butt"/>
-        </g>
+    <div class="bar">
+      <a class="ident" href="#overview">
+        <span class="ident__mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" width="30" height="30">
+            <defs>
+              <linearGradient id="vmark" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#57A8E6"/><stop offset="1" stop-color="#3A80B8"/>
+              </linearGradient>
+            </defs>
+            <rect width="32" height="32" rx="7.5" fill="#0B0F14"/>
+            <rect x=".5" y=".5" width="31" height="31" rx="7" fill="none" stroke="#fff" stroke-opacity=".10"/>
+            <path d="M5.5 6.5 H10.8 L16 19.6 L21.2 6.5 H26.5 L17.9 26 H14.1 Z" fill="url(#vmark)"/>
+            <path d="M5.5 6.5 H10.8 L13.1 12.3 H7.8 Z" fill="#8FE0F5"/>
+          </svg>
+        </span>
+        <span class="ident__name">Vyom Aggarwal</span>
+      </a>
+
+      <span class="status glass">
+        <i class="status__dot" aria-hidden="true"></i>
+        Lathrop, CA <b id="clock">--:--:--</b>
+      </span>
+
+      <nav class="navpill glass" aria-label="Sections">
+        <a href="#overview" aria-current="true">Overview</a>
+        <a href="#research">Research</a>
+        <a href="#work">Work</a>
+        <a href="#education">Education</a>
+        <a href="#awards">Awards</a>
+        <a href="#contact">Contact</a>
+      </nav>
+
+      <a class="btn btn--solid" href="mailto:aggarw.vyom@gmail.com">Get in touch</a>
+    </div>
+
+    <div class="head">
+      <p class="counter">[ <b>01</b> / 06 ]</p>
+      <h1 class="display" id="display">
+        <span><span class="u-sr">Vyom Aggarwal. </span>Building</span>
+        <span>For</span>
+        <span>Environments</span>
+        <span>That Don't Forgive</span>
+      </h1>
+    </div>
+
+
+    <div class="stage" id="stage">
+      <img class="stage__poster" id="poster" src="assets/img/earth-poster.webp?v=7a37e421" alt="" width="1440" height="860" fetchpriority="high" decoding="async">
+      <canvas class="stage__canvas" id="heroRig" aria-hidden="true"></canvas>
+    </div>
+    <div class="scrim" aria-hidden="true"></div>
+
+    <div class="word word--back" aria-hidden="true">
+      <i class="w-vyom">Vyom</i>
+      <i class="w-agg">Aggarwal</i>
+    </div>
+    <div class="word word--front" aria-hidden="true">
+      <i class="w-vyom">Vyom</i>
+      <i class="w-agg">Aggarwal</i>
+    </div>
+    <div class="word word--spill" aria-hidden="true">
+      <i class="w-vyom">Vyom</i>
+      <i class="w-agg">Aggarwal</i>
+    </div>
+
+    <div class="foot">
+      <p class="foot__lede">I work on control that has to <em>hold after something breaks</em> — simulation, fault tolerance, and the math underneath.</p>
+      <div class="foot__cta">
+        <a class="btn btn--solid" href="#work">See the work</a>
+        <a class="btn btn--glass glass" href="mailto:aggarw.vyom@gmail.com">Get in touch</a>
+      </div>
+    </div>
+
+
+    <nav class="rail glass" aria-label="Elsewhere">
+      <a href="https://github.com/vyom-aggarwal" target="_blank" rel="noopener">
+        <span class="u-sr">GitHub</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true">
+          <circle cx="6.5" cy="5.5" r="2.4"/><circle cx="6.5" cy="18.5" r="2.4"/><circle cx="17.5" cy="5.5" r="2.4"/>
+          <path d="M6.5 7.9v8.2M17.5 7.9v2.6c0 2.4-1.9 4.3-4.3 4.3H8.9"/>
+        </svg>
+      </a>
+      <a href="https://www.linkedin.com/in/vyom-aggarwal/" target="_blank" rel="noopener">
+        <span class="u-sr">LinkedIn</span>
+        <svg viewBox="0 0 24 24" fill="currentColor" fill-rule="evenodd" aria-hidden="true">
+          <path d="M3.6 2h16.8A1.6 1.6 0 0 1 22 3.6v16.8a1.6 1.6 0 0 1-1.6 1.6H3.6A1.6 1.6 0 0 1 2 20.4V3.6A1.6 1.6 0 0 1 3.6 2Zm2.2 7.4h2.9V19H5.8V9.4Zm1.45-4.6a1.7 1.7 0 1 1 0 3.4 1.7 1.7 0 0 1 0-3.4ZM10.6 9.4h2.78v1.31h.04c.39-.73 1.33-1.5 2.74-1.5 2.93 0 3.47 1.93 3.47 4.43V19h-2.9v-4.77c0-1.14-.02-2.6-1.58-2.6-1.59 0-1.83 1.24-1.83 2.52V19h-2.9V9.4Z"/>
+        </svg>
+      </a>
+      <a href="mailto:aggarw.vyom@gmail.com">
+        <span class="u-sr">Email</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true">
+          <rect x="2.5" y="4.8" width="19" height="14.4" rx="2.2"/>
+          <path d="m3.4 6.6 8.6 6 8.6-6"/>
+        </svg>
+      </a>
+    </nav>
+
+    <div class="notch">
+      <svg viewBox="0 0 13 20" stroke-width="1.3" aria-hidden="true">
+        <rect x="0.65" y="0.65" width="11.7" height="18.7" rx="5.85"/>
+        <line class="notch__wheel" x1="6.5" y1="5" x2="6.5" y2="8.5" stroke-linecap="round"/>
       </svg>
-    </span>
-    <span class="ident__text">
-      <b>Vyom Aggarwal</b>
-      <i>Robotics · ML · Mathematics</i>
-    </span>
-  </a>
+      <span>Scroll to<br>explore</span>
+    </div>
 
-  <div class="console__status">
-    <span class="live"><i></i>Open to work</span>
-    <span class="console__clock" title="Local time in Lathrop, California">
-      Lathrop, CA <b id="clock">--:--:--</b>
-    </span>
-  </div>
-
-  <nav class="index" aria-label="Sections">
-    <a href="#overview"><em>01</em><span data-scramble>Overview</span></a>
-    <a href="#research"><em>02</em><span data-scramble>Research</span></a>
-    <a href="#work"><em>03</em><span data-scramble>Work</span></a>
-    <a href="#education"><em>04</em><span data-scramble>Education</span></a>
-    <a href="#awards"><em>05</em><span data-scramble>Awards</span></a>
-    <a href="#contact"><em>06</em><span data-scramble>Contact</span></a>
-  </nav>
-
-  <div class="console__foot">
-    <ul class="console__links">
-      <li><a href="mailto:aggarw.vyom@gmail.com" data-cursor="email">Email</a></li>
-      <li><a href="https://www.linkedin.com/in/vyom-aggarwal/" target="_blank" rel="noopener" data-cursor="open">LinkedIn</a></li>
-      <li><a href="https://github.com/vyom-aggarwal" target="_blank" rel="noopener" data-cursor="open">GitHub</a></li>
-    </ul>
-    <button class="theme-toggle" id="themeToggle" type="button" data-magnetic aria-label="Switch colour theme">
-      <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.6M12 19.4V22M2 12h2.6M19.4 12H22M4.9 4.9l1.9 1.9M17.2 17.2l1.9 1.9M19.1 4.9l-1.9 1.9M6.8 17.2l-1.9 1.9"/></svg>
-      <svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.4A8.4 8.4 0 0 1 9.6 4a8.4 8.4 0 1 0 10.4 10.4Z"/></svg>
-    </button>
-  </div>
-
-  <button class="burger" id="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="menu"><i></i><i></i></button>
-  <div class="console__progress" aria-hidden="true"><i id="progressFill"></i></div>
-</header>
-
-<!-- ══ mobile menu ══ -->
-<div class="menu" id="menu" hidden>
-  <nav class="menu__list" aria-label="Sections">
-    <a href="#overview"><em>01</em> Overview</a>
-    <a href="#research"><em>02</em> Research</a>
-    <a href="#work"><em>03</em> Work</a>
-    <a href="#education"><em>04</em> Education</a>
-    <a href="#awards"><em>05</em> Awards</a>
-    <a href="#contact"><em>06</em> Contact</a>
-  </nav>
-  <div class="menu__foot">
-    <a href="mailto:aggarw.vyom@gmail.com">aggarw.vyom@gmail.com</a>
-    <a href="https://www.linkedin.com/in/vyom-aggarwal/" target="_blank" rel="noopener">LinkedIn</a>
-    <a href="https://github.com/vyom-aggarwal" target="_blank" rel="noopener">GitHub</a>
-  </div>
+  </section>
 </div>
 
-<!-- ══════════════ CANVAS ══════════════ -->
-<main class="canvas" id="main">
+<!-- ═══════════════ PROFILE ═══════════════ -->
+<div class="panel">
+  <section class="section" id="profile" aria-label="Profile">
+    <div class="overview__grid">
 
-  <!-- ─────────── 01 · OVERVIEW ─────────── -->
-  <section class="block" id="overview" aria-label="Overview">
-    <div class="grid">
-
-      <!-- masthead -->
-      <article class="tile tile--hero s12" data-reveal>
-        <canvas class="hero__canvas" id="gl" aria-hidden="true"></canvas>
-        <div class="hero__veil" aria-hidden="true"></div>
-        <div class="hero__body">
-          <p class="tag tag--accent">River Islands High School — Class of 2029</p>
-          <h1 class="hero__title" data-split="chars">Vyom Aggarwal</h1>
-          <p class="hero__lede">
-            Student researcher at <b>MIT</b> and <b>UCSC</b> — building machines that
-            <em>reason</em>, and doing the math underneath.
-          </p>
-          <div class="hero__actions">
-            <a class="btn btn--solid" href="#work" data-magnetic data-cursor="scroll">
-              <span>See the work</span>
-              <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1v14M2.6 9.4 8 14.8l5.4-5.4"/></svg>
-            </a>
-            <a class="btn" href="mailto:aggarw.vyom@gmail.com" data-magnetic data-cursor="email">
-              <span>Get in touch</span>
-            </a>
-          </div>
+      <div>
+        <div class="section__head">
+          <h2 class="section__title">I work where <em>ML</em> meets <em>hardware</em>.</h2>
         </div>
-      </article>
-
-      <!-- metrics -->
-      <article class="tile tile--stat s3" data-reveal data-reveal-delay="60">
-        <span class="stat__k">Weighted GPA</span><span class="stat__v">4.86</span>
-        <span class="stat__n">Sophomore year</span>
-      </article>
-      <article class="tile tile--stat s3" data-reveal data-reveal-delay="240">
-        <span class="stat__k">Dual enrollment</span><span class="stat__v">4.0</span>
-        <span class="stat__n">Unweighted, Delta College</span>
-      </article>
-      <article class="tile tile--stat s3" data-reveal data-reveal-delay="120">
-        <span class="stat__k">Concurrent roles</span><span class="stat__v">08</span>
-        <span class="stat__n">Research · robotics · math</span>
-      </article>
-      <article class="tile tile--stat s3" data-reveal data-reveal-delay="180">
-        <span class="stat__k">Research labs</span><span class="stat__v">03</span>
-        <span class="stat__n">MIT · UC Santa Cruz · Lumiere Education</span>
-      </article>
-
-      <!-- profile -->
-      <article class="tile s8" data-reveal>
-        <p class="tag">01 · Profile</p>
-        <h2 class="tile__title" data-split="words">I work where <em>ML</em> meets <em>hardware</em>.</h2>
         <div class="prose">
           <p>I'm a sophomore at <b>River Islands High School</b>, dual-enrolled at
             <b>San Joaquin Delta College</b>. I specialize in the <b>integration of AI and
@@ -198,421 +189,607 @@
             benchmark and a model you would trust to run a physical system are not the same
             object, and the distance between them is where the engineering actually lives.</p>
         </div>
-      </article>
+      </div>
 
-      <article class="tile tile--spec s4" data-reveal data-reveal-delay="100">
-        <p class="tag">Quick spec</p>
-        <dl class="spec">
-          <div><dt>Age</dt><dd>15</dd></div>
-          <div><dt>Year</dt><dd>Sophomore</dd></div>
-          <div><dt>School</dt><dd>River Islands HS</dd></div>
-          <div><dt>Fields</dt><dd>Mechatronics/ML</dd></div>
-          <div><dt>Location</dt><dd>Lathrop, CA</dd></div>
-        </dl>
-      </article>
-
-      <!-- affiliations -->
-      <div class="tile tile--ticker s12" data-reveal aria-hidden="true">
-        <div class="ticker__track">
-          <span>MIT CSAIL</span><i>◆</i><span>UC Santa Cruz</span><i>◆</i><span>FTC 36541</span><i>◆</i><span>AIME Qualifier</span><i>◆</i><span>USACO Silver</span><i>◆</i><span>MATHCOUNTS 1st</span><i>◆</i><span>Congressional App Challenge</span><i>◆</i><span>Apex STEM</span><i>◆</i><span>Lumiere Research</span><i>◆</i>
-          <span>MIT CSAIL</span><i>◆</i><span>UC Santa Cruz</span><i>◆</i><span>FTC 36541</span><i>◆</i><span>AIME Qualifier</span><i>◆</i><span>USACO Silver</span><i>◆</i><span>MATHCOUNTS 1st</span><i>◆</i><span>Congressional App Challenge</span><i>◆</i><span>Apex STEM</span><i>◆</i><span>Lumiere Research</span><i>◆</i>
-        </div>
+      <div style="display: grid; gap: var(--s-4)">
+        <article class="card">
+          <p class="card__k">Quick spec</p>
+          <dl class="spec">
+            <div><dt>Age</dt><dd>15</dd></div>
+            <div><dt>Year</dt><dd>Sophomore</dd></div>
+            <div><dt>School</dt><dd>River Islands HS</dd></div>
+            <div><dt>Fields</dt><dd>Mechatronics/ML</dd></div>
+            <div><dt>Location</dt><dd>Lathrop, CA</dd></div>
+          </dl>
+        </article>
+        <article class="card">
+          <p class="card__k">By the numbers</p>
+          <dl class="spec">
+            <div><dt>Weighted GPA</dt><dd>4.86</dd></div>
+            <div><dt>Dual enrollment</dt><dd>4.0 unweighted</dd></div>
+            <div><dt>Concurrent roles</dt><dd>08</dd></div>
+            <div><dt>Research labs</dt><dd>03</dd></div>
+          </dl>
+          <p class="note">MIT · UC Santa Cruz · Lumiere Education</p>
+        </article>
       </div>
 
     </div>
+
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee__track">
+        <span>MIT CSAIL</span><span>UC Santa Cruz</span><span>FTC 36541</span><span>AIME Qualifier</span><span>USACO Silver</span><span>MATHCOUNTS 1st</span><span>Congressional App Challenge</span><span>Apex STEM</span><span>Lumiere Research</span>
+        <span>MIT CSAIL</span><span>UC Santa Cruz</span><span>FTC 36541</span><span>AIME Qualifier</span><span>USACO Silver</span><span>MATHCOUNTS 1st</span><span>Congressional App Challenge</span><span>Apex STEM</span><span>Lumiere Research</span>
+      </div>
+    </div>
   </section>
+</div>
 
-  <!-- ─────────── 02 · RESEARCH ─────────── -->
-  <section class="block" id="research">
-    <header class="block__head" data-reveal>
-      <p class="tag">02 &middot; Current research &middot; UC Santa Cruz AIEA Lab</p>
-      <h2 class="block__title" data-split="words">Teaching a broken robot <em>to keep walking</em>.</h2>
-      <p class="block__lede">Fault Recovery in RL Locomotion Through Online Residual Adaptation &mdash;
-        can a small correction module, updated <em class="serif">during</em> execution, restore a
-        quadruped&rsquo;s gait after a hardware fault without retraining the policy underneath?</p>
-    </header>
+<!-- ═══════════════ 02 · PROJECTS ═══════════════ -->
+<div class="panel">
+  <section class="section" id="research">
+    <span class="u-anchor" id="projects" aria-hidden="true"></span>
 
-    <!-- scroll-driven stage: scroll position is the trial timeline, steps 0-500 -->
-    <div class="stage" id="rigStage">
-      <div class="stage__pin">
-        <canvas class="stage__canvas" id="rig" aria-hidden="true"></canvas>
-        <div class="stage__veil" aria-hidden="true"></div>
+    <div class="section__head">
+      <p class="section__no">[ <b>02</b> / 06 ]</p>
+      <h2 class="section__title">Two projects, both built <em>instrument-first</em>.</h2>
+      <p class="section__lede">Each one spent its first months on the measurement rather than on the
+        result, because a number you cannot defend is worse than no number at all.</p>
+    </div>
 
-        <div class="stage__hud" data-tone="ok" aria-hidden="true">
-          <div class="hud__status"><i></i><span data-hud="status">Nominal gait</span></div>
-          <div class="hud__detail" data-hud="detail">base policy &middot; healthy</div>
-          <div class="hud__sep"></div>
-          <div class="hud__row"><span class="hud__k">Fwd vel</span><span class="hud__v"><b data-hud="vel">0.50</b> m/s</span></div>
-          <div class="hud__row"><span class="hud__k">Step</span><span class="hud__v" data-hud="step">000</span></div>
-          <div class="hud__row"><span class="hud__k">Control</span><span class="hud__v">60 Hz</span></div>
-          <div class="hud__row"><span class="hud__k">Mode</span><span class="hud__v">Schematic</span></div>
+    <ul class="launcher">
+      <li>
+        <button class="pcard" type="button" aria-haspopup="dialog" data-open="fault-tolerant-control">
+          <span class="pcard__stage">
+            <img class="pcard__poster" src="assets/img/card-quadruped.webp?v=574f46b7" alt="" width="720" height="450" loading="lazy" decoding="async">
+            <canvas class="pcard__canvas" data-model="quadruped" aria-hidden="true"></canvas>
+          </span>
+          <span class="pcard__meta">
+            <span class="pcard__state"><i></i>Baseline complete · adaptation not built</span>
+            <span class="pcard__title">Fault-tolerant control</span>
+            <span class="pcard__line">Keeping a machine mission-capable after an actuator fails,
+              measured on a simulated quadruped.</span>
+            <span class="pcard__chips"><b>10/10 seeds</b><b>5 fault families</b><b>1.2–82.3% recovery</b></span>
+          </span>
+        </button>
+      </li>
+      <li>
+        <button class="pcard" type="button" aria-haspopup="dialog" data-open="codon-lab">
+          <span class="pcard__stage">
+            <img class="pcard__poster" src="assets/img/card-protein.webp?v=3d4d1e4e" alt="" width="720" height="450" loading="lazy" decoding="async">
+            <canvas class="pcard__canvas" data-model="protein" aria-hidden="true"></canvas>
+          </span>
+          <span class="pcard__meta">
+            <span class="pcard__state"><i></i>Eight of ten clauses closed · primers not built</span>
+            <span class="pcard__title">Codon Lab</span>
+            <span class="pcard__line">You describe what the protein should do, in English. It returns a
+              ranked, constrained list of specific mutations, every number traceable to the model that
+              produced it.</span>
+            <span class="pcard__chips"><b>10,450 ranked variants</b><b>2,172 measured T50</b><b>263 gate checks</b></span>
+          </span>
+        </button>
+      </li>
+    </ul>
+
+    <p class="nojs-note note">Both projects are shown in full below.</p>
+
+    <!-- ── Project A ── -->
+    <dialog class="proj" id="project-fault-tolerant-control" aria-labelledby="ftc-title">
+      <div class="proj__inner">
+        <header class="proj__head">
+          <p class="proj__eyebrow">Project A · UC Santa Cruz AIEA Lab</p>
+          <h2 class="proj__title" id="ftc-title">Fault Recovery in RL Locomotion Through Online Residual Adaptation</h2>
+          <p class="proj__lede">Can a small correction module, updated <em>during</em> execution, restore a
+            quadruped's gait after a hardware fault without retraining the policy underneath?</p>
+          <button class="proj__close" type="button" data-close><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3l10 10M13 3L3 13"/></svg><span class="u-sr">Close project</span></button>
+        </header>
+
+
+        <div class="proj__stage">
+          <canvas class="proj__canvas" data-sim="fault" aria-hidden="true"></canvas>
+          <div class="simhud" data-tone="ok" aria-hidden="true">
+            <i class="simhud__dot"></i>
+            <b data-sim-status>Nominal gait</b>
+            <span data-sim-detail>base policy · healthy</span>
+            <span class="simhud__v"><b data-sim-vel>0.50</b> m/s</span>
+            <span class="simhud__v">step <b data-sim-step>000</b></span>
+          </div>
+        </div>
+        <div class="stepper">
+          <div class="stepper__bar">
+            <p class="stepper__pos"><b data-step-num>01</b> / 06</p>
+            <p class="stepper__name" data-step-name>Premise</p>
+            <div class="stepper__ctl">
+              <button type="button" data-step-prev aria-label="Previous step" disabled><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 2 4 8l6 6"/></svg></button>
+              <button type="button" data-step-next aria-label="Next step"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 2l6 6-6 6"/></svg></button>
+            </div>
+          </div>
+          <input class="stepper__range" type="range" min="0" max="500" step="1" value="0"
+                 aria-label="Trial step" aria-valuetext="Step 1 of 6, Premise" data-step-range>
+          <ol class="stepper__ticks">
+          <li><button type="button" data-step-go="1" aria-current="true">Premise</button></li>
+          <li><button type="button" data-step-go="2">Apparatus</button></li>
+          <li><button type="button" data-step-go="3">Injection</button></li>
+          <li><button type="button" data-step-go="4">Method</button></li>
+          <li><button type="button" data-step-go="5">Measurement</button></li>
+          <li><button type="button" data-step-go="6">Finding</button></li>
+          </ol>
         </div>
 
-        <div class="stage__beats">
-
-          <article class="beat is-active">
-            <p class="beat__no">01 &mdash; Premise</p>
+        <div class="steps" data-steps>
+      <article class="step is-active" data-step="1" aria-label="Step 1 of 6, Premise">
+        <div class="beat">
+            <p class="beat__no">01 — Premise</p>
             <h3 class="beat__title">Policies are trained on robots that <em>never break</em>.</h3>
             <p class="beat__body">In the real world motors weaken, joints seize, and sensors start
-              reporting values that aren&rsquo;t true. A locomotion policy trained only under ideal
-              conditions has never once been shown what failure feels like &mdash; so it has no
-              response to it.</p>
-          </article>
-
-          <article class="beat">
-            <p class="beat__no">02 &mdash; Apparatus</p>
+              reporting values that aren't true. A locomotion policy trained only under ideal
+              conditions has never once been shown what failure feels like — so it has no
+              response to it.</p></div>
+      </article>
+      <article class="step" data-step="2" aria-label="Step 2 of 6, Apparatus">
+        <div class="beat">
+            <p class="beat__no">02 — Apparatus</p>
             <h3 class="beat__title">A quadruped you can break <em>on purpose</em>.</h3>
             <p class="beat__body">Twelve revolute joints in PyBullet, physics at 240&nbsp;Hz stepped
-              down to 60&nbsp;Hz control. PPO trained across <b>ten seeds at 1.5M timesteps</b> &mdash;
+              down to 60&nbsp;Hz control. PPO trained across <b>ten seeds at 1.5M timesteps</b> —
               all ten converged to a usable gait, so every one of them is in the experiment.</p>
             <div class="beat__meta">
               <span>34-dim observation</span><span>12-dim action</span><span>0.5 m/s target</span><span>~8.4 h laptop CPU</span>
-            </div>
-          </article>
-
-          <article class="beat">
-            <p class="beat__no">03 &mdash; Injection</p>
-            <h3 class="beat__title">At step 200, <em>something fails</em>.</h3>
-            <p class="beat__body">Five fault families on a matched seed set, so every fault type is
-              compared against identical initial conditions. Three corrupt the <b>physics</b> &mdash;
-              what the robot can do. Two corrupt the <b>observations</b> &mdash; what the robot
-              knows.</p>
-            <div class="beat__meta">
-              <span>torque_limit</span><span>joint_lock</span><span>actuation_delay</span><span>sensor_dropout</span><span>sensor_noise</span>
-            </div>
-          </article>
-
-          <article class="beat">
-            <p class="beat__no">04 &mdash; Method</p>
-            <h3 class="beat__title">Correct <em>around</em> the fault, don&rsquo;t retrain through it.</h3>
-            <p class="beat__body">A small residual module sits between the frozen base policy and the
-              actuators, updating online. The seized joint stays seized &mdash; the correction
-              redistributes the gait around it. Measured against two bounds: no adaptation, and full
-              retraining.</p>
-            <p class="beat__note">Not built yet &mdash; this is the hypothesis the apparatus exists to test.</p>
-          </article>
-
-          <article class="beat">
-            <p class="beat__no">05 &mdash; Measurement</p>
-            <h3 class="beat__title">First, build an instrument <em>you can trust</em>.</h3>
-            <p class="beat__body">The original recovery criterion latched onto the first instantaneous
-              velocity crossing and scored ~100% recovery on every fault &mdash; including 100%
-              recovery alongside a 36.5% fall rate, which cannot both be true. It was rebuilt:
-              velocity smoothed over a 30-step causal window, <b>degradation has to be observed before
-              recovery can be</b>, the speed must hold for 30 consecutive steps, and a trial that falls
-              is never scored as recovered.</p>
-            <p class="beat__note">Every recovery number predating that change was discarded.</p>
-          </article>
-
-          <article class="beat">
-            <p class="beat__no">06 &mdash; Finding</p>
-            <h3 class="beat__title">The faults <em>separate cleanly</em>.</h3>
-            <p class="beat__body">Unadapted recovery runs from <b>1.2% on actuation_delay</b> to
-              <b>82.3% on sensor_noise</b>. Every actuation-side fault is less recoverable than both
-              sensor-side faults, with no overlap &mdash; which makes the physics/sensor distinction a
-              measured property of the system rather than a labelling convention, and a defensible
-              axis for the H3 generalization split.</p>
-            <p class="beat__note">Real headroom for an adaptation method to demonstrate an effect.</p>
-          </article>
-
-        </div>
-
-        <div class="stage__track" aria-hidden="true"><i></i></div>
-      </div>
-    </div>
-
-    <div class="grid">
-
-      <article class="tile s12" data-reveal>
-        <div class="rtable__wrap">
-          <table class="rtable">
-            <caption>Baseline A &middot; no adaptation &middot; 10 seeds &times; 100 trials &middot; &plusmn; is spread across seeds, shown where the aggregation reports one</caption>
-            <thead>
-              <tr>
-                <th scope="col">Fault (severity)</th>
-                <th scope="col">Degraded</th>
-                <th scope="col">Vel. drop</th>
-                <th scope="col">Recovery</th>
-                <th scope="col">Falls</th>
-                <th scope="col">Recovery time</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr><td>actuation_delay (10 steps)</td><td>100.0%</td><td>98.5%</td><td class="is-flag">1.2% &plusmn; 1.4</td><td><b>78.5% &plusmn; 12.2</b></td><td>2.340 s &plusmn; 0.617</td></tr>
-              <tr><td>torque_limit (0.2&times;)</td><td>93.7%</td><td>57.4%</td><td class="is-flag">43.1% &plusmn; 8.4</td><td>31.1% &plusmn; 11.1</td><td>1.679 s &plusmn; 0.340</td></tr>
-              <tr><td>joint_lock</td><td>94.9%</td><td>49.8%</td><td class="is-flag">53.7% &plusmn; 8.2</td><td>4.2% &plusmn; 8.2</td><td>1.896 s &plusmn; 0.180</td></tr>
-              <tr><td>sensor_dropout</td><td>83.9%</td><td>31.7%</td><td class="is-flag">79.6% &plusmn; 7.5</td><td>2.6% &plusmn; 4.6</td><td>1.729 s &plusmn; 0.146</td></tr>
-              <tr><td>sensor_noise (&sigma; 0.3)</td><td>84.7%</td><td>29.3%</td><td class="is-flag">82.3% &plusmn; 8.2</td><td>2.0% &plusmn; 4.6</td><td>1.622 s &plusmn; 0.141</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <p class="rtable__note">Recovery is <b>conditional on degradation</b> &mdash; of the trials
-          where the fault measurably slowed the robot, the fraction that returned to pre-fault speed
-          and held it. Trials the fault never affected are counted under Degraded rather than scored
-          as recoveries. <b>torque_limit</b> and <b>joint_lock</b> are the highest-power test cases:
-          recovery sits mid-range at 43.1% and 53.7%, so an adaptation method has room to move it
-          without running into a floor or a ceiling. <b>actuation_delay</b> is the severe end &mdash;
-          it topples the robot in 78.5% of trials and almost never recovers.</p>
-      </article>
-
-      <article class="tile s4" data-reveal data-reveal-delay="60">
-        <p class="tag">Training reliability</p>
+            </div></div>
+        <article class="card">
+        <p class="card__k">Training reliability</p>
         <dl class="spec">
           <div><dt>Seeds attempted</dt><dd>10 @ 1.5M</dd></div>
-          <div><dt>Converged</dt><dd>10 / 10 &middot; 100%</dd></div>
+          <div><dt>Converged</dt><dd>10 / 10 · 100%</dd></div>
           <div><dt>Excluded</dt><dd>None</dd></div>
           <div><dt>Commanded</dt><dd>0.500 m/s</dd></div>
           <div><dt>Wall clock</dt><dd>~8.4 h</dd></div>
         </dl>
-        <p class="rtable__note">Every seed reached a usable gait on this run, so none were held out
-          and all ten are aggregated below &mdash; the convergence rate is a reported result either
+        <p class="note">Every seed reached a usable gait on this run, so none were held out
+          and all ten are aggregated above — the convergence rate is a reported result either
           way, since it characterises how reliably this setup produces a usable policy.</p>
       </article>
-
-      <article class="tile s4" data-reveal data-reveal-delay="120">
-        <p class="tag">Per-seed recovery range</p>
-        <dl class="spec">
-          <div><dt>actuation_delay</dt><dd>0 &ndash; 4%</dd></div>
-          <div><dt>torque_limit</dt><dd>32 &ndash; 60%</dd></div>
-          <div><dt>joint_lock</dt><dd>41 &ndash; 68%</dd></div>
-          <div><dt>sensor_dropout</dt><dd>68 &ndash; 88%</dd></div>
-          <div><dt>sensor_noise</dt><dd>64 &ndash; 94%</dd></div>
-        </dl>
-        <p class="rtable__note"><b>actuation_delay</b> is narrow only because it sits on the floor
-          &mdash; every seed fails it. The other four spread 20 to 30 points, none of them wide
-          enough to trip the 40-point flag, so no fault is strongly seed-dependent on this run.</p>
       </article>
-
-      <article class="tile s4 is-fill" data-reveal data-reveal-delay="180">
-        <p class="tag">Build status</p>
+      <article class="step" data-step="3" aria-label="Step 3 of 6, Injection">
+        <div class="beat">
+            <p class="beat__no">03 — Injection</p>
+            <h3 class="beat__title">At step 200, <em>something fails</em>.</h3>
+            <p class="beat__body">Five fault families on a matched seed set, so every fault type is
+              compared against identical initial conditions. Three corrupt the <b>physics</b> —
+              what the robot can do. Two corrupt the <b>observations</b> — what the robot
+              knows.</p>
+            <div class="beat__meta">
+              <span>torque_limit</span><span>joint_lock</span><span>actuation_delay</span><span>sensor_dropout</span><span>sensor_noise</span>
+            </div></div>
+      </article>
+      <article class="step" data-step="4" aria-label="Step 4 of 6, Method">
+        <div class="beat">
+            <p class="beat__no">04 — Method</p>
+            <h3 class="beat__title">Correct <em>around</em> the fault, don't retrain through it.</h3>
+            <p class="beat__body">A small residual module sits between the frozen base policy and the
+              actuators, updating online. The seized joint stays seized — the correction
+              redistributes the gait around it. Measured against two bounds: no adaptation, and full
+              retraining.</p>
+            <p class="beat__note">Not built yet — this is the hypothesis the apparatus exists to test.</p></div>
+      </article>
+      <article class="step" data-step="5" aria-label="Step 5 of 6, Measurement">
+        <div class="beat">
+            <p class="beat__no">05 — Measurement</p>
+            <h3 class="beat__title">First, build an instrument <em>you can trust</em>.</h3>
+            <p class="beat__body">The original recovery criterion latched onto the first instantaneous
+              velocity crossing and scored ~100% recovery on every fault — including 100%
+              recovery alongside a 36.5% fall rate, which cannot both be true. It was rebuilt:
+              velocity smoothed over a 30-step causal window, <b>degradation has to be observed before
+              recovery can be</b>, the speed must hold for 30 consecutive steps, and a trial that falls
+              is never scored as recovered.</p>
+            <p class="beat__note">Every recovery number predating that change was discarded.</p></div>
+        <article class="card">
+        <p class="card__k">Build status</p>
         <ul class="checklist">
           <li data-state="done"><i></i>Fault-injectable environment</li>
-          <li data-state="done"><i></i>PPO base policy &middot; 10 seeds</li>
+          <li data-state="done"><i></i>PPO base policy · 10 seeds</li>
           <li data-state="done"><i></i>Recovery criterion rebuilt</li>
           <li data-state="done"><i></i>Baseline A evaluation</li>
           <li data-state="done"><i></i>Across-seed aggregation</li>
-          <li data-state="partial"><i></i>Severity sweep &middot; built, not run</li>
+          <li data-state="partial"><i></i>Severity sweep · built, not run</li>
           <li data-state="todo"><i></i>H3 held-out fault split</li>
           <li data-state="todo"><i></i>Residual adaptation module</li>
-          <li data-state="todo"><i></i>Baseline B &middot; full retraining</li>
+          <li data-state="todo"><i></i>Baseline B · full retraining</li>
         </ul>
       </article>
-
-      <a class="tile tile--link s12" href="https://github.com/vyom-aggarwal/fault-recovery-quadruped-rl"
-         target="_blank" rel="noopener" data-reveal data-cursor="open">
-        <span class="link__k">Repository &middot; reproducible from a clean clone</span>
-        <span class="link__v">github.com/vyom-aggarwal/fault-recovery-quadruped-rl</span>
-        <i aria-hidden="true"></i>
-      </a>
+      </article>
+      <article class="step" data-step="6" aria-label="Step 6 of 6, Finding">
+        <div class="beat">
+            <p class="beat__no">06 — Finding</p>
+            <h3 class="beat__title">The faults <em>separate cleanly</em>.</h3>
+            <p class="beat__body">Unadapted recovery runs from <b>1.2% on actuation_delay</b> to
+              <b>82.3% on sensor_noise</b>. Every actuation-side fault is less recoverable than both
+              sensor-side faults, with no overlap — which makes the physics/sensor distinction a
+              measured property of the system rather than a labelling convention, and a defensible
+              axis for the H3 generalization split.</p>
+            <p class="beat__note">Real headroom for an adaptation method to demonstrate an effect.</p></div>
+        <div class="tablewrap">
+      <table class="rtable">
+        <caption>Baseline A · no adaptation · 10 seeds × 100 trials · ± is spread across seeds, shown where the aggregation reports one</caption>
+        <thead>
+          <tr>
+            <th scope="col">Fault (severity)</th>
+            <th scope="col">Degraded</th>
+            <th scope="col">Vel. drop</th>
+            <th scope="col">Recovery</th>
+            <th scope="col">Falls</th>
+            <th scope="col">Recovery time</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>actuation_delay (10 steps)</td><td>100.0%</td><td>98.5%</td><td>1.2% ± 1.4</td><td><b>78.5% ± 12.2</b></td><td>2.340 s ± 0.617</td></tr>
+          <tr data-power><td>torque_limit (0.2×)</td><td>93.7%</td><td>57.4%</td><td>43.1% ± 8.4</td><td>31.1% ± 11.1</td><td>1.679 s ± 0.340</td></tr>
+          <tr data-power><td>joint_lock</td><td>94.9%</td><td>49.8%</td><td>53.7% ± 8.2</td><td>4.2% ± 8.2</td><td>1.896 s ± 0.180</td></tr>
+          <tr><td>sensor_dropout</td><td>83.9%</td><td>31.7%</td><td>79.6% ± 7.5</td><td>2.6% ± 4.6</td><td>1.729 s ± 0.146</td></tr>
+          <tr><td>sensor_noise (σ 0.3)</td><td>84.7%</td><td>29.3%</td><td>82.3% ± 8.2</td><td>2.0% ± 4.6</td><td>1.622 s ± 0.141</td></tr>
+        </tbody>
+      </table>
     </div>
-  </section>
+        <p class="note" style="max-width: var(--measure)">Recovery is <b>conditional on degradation</b> — of the trials
+      where the fault measurably slowed the robot, the fraction that returned to pre-fault speed
+      and held it. Trials the fault never affected are counted under Degraded rather than scored
+      as recoveries. <b>torque_limit</b> and <b>joint_lock</b> are the highest-power test cases:
+      recovery sits mid-range at 43.1% and 53.7%, so an adaptation method has room to move it
+      without running into a floor or a ceiling. <b>actuation_delay</b> is the severe end —
+      it topples the robot in 78.5% of trials and almost never recovers.</p>
+        <div class="step__pair"><article class="card">
+        <p class="card__k">Per-seed recovery range</p>
+        <dl class="spec">
+          <div><dt>actuation_delay</dt><dd>0 – 4%</dd></div>
+          <div><dt>torque_limit</dt><dd>32 – 60%</dd></div>
+          <div><dt>joint_lock</dt><dd>41 – 68%</dd></div>
+          <div><dt>sensor_dropout</dt><dd>68 – 88%</dd></div>
+          <div><dt>sensor_noise</dt><dd>64 – 94%</dd></div>
+        </dl>
+        <p class="note"><b>actuation_delay</b> is narrow only because it sits on the floor
+          — every seed fails it. The other four spread 20 to 30 points, none of them wide
+          enough to trip the 40-point flag, so no fault is strongly seed-dependent on this run.</p>
+      </article></div>
+        <a class="repo" href="https://github.com/vyom-aggarwal/fault-recovery-quadruped-rl" target="_blank" rel="noopener">
+      <span class="repo__k">Repository · reproducible from a clean clone</span>
+      <span class="repo__v">github.com/vyom-aggarwal/fault-recovery-quadruped-rl</span>
+    </a>
+      </article>
+        </div>
+      </div>
+    </dialog>
 
-  <!-- ─────────── 03 · WORK ─────────── -->
-  <section class="block" id="work">
-    <header class="block__head" data-reveal>
-      <p class="tag">03 · Experience</p>
-      <h2 class="block__title" data-split="words">Eight roles, <em>running at once</em>.</h2>
+    <!-- ── Project B ── -->
+    <dialog class="proj" id="project-codon-lab" aria-labelledby="cl-title">
+      <div class="proj__inner">
+        <header class="proj__head">
+          <p class="proj__eyebrow">Project B · Protein design copilot</p>
+          <h2 class="proj__title" id="cl-title">Codon Lab</h2>
+          <p class="proj__lede">A protein-engineering copilot. You describe what you want the protein
+            to do, in English; it returns a ranked, constrained list of specific mutations. It also
+            <em>refuses</em> — when it cannot know something, it says so and says why, instead of
+            returning a plausible number.</p>
+          <button class="proj__close" type="button" data-close><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3l10 10M13 3L3 13"/></svg><span class="u-sr">Close project</span></button>
+        </header>
+
+
+        <div class="proj__stage">
+          <canvas class="proj__canvas" data-sim="scan" aria-hidden="true"></canvas>
+        </div>
+        <div class="proj__body">
+          <p class="beat__body">The models that could help a wet-lab protein engineer — ESM,
+            ProteinMPNN, ThermoMPNN, RFdiffusion, AlphaFold — are Python repositories with CUDA
+            requirements, not tools. So bench scientists either do not use them at all, or get a
+            one-off notebook from a computational colleague, run it once, and never trust the output
+            enough to spend $4,000 of ordering budget on it. <b>The gap is not capability. It is
+            trust.</b> A scientist will not order oligos off the back of a number they cannot
+            interrogate.</p>
+
+          <h3 class="proj__sub">Three <em>invariants</em>.</h3>
+          <div class="inv">
+            <article class="inv__item">
+              <p class="inv__no">01 — Parse, then confirm</p>
+              <p class="inv__title">Never silently interpret.</p>
+              <p class="inv__body">You type a goal in English. The app parses it into an explicit
+                objective — target, budget, host, assay — and shows that parse back as editable chips.
+                <b>Nothing runs until you confirm it.</b> A tool that guesses what "more thermostable"
+                means, and quietly proceeds, is a tool you abandon after the first surprising result.</p>
+              <p class="inv__body">The refusal is enforced in the service layer, not in a route. The
+                job queue is a second caller, and a check placed in a route can be routed around.</p>
+            </article>
+            <article class="inv__item">
+              <p class="inv__no">02 — Provenance</p>
+              <p class="inv__title">Every number is traceable.</p>
+              <p class="inv__body">Any score on any screen reaches its model, version and weights hash
+                <b>in two clicks</b>, counted in tests with trusted events. Provenance is a first-class
+                table, not a log file, and the database refuses to store a score without a model
+                version and a run.</p>
+              <p class="inv__body">The weights hash is a SHA-256 of the bytes actually loaded, never a
+                placeholder. A made-up hash is indistinguishable from a real one in a provenance trail,
+                which turns the entire traceability claim into a lie.</p>
+            </article>
+            <article class="inv__item">
+              <p class="inv__no">03 — Fabrication</p>
+              <p class="inv__title">Never invent a scientific number.</p>
+              <p class="inv__body">A model that cannot run <b>reports why</b>. The cell reads as an em
+                dash with the reason on hover — never an imputed value, never an estimated placeholder.
+                The one provider allowed to invent numbers badges every one of them, watermarks
+                exports, and refuses to generate primers.</p>
+            </article>
+          </div>
+
+          <h3 class="proj__sub">What it <em>refuses</em> to do, and why.</h3>
+          <p class="beat__body">The refusals are the product. Each one names what is wrong and what
+            would fix it.</p>
+          <div class="tablewrap">
+            <table class="rtable rtable--refusals">
+              <thead>
+                <tr><th scope="col">It refuses to</th><th scope="col">Because</th></tr>
+              </thead>
+              <tbody>
+                <tr data-power><td>Accept a mutation code before you confirm a numbering scheme</td><td>Ser77 and Ser108 can be the same residue. Guessing is the most expensive error in the domain.</td></tr>
+                <tr><td>Start a run from an unconfirmed parse</td><td>A tool that guesses what your goal meant is one you stop trusting after the first surprise.</td></tr>
+                <tr data-power><td>Report a ΔΔG interval it does not have</td><td>ThermoMPNN has no per-variant uncertainty. A benchmark RMSE dressed as an interval renders identically to a real one.</td></tr>
+                <tr><td>Compute an error term across incompatible units</td><td>A measured T50 in °C and a predicted ΔΔG in kcal/mol cannot be subtracted. The card says so instead of producing a number.</td></tr>
+                <tr><td>Fall back to another model when one is unavailable</td><td>You would get numbers from a model you did not choose, labelled as the one you did.</td></tr>
+                <tr><td>Generate primers from synthetic scores</td><td>A synthetic ΔΔG is recognisable as synthetic on screen. An oligo ordered off one is not.</td></tr>
+                <tr><td>Generate primers without your construct's DNA</td><td>A primer anneals to the plasmid on your bench. Back-translating the protein invents a sequence that is nobody's plasmid.</td></tr>
+                <tr><td>Trim a signal peptide to make your DNA fit</td><td>Every primer position would shift by the length of the leader, and a primer at the wrong position anneals to nothing.</td></tr>
+                <tr><td>Apply a numbering offset on your behalf</td><td>Even when one constant shift explains every unplaced row, it proposes and waits.</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3 class="proj__sub">The measurement is the <em>moat</em>.</h3>
+          <p class="beat__body">You upload measured values from your assay. The app joins them to the
+            variants it predicted — exactly, with no similarity threshold anywhere, because
+            <b>A123V</b> and <b>A123L</b> differ by one character and are different experiments. A
+            persistent scorecard then accumulates per predictor, so across three projects a lab learns
+            which predictor to trust for its own chemistry.</p>
+          <p class="beat__body">It ships against real data. The build seeds <b>2,172 measured T50
+            values</b> for <em>B. subtilis</em> lipase A from ProteinGym, vendored with its SHA-256 and
+            checked byte-identical against UniProt P37957. Against those measurements, real ESM-2 650M
+            scores <b>Spearman ρ = 0.30</b> where the synthetic predictor scores <b>−0.06</b> —
+            measured on this machine, not quoted from a paper.</p>
+          <p class="beat__note">A DSSP-agreement test was supposed to validate the van der Waals radii
+            set and could not: swapping ProtOr for a uniform radius <em>raised</em> correlation to
+            r = 0.998 while moving 8 of 1BTL's 263 residues across a region boundary. Correlation is
+            invariant to monotonic transforms, and a systematic offset, a scale error and a
+            miscalibration are all monotonic. So the scorecard reports a rank metric <b>and</b> an
+            error metric <b>and</b> a bias term, with bias rendered next to rank.</p>
+
+          <h3 class="proj__sub">What is <em>not</em> verified.</h3>
+          <p class="beat__body">Tracked as carefully as the code, because on this project the
+            distinction is the point.</p>
+          <ul class="unverified">
+            <li><b>Nobody has looked at these screens with a design eye.</b> The brief is emphatic
+              about how this must look, and no human has judged it. No test can.</li>
+            <li><b>Nothing has ever been signed in to.</b> Identity is wired end to end, but no account
+              exists, so no real token has reached the verifier outside synthetic key pairs in tests.</li>
+            <li><b>The containerised real-model path.</b> Real predictors are verified on this machine,
+              not in the deployed image.</li>
+            <li><b>A screen reader.</b> Structure and computed contrast are asserted on every build;
+              nobody has opened the app in NVDA or VoiceOver.</li>
+          </ul>
+
+          <h3 class="proj__sub">Known gaps.</h3>
+          <ul class="unverified">
+            <li><b>Primers and the one-page PDF are not built</b> — the last clause of the definition
+              of done that is not met. The blocker is gone, a target can carry its construct's DNA, and
+              the chemistry is decided and recorded. The designer itself remains.</li>
+            <li><b>The hour-long job timeout is still marginal.</b> A 550-residue target needs about
+              142 minutes, so it finishes across two or three runs rather than one. Continuation is
+              manual.</li>
+            <li><b>ΔΔG intervals.</b> The brief requires an interval and ThermoMPNN has none to give.
+              It reports the point estimate with the reason stated, which leaves the requirement
+              formally unmet, and visibly so.</li>
+            <li><b>Projects cannot be shared.</b> Ownership is per user; a lab wanting a shared project
+              needs an organisation model that is not built.</li>
+          </ul>
+
+          <p class="beat__note">Eight of ten clauses in the definition of done are closed. One is
+            knowingly open behind named work. One cannot be closed by anyone who has not looked at the
+            screens.</p>
+
+          <p class="privnote">Repository is private. Available on request.</p>
+        </div>
+      </div>
+    </dialog>
+  </section>
+</div>
+
+<!-- ═══════════════ 03 · WORK ═══════════════ -->
+<div class="panel">
+  <section class="section" id="work">
+    <div class="section__head" style="max-width: none">
+      <p class="section__no">[ <b>03</b> / 06 ]</p>
+      <h2 class="section__title">Eight roles, <em>running at once</em>.</h2>
       <div class="filters" role="group" aria-label="Filter experience">
-        <button class="filter is-active" type="button" data-filter="all" aria-pressed="true">All <em>8</em></button>
+        <button class="filter" type="button" data-filter="all" aria-pressed="true">All <em>8</em></button>
         <button class="filter" type="button" data-filter="research" aria-pressed="false">Research <em>3</em></button>
         <button class="filter" type="button" data-filter="robotics" aria-pressed="false">Robotics <em>1</em></button>
         <button class="filter" type="button" data-filter="math" aria-pressed="false">Math <em>1</em></button>
         <button class="filter" type="button" data-filter="leadership" aria-pressed="false">Leadership <em>4</em></button>
       </div>
-    </header>
+    </div>
 
-    <ol class="deck" id="jobs">
-
-      <li class="tile tile--job is-lead" data-tags="research">
-        <span class="job__idx">01</span>
-        <span class="chip">Active</span>
-        <h3 class="job__role">Student Researcher</h3>
-        <p class="job__org">Massachusetts Institute of Technology</p>
-        <p class="job__desc">Member of MIT CSAIL, assisting development of a system that changes the way data can be visualized.</p>
-        <p class="job__date">Jul 2026 — Present</p>
+    <ol class="roles" id="roles">
+      <li class="role" data-tags="research">
+        <span class="role__no">01</span>
+        <span class="role__title"><i class="role__dot" aria-hidden="true"></i>Student Researcher</span>
+        <span class="role__org">Massachusetts Institute of Technology</span>
+        <span class="role__date">Jul 2026 — Present</span>
+        <span class="role__desc">Member of MIT CSAIL, assisting development of a system that changes the way data can be visualized.</span>
       </li>
-
-      <li class="tile tile--job is-lead" data-tags="research">
-        <span class="job__idx">02</span>
-        <span class="chip">Active</span>
-        <h3 class="job__role">Student Researcher</h3>
-        <p class="job__org">University of California, Santa Cruz</p>
-        <p class="job__desc">Machine learning applications in robotics, and their integration into the real world.</p>
-        <p class="job__date">Jul 2026 — Present</p>
+      <li class="role" data-tags="research">
+        <span class="role__no">02</span>
+        <span class="role__title"><i class="role__dot" aria-hidden="true"></i>Student Researcher</span>
+        <span class="role__org">University of California, Santa Cruz</span>
+        <span class="role__date">Jul 2026 — Present</span>
+        <span class="role__desc">Machine learning applications in robotics, and their integration into the real world.</span>
       </li>
-
-      <li class="tile tile--job" data-tags="research">
-        <span class="job__idx">03</span>
-        <span class="chip">Active</span>
-        <h3 class="job__role">Research Fellow</h3>
-        <p class="job__org">Lumiere Education</p>
-        <p class="job__desc">Conducting research alongside Fernanda-Maria Lugo-Bolanos from Brown University.</p>
-        <p class="job__date">Jun 2026 — Present</p>
+      <li class="role" data-tags="research">
+        <span class="role__no">03</span>
+        <span class="role__title"><i class="role__dot" aria-hidden="true"></i>Research Fellow</span>
+        <span class="role__org">Lumiere Education</span>
+        <span class="role__date">Jun 2026 — Present</span>
+        <span class="role__desc">Conducting research alongside Fernanda-Maria Lugo-Bolanos from Brown University.</span>
       </li>
-
-      <li class="tile tile--job" data-tags="robotics leadership">
-        <span class="job__idx">04</span>
-        <span class="chip">Captain</span>
-        <h3 class="job__role">Team Captain</h3>
-        <p class="job__org">FIRST Tech Challenge · Team 36541</p>
-        <p class="job__desc">Leads the team and teaches robotics fundamentals to rookie teammates.</p>
-        <p class="job__date">Sep 2025 — Present</p>
+      <li class="role" data-tags="robotics leadership">
+        <span class="role__no">04</span>
+        <span class="role__title"><i class="role__dot" aria-hidden="true"></i>Team Captain</span>
+        <span class="role__org">FIRST Tech Challenge · Team 36541</span>
+        <span class="role__date">Sep 2025 — Present</span>
+        <span class="role__desc">Leads the team and teaches robotics fundamentals to rookie teammates.</span>
       </li>
-
-
-      <li class="tile tile--job" data-tags="leadership">
-        <span class="job__idx">05</span>
-        <span class="chip">Founder</span>
-        <h3 class="job__role">Founder</h3>
-        <p class="job__org">Apex STEM</p>
-        <p class="job__desc">Founded and runs a STEM initiative from the ground up.</p>
-        <p class="job__date">Dec 2024 — Present</p>
+      <li class="role" data-tags="leadership">
+        <span class="role__no">05</span>
+        <span class="role__title"><i class="role__dot" aria-hidden="true"></i>Founder</span>
+        <span class="role__org">Apex STEM</span>
+        <span class="role__date">Dec 2024 — Present</span>
+        <span class="role__desc">Founded and runs a STEM initiative from the ground up.</span>
       </li>
-
-
-      <li class="tile tile--job" data-tags="leadership">
-        <span class="job__idx">06</span>
-        <span class="chip">Active</span>
-        <h3 class="job__role">Director</h3>
-        <p class="job__org">Binary Tree</p>
-        <p class="job__desc">Contributing to educational programming and outreach initiatives.</p>
-        <p class="job__date">Jun 2026 — Present</p>
+      <li class="role" data-tags="leadership">
+        <span class="role__no">06</span>
+        <span class="role__title"><i class="role__dot" aria-hidden="true"></i>Director</span>
+        <span class="role__org">Binary Tree</span>
+        <span class="role__date">Jun 2026 — Present</span>
+        <span class="role__desc">Contributing to educational programming and outreach initiatives.</span>
       </li>
-
-      <li class="tile tile--job" data-tags="math">
-        <span class="job__idx">07</span>
-        <span class="chip is-done">Completed</span>
-        <h3 class="job__role">Academic Writing Intern</h3>
-        <p class="job__org">TMAS Academy</p>
-        <p class="job__desc">Wrote a free AMC 8 prep book for accessible math learning — currently in the process of being published.</p>
-        <p class="job__date">Jun 2025 — Aug 2026</p>
+      <li class="role" data-tags="math">
+        <span class="role__no">07</span>
+        <span class="role__title">Academic Writing Intern</span>
+        <span class="role__org">TMAS Academy</span>
+        <span class="role__date">Jun 2025 — Aug 2026</span>
+        <span class="role__desc">Wrote a free AMC 8 prep book for accessible math learning — currently in the process of being published.</span>
       </li>
-
-      <li class="tile tile--job" data-tags="leadership">
-        <span class="job__idx">08</span>
-        <span class="chip">Active</span>
-        <h3 class="job__role">Troop Guide</h3>
-        <p class="job__org">Boy Scouts of America · Manteca, CA</p>
-        <p class="job__desc">Mentors younger scouts in outdoor skills and leadership.</p>
-        <p class="job__date">Nov 2023 — Present</p>
+      <li class="role" data-tags="leadership">
+        <span class="role__no">08</span>
+        <span class="role__title"><i class="role__dot" aria-hidden="true"></i>Troop Guide</span>
+        <span class="role__org">Boy Scouts of America · Manteca, CA</span>
+        <span class="role__date">Nov 2023 — Present</span>
+        <span class="role__desc">Mentors younger scouts in outdoor skills and leadership.</span>
       </li>
-
     </ol>
-    <p class="deck__empty" id="jobsEmpty" hidden>No entries in this discipline.</p>
+    <p class="roles__empty" id="rolesEmpty" hidden>No entries in this discipline.</p>
   </section>
+</div>
 
-  <!-- ─────────── 04 · EDUCATION ─────────── -->
-  <section class="block" id="education">
-    <header class="block__head" data-reveal>
-      <p class="tag">04 · Education</p>
-      <h2 class="block__title" data-split="words">Two transcripts, <em>one track</em>.</h2>
-    </header>
+<!-- ═══════════════ 04 · EDUCATION ═══════════════ -->
+<div class="panel">
+  <section class="section" id="education">
+    <div class="section__head">
+      <p class="section__no">[ <b>04</b> / 06 ]</p>
+      <h2 class="section__title">Two transcripts, <em>one track</em>.</h2>
+    </div>
 
-    <div class="deck deck--wide" data-reveal data-stagger>
-      <article class="tile tile--edu">
-        <span class="chip">High school</span>
-        <h3 class="tile__title">River Islands High School</h3>
-        <p class="tile__meta">Aug 2025 — Jun 2029 · Diploma candidate</p>
-        <p class="prose">Sophomore year, <b>4.86 weighted GPA</b>. Electives: AP Computer Science
-          Principles, STEM Leadership, and AP Psychology.</p>
-        <dl class="mini">
+    <div class="edu">
+      <article class="card">
+        <span class="edu__chip">High school</span>
+        <h3 class="edu__name">River Islands High School</h3>
+        <p class="edu__meta">Aug 2025 — Jun 2029 · Diploma candidate</p>
+        <div class="prose"><p>Sophomore year, <b>4.86 weighted GPA</b>. Electives: AP Computer Science
+          Principles, STEM Leadership, and AP Psychology.</p></div>
+        <dl class="spec">
           <div><dt>GPA</dt><dd>4.86 W</dd></div>
           <div><dt>Class of</dt><dd>2029</dd></div>
         </dl>
       </article>
-      <article class="tile tile--edu">
-        <span class="chip">Dual enrollment</span>
-        <h3 class="tile__title">San Joaquin Delta College</h3>
-        <p class="tile__meta">Jun 2025 — May 2029 · A.S. candidate</p>
-        <p class="prose">Early College Pathway program, <b>4.0 unweighted GPA</b>. Currently
-          enrolled in CS11, POLS C1000, and PSYC C1000.</p>
-        <dl class="mini">
+      <article class="card">
+        <span class="edu__chip">Dual enrollment</span>
+        <h3 class="edu__name">San Joaquin Delta College</h3>
+        <p class="edu__meta">Jun 2025 — May 2029 · A.S. candidate</p>
+        <div class="prose"><p>Early College Pathway program, <b>4.0 unweighted GPA</b>. Currently
+          enrolled in CS11, POLS C1000, and PSYC C1000.</p></div>
+        <dl class="spec">
           <div><dt>GPA</dt><dd>4.0 UW</dd></div>
           <div><dt>Track</dt><dd>Early College Pathway</dd></div>
         </dl>
       </article>
     </div>
   </section>
+</div>
 
-  <!-- ─────────── 05 · AWARDS ─────────── -->
-  <section class="block" id="awards">
-    <header class="block__head" data-reveal>
-      <p class="tag">05 · Recognition</p>
-      <h2 class="block__title" data-split="words">Awards</h2>
-    </header>
+<!-- ═══════════════ 05 · AWARDS ═══════════════ -->
+<div class="panel">
+  <section class="section" id="awards">
+    <div class="section__head">
+      <p class="section__no">[ <b>05</b> / 06 ]</p>
+      <h2 class="section__title">Awards</h2>
+    </div>
 
-    <div class="grid" data-reveal data-stagger>
-      <article class="tile tile--award tile--spot s6">
+    <div class="awards">
+      <article class="card award">
         <span class="award__result">1st place</span>
-        <h3 class="tile__title">MATHCOUNTS</h3>
-        <p class="prose">Took first place at the MATHCOUNTS competition.</p>
+        <h3 class="award__name">MATHCOUNTS</h3>
+        <div class="prose"><p>Took first place at the MATHCOUNTS competition.</p></div>
       </article>
-      <article class="tile tile--award tile--spot s6">
+      <article class="card award">
         <span class="award__result">Top ~14%</span>
-        <h3 class="tile__title">AIME Qualifier</h3>
-        <p class="prose">Scored in the top ~14% of competitors on the AMC 12.</p>
+        <h3 class="award__name">AIME Qualifier</h3>
+        <div class="prose"><p>Scored in the top ~14% of competitors on the AMC 12.</p></div>
       </article>
-      <article class="tile tile--award tile--spot s4">
-        <span class="award__result">Honorable mention</span>
-        <h3 class="tile__title">Stanford Math Tournament</h3>
-        <p class="prose">Top 25% of competitors.</p>
-      </article>
-      <article class="tile tile--award tile--spot s4">
-        <span class="award__result">Distinguished honor roll</span>
-        <h3 class="tile__title">Berkeley Math Tournament</h3>
-        <p class="prose">Top 20% of competitors.</p>
-      </article>
-      <article class="tile tile--award tile--spot s4">
-        <span class="award__result">2026 · 2nd contest</span>
-        <h3 class="tile__title">USACO Silver</h3>
-        <p class="prose">Silver division standing in the USA Computing Olympiad.</p>
-      </article>
-      <article class="tile tile--award tile--spot s12">
+      <article class="card award">
         <span class="award__result">Winner · CA-13</span>
-        <h3 class="tile__title">Congressional App Challenge</h3>
-        <p class="prose">Built <b>LifeLine</b>, an app for people affected by natural disasters.</p>
+        <h3 class="award__name">Congressional App Challenge</h3>
+        <div class="prose"><p>Built <b>LifeLine</b>, an app for people affected by natural disasters.</p></div>
+      </article>
+      <article class="card award">
+        <span class="award__result">Honorable mention</span>
+        <h3 class="award__name">Stanford Math Tournament</h3>
+        <div class="prose"><p>Top 25% of competitors.</p></div>
+      </article>
+      <article class="card award">
+        <span class="award__result">Distinguished honor roll</span>
+        <h3 class="award__name">Berkeley Math Tournament</h3>
+        <div class="prose"><p>Top 20% of competitors.</p></div>
+      </article>
+      <article class="card award">
+        <span class="award__result">2026 · 2nd contest</span>
+        <h3 class="award__name">USACO Silver</h3>
+        <div class="prose"><p>Silver division standing in the USA Computing Olympiad.</p></div>
       </article>
     </div>
   </section>
+</div>
 
-  <!-- ─────────── 06 · CONTACT ─────────── -->
-  <section class="block" id="contact">
-    <div class="grid">
-      <article class="tile tile--cta s12" data-reveal>
-        <p class="tag tag--accent">06 · Contact</p>
-        <h2 class="cta__title" data-split="chars">Let's build something</h2>
-        <p class="cta__sub">Open to research collaborations, AI/ML internships, and math problems
-          worth arguing about.</p>
-      </article>
+<!-- ═══════════════ 06 · CONTACT ═══════════════ -->
+<div class="panel">
+  <section class="section contact" id="contact">
+    <div class="section__head" style="max-width: none">
+      <p class="section__no">[ <b>06</b> / 06 ]</p>
+      <h2 class="contact__title">Let's build something</h2>
+      <p class="contact__sub">Open to research collaborations, AI/ML internships, and math problems
+        worth arguing about.</p>
+    </div>
 
-      <a class="tile tile--link s6" href="mailto:aggarw.vyom@gmail.com" data-reveal data-cursor="email">
-        <span class="link__k">Email</span>
-        <span class="link__v">aggarw.vyom@gmail.com</span>
-        <i aria-hidden="true"></i>
+    <div class="contact__links">
+      <a class="contact__link" href="mailto:aggarw.vyom@gmail.com">
+        <span class="contact__k">Email</span>
+        <span class="contact__v">aggarw.vyom@gmail.com</span>
       </a>
-      <a class="tile tile--link s6" href="https://www.linkedin.com/in/vyom-aggarwal/" target="_blank" rel="noopener" data-reveal data-reveal-delay="80" data-cursor="open">
-        <span class="link__k">LinkedIn</span>
-        <span class="link__v">/in/vyom-aggarwal</span>
-        <i aria-hidden="true"></i>
+      <a class="contact__link" href="https://www.linkedin.com/in/vyom-aggarwal/" target="_blank" rel="noopener">
+        <span class="contact__k">LinkedIn</span>
+        <span class="contact__v">/in/vyom-aggarwal</span>
       </a>
-      <a class="tile tile--link s6" href="tel:+12094063179" data-reveal data-reveal-delay="160" data-cursor="call">
-        <span class="link__k">Phone</span>
-        <span class="link__v">(209) 406-3179</span>
-        <i aria-hidden="true"></i>
+      <a class="contact__link" href="tel:+12094063179">
+        <span class="contact__k">Phone</span>
+        <span class="contact__v">(209) 406-3179</span>
       </a>
-      <a class="tile tile--link s6" href="https://github.com/vyom-aggarwal" target="_blank" rel="noopener" data-reveal data-reveal-delay="240" data-cursor="open">
-        <span class="link__k">GitHub</span>
-        <span class="link__v">@vyom-aggarwal</span>
-        <i aria-hidden="true"></i>
+      <a class="contact__link" href="https://github.com/vyom-aggarwal" target="_blank" rel="noopener">
+        <span class="contact__k">GitHub</span>
+        <span class="contact__v">github.com/vyom-aggarwal</span>
       </a>
     </div>
 
-    <footer class="foot">
-      <span>© <span id="year">2026</span> Vyom Aggarwal</span>
-      <span>Lathrop, California · Class of 2029</span>
-      <button type="button" id="toTop" data-magnetic>Back to top <i aria-hidden="true"></i></button>
-    </footer>
+    <p class="contact__mark" aria-hidden="true">VA</p>
   </section>
+</div>
+
+<p class="colophon">
+  <span>Vyom Aggarwal · Lathrop, California</span>
+  <span>Built as a static site. No framework, no build step.</span>
+</p>
 
 </main>
 
@@ -639,6 +816,8 @@
 }
 </script>
 
-<script type="module" src="assets/js/main.js"></script>
+<script type="module" src="assets/js/hero.js?v=8f3d805d"></script>
+<script type="module" src="assets/js/projects.js?v=8f3d805d"></script>
+<script type="module" src="assets/js/sections.js?v=8f3d805d"></script>
 </body>
 </html>
