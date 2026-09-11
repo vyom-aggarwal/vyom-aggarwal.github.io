@@ -11,7 +11,7 @@ This appends `?v=<hash>` to every asset reference. Run it after changing
 anything under assets/, and commit the result -- the output is part of
 the site, not a build artefact that has to be regenerated to serve.
 
-    python redesign/tools/stamp.py
+    python tools/stamp.py
 
 One stamp is shared by every JavaScript URL on purpose. Two modules that
 import the same file under different query strings are two different
