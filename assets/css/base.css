@@ -95,7 +95,10 @@ button { font: inherit; color: inherit; background: none; border: 0; }
   border-radius: var(--r-panel);
   background: var(--panel);
   border: 1px solid var(--hair);
-  box-shadow: var(--shadow-panel);
+  /* The lit top edge is an inset shadow, not a positioned bar. A bar
+     runs straight across at y=0, where a rounded shape is much
+     narrower, so it juts out past both curves as a floating line. */
+  box-shadow: inset 0 1px 0 var(--edge-top), var(--shadow-panel);
   overflow: hidden;
 }
 /* A scroll-clipping ancestor disables position: sticky in every
@@ -107,17 +110,13 @@ button { font: inherit; color: inherit; background: none; border: 0; }
    --panel, so the scene has somewhere black to sit before it loads. */
 .panel--window { background: var(--window); }
 
-.panel::before {
-  content: ''; position: absolute; inset: 0 0 auto; height: 1px;
-  background: linear-gradient(90deg, transparent, var(--edge-top) 18%, var(--edge-top) 82%, transparent);
-  z-index: 3; pointer-events: none;
-}
-
 /* ── glass ─────────────────────────────────────────────── */
 .glass {
   position: relative;
   background: var(--glass-solid);
   border: 1px solid var(--glass-edge);
+  /* follows the pill's curve; a positioned bar would overshoot it */
+  box-shadow: inset 0 1px 0 var(--glass-top);
 }
 @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .glass {
@@ -125,11 +124,6 @@ button { font: inherit; color: inherit; background: none; border: 0; }
     -webkit-backdrop-filter: var(--glass-blur);
     backdrop-filter: var(--glass-blur);
   }
-}
-.glass::before {
-  content: ''; position: absolute; inset: 0 0 auto; height: 1px;
-  background: var(--glass-top); pointer-events: none;
-  border-radius: inherit;
 }
 
 /* ── controls ──────────────────────────────────────────── */
