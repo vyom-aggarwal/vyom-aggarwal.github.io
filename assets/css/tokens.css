@@ -59,10 +59,11 @@
   --signal-deep: #0D3F6E;   /* contact panel, large tinted surfaces */
   --limb:        #8FE0F5;   /* rim-light, focus rings, hairline accents */
 
-  /* The wordmark now sits over a scene whose brightness varies from
-     near-black to the limb, so a fixed hex would vanish in one place
-     and glare in another. Low-alpha white tracks the backdrop. */
-  --ghost:       rgb(255 255 255 / 0.08);
+  /* Low-alpha white rather than a fixed hex, so the wordmark tracks
+     whatever it sits on. It is placed on the dark side of the frame,
+     where 0.20 reads at about 1.7:1 — present, and nowhere near
+     competing with the headline. */
+  --ghost:       rgb(255 255 255 / 0.20);
 
   /* derived accent surfaces — same three hues, alpha only */
   --signal-soft: rgb(74 158 224 / 0.12);
@@ -107,7 +108,7 @@
   --fs-h2:    clamp(1.9rem, 1.3rem + 2.4vw, 3.157rem);
   --fs-stat:  clamp(2.6rem, 1.6rem + 3.4vw, 4rem);
   --fs-display: clamp(1.9rem, 0.3rem + 4.1vw, 4.1rem);
-  --fs-word:  clamp(3.2rem, 0.5rem + 8vw, 8rem);
+  --fs-word:  clamp(2rem, 0.6rem + 3.1vw, 3.6rem);
 
   /* Optical compensation for light-on-dark. Strokes bloom on a
      dark ground, so the display weight drops a step, tracking

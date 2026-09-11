@@ -133,47 +133,28 @@
 .stage.is-live .stage__poster { opacity: 0; }
 
 /* ═══ the pixel wordmark ════════════════════════════════
-   --ghost measures 1.65 against --panel. That is deliberate: it
-   reproduces the relationship white-on-panel had in the light
-   build, so the wordmark stays a graphic and never competes with
-   the headline. It carries no information; the name is in the h1
-   and in the nav. */
+   One block, not two halves in opposite corners. It sits in the dark
+   band between the nav and the planet's limb, right-aligned against
+   the same edge as the rail, at one size for both words — so it reads
+   as a signature rather than as debris.
+
+   --ghost is white at 8%. That is deliberate: it carries no
+   information, the name is in the heading and the nav, and it must
+   never compete with the headline. It lives here, on the dark side of
+   the frame, because over the city lights it would disappear
+   entirely. */
 .word {
-  position: absolute; inset: 0;
+  position: absolute; z-index: 1;
+  top: 15%; right: var(--gutter);
+  margin: 0; text-align: right;
   pointer-events: none; user-select: none;
   font-family: var(--font-pixel);
   font-size: var(--fs-word);
-  line-height: 0.8;
+  line-height: 1.06;
   color: var(--ghost);
   text-transform: uppercase;
 }
-.word--back  { z-index: 1; }
-.word--front { z-index: 3; }
-
-.word i { position: absolute; font-style: normal; display: block; }
-.word .w-vyom { left: 26%; top: 64%; }
-.word .w-agg  { right: -5%; bottom: calc(var(--gutter) * 0.5); font-size: 0.6em; }
-
-/* The front copy is revealed only across the band where the robot
-   crosses the letterforms, so the wordmark interleaves with the
-   object instead of sitting flatly in front of it or behind it. */
-.word--front {
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0 66%, #000 71%, #000 100%);
-          mask-image: linear-gradient(to bottom, transparent 0 66%, #000 71%, #000 100%);
-}
-
-/* Rim spill: where the cyan key light falls, the letterforms
-   brighten locally. Same text, clipped to itself, painted with a
-   radial of --limb centred on the robot. This is what makes the
-   occlusion read as lighting rather than as a z-index trick. */
-.word--spill {
-  z-index: 3;
-  color: transparent;
-  background: radial-gradient(closest-side circle at 48% 56%, var(--limb) 0%, rgb(143 224 245 / 0.30) 44%, transparent 74%);
-  -webkit-background-clip: text;
-          background-clip: text;
-  opacity: 0.55;
-}
+.word i { display: block; font-style: normal; }
 
 /* ═══ social rail ═══════════════════════════════════════ */
 .rail {
@@ -252,7 +233,6 @@
   /* the wordmark's band closes up as the hero shortens, so it has to
      give way to the copy rather than sit on top of it */
   :root { --fs-word: clamp(2.6rem, 0.4rem + 5.6vw, 5.6rem); }
-  .word .w-vyom { top: 56%; }
 }
 @media (max-height: 620px) and (min-width: 861px) {
   .display { font-size: clamp(1.6rem, 0.3rem + 2.8vw, 2.8rem); }
@@ -287,16 +267,19 @@
   .display > span { margin-left: 0 !important; white-space: normal; }
   .foot__lede { max-width: none; }
 
+  /* In the flow at the end, flush left like everything else here.
+     It cannot be occluded by the object the way it is on a wide
+     screen — the scene fills the whole panel here, so the mark would
+     simply be buried and read as half-drawn letters. It sits above
+     the window instead, still dim enough to stay decoration. */
   .word {
-    position: relative; inset: auto; height: auto;
-    margin-top: var(--s-5); font-size: 19vw; line-height: 0.9;
+    position: relative; inset: auto; height: auto; z-index: 4;
+    text-align: left; margin-top: var(--s-5);
+    font-size: clamp(2rem, 11vw, 3rem);
   }
-  .word--front, .word--spill { display: none; }  /* nothing left to interleave with */
 
   /* The poster is the largest paint on a phone. Fading it in from
      zero opacity delays or suppresses the LCP candidate entirely,
      so the entrance sequence skips it here. */
   .js .stage, .js .word { animation: none; }
-  .word i { position: static; }
-  .word .w-agg { font-size: 0.55em; }
 }

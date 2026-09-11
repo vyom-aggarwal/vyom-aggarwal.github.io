@@ -23,7 +23,7 @@ function wakeCard(cardEl, on) {
   if (!on) return;
 
   models.set(canvas, { setActive() {} });      /* claim the slot, once */
-  (cardModule || (cardModule = import('./cards.js?v=60873462')))
+  (cardModule || (cardModule = import('./cards.js?v=fa8951bc')))
     .then(({ initCardModel }) => {
       const rig = initCardModel(canvas, canvas.dataset.model);
       if (!rig) return;
@@ -61,8 +61,8 @@ function startSim(slug, d) {
 
   const kind = canvas.dataset.sim;
   const load = kind === 'fault'
-    ? import('./rig.js?v=60873462').then(({ initRig }) => initRig(canvas, { reducedMotion: reduced }))
-    : import('./cards.js?v=60873462').then(({ initCardModel }) => initCardModel(canvas, 'scan'));
+    ? import('./rig.js?v=fa8951bc').then(({ initRig }) => initRig(canvas, { reducedMotion: reduced }))
+    : import('./cards.js?v=fa8951bc').then(({ initCardModel }) => initCardModel(canvas, 'scan'));
 
   load.then((rig) => {
     sims.set(slug, rig);
@@ -185,6 +185,7 @@ function close({ pop = true, restore = true } = {}) {
   const openSlugWas = openSlug;
   openSlug = null;
 
+  stoppers.get(openSlugWas)?.();
   stopSim(openSlugWas);
 
   if (typeof d.close === 'function' && d.open) d.close();
@@ -223,6 +224,7 @@ document.querySelectorAll('[data-open]').forEach((btn) => {
 
 /* ═══ the stepper ══════════════════════════════════════════ */
 const steppers = new Map();
+const stoppers = new Map();   /* stop playback when a dialog closes */
 
 for (const [slug, d] of dialogs) {
   const range = d.querySelector('[data-step-range]');
@@ -233,8 +235,7 @@ for (const [slug, d] of dialogs) {
   const steps = Array.from(pane.querySelectorAll('.step'));
   const num = d.querySelector('[data-step-num]');
   const name = d.querySelector('[data-step-name]');
-  const prev = d.querySelector('[data-step-prev]');
-  const next = d.querySelector('[data-step-next]');
+  const play = d.querySelector('[data-step-play]');
   const ticks = Array.from(d.querySelectorAll('[data-step-go]'));
 
   /* The track runs the trial's own 0-500 steps rather than 1-6, so the
@@ -280,8 +281,6 @@ for (const [slug, d] of dialogs) {
     range.setAttribute('aria-valuetext', `Step ${current} of ${steps.length}, ${STEP_NAMES[current - 1]}`);
     num.textContent = String(current).padStart(2, '0');
     name.textContent = STEP_NAMES[current - 1];
-    prev.disabled = current === 1;
-    next.disabled = current === steps.length;
     pane.scrollTop = 0;
     steps[current - 1].scrollTop = 0;
     if (moveThumb) paintSim(slug, current);
@@ -302,23 +301,65 @@ for (const [slug, d] of dialogs) {
     if (n !== current) go(n, true, false);
   };
 
-  range.addEventListener('input', () => scrub(range.value));
+  /* ── play ────────────────────────────────────────────────
+     The trial runs itself: the thumb travels the track and the
+     simulation, the readout and the written step all follow it, the
+     same path a drag takes. Driven on wall-clock time so the speed
+     does not depend on the frame rate. */
+  const RUN_MS = 12000;
+  let raf = 0, runFrom = 0, runAt = 0;
+
+  const setPlaying = (on) => {
+    if (on) play.setAttribute('data-playing', '');
+    else play.removeAttribute('data-playing');
+    play.setAttribute('aria-label', on ? 'Pause the trial' : 'Play the trial');
+  };
+
+  const stopPlay = () => {
+    if (!raf) return;
+    cancelAnimationFrame(raf);
+    raf = 0;
+    setPlaying(false);
+  };
+
+  const startPlay = () => {
+    /* pressing play at the end starts over rather than doing nothing */
+    const from = Number(range.value) >= SPAN - 1 ? 0 : Number(range.value);
+    runFrom = from;
+    runAt = performance.now();
+    setPlaying(true);
+
+    const frame = (now) => {
+      const travelled = ((now - runAt) / RUN_MS) * SPAN;
+      const v = Math.min(runFrom + travelled, SPAN);
+      range.value = String(Math.round(v));
+      scrub(v);
+      if (v >= SPAN) { stopPlay(); go(steps.length); return; }
+      raf = requestAnimationFrame(frame);
+    };
+    raf = requestAnimationFrame(frame);
+  };
+
+  play.addEventListener('click', () => (raf ? stopPlay() : startPlay()));
+  stoppers.set(slug, stopPlay);
+
+  /* Any hand on the controls takes over. Setting range.value in code
+     does not fire input, so this only catches a real interaction. */
+  range.addEventListener('input', () => { stopPlay(); scrub(range.value); });
   /* settle onto the nearest detent when the thumb is let go */
   const settle = () => go(nearest(Number(range.value)));
   range.addEventListener('change', settle);
   range.addEventListener('pointerup', settle);
-  prev.addEventListener('click', () => go(current - 1));
-  next.addEventListener('click', () => go(current + 1));
-  ticks.forEach((t) => t.addEventListener('click', () => go(t.dataset.stepGo)));
+  ticks.forEach((t) => t.addEventListener('click', () => { stopPlay(); go(t.dataset.stepGo); }));
 
   /* A 500-unit track would make the arrow keys crawl, so they move a
      whole step, which is what the control means. */
   range.addEventListener('keydown', (e) => {
     const k = e.key;
-    if (k === 'Home') { e.preventDefault(); go(1); }
-    else if (k === 'End') { e.preventDefault(); go(steps.length); }
-    else if (k === 'ArrowRight' || k === 'ArrowUp' || k === 'PageUp') { e.preventDefault(); go(current + 1); }
-    else if (k === 'ArrowLeft' || k === 'ArrowDown' || k === 'PageDown') { e.preventDefault(); go(current - 1); }
+    if (k === 'Home') { e.preventDefault(); stopPlay(); go(1); }
+    else if (k === 'End') { e.preventDefault(); stopPlay(); go(steps.length); }
+    else if (k === 'ArrowRight' || k === 'ArrowUp' || k === 'PageUp') { e.preventDefault(); stopPlay(); go(current + 1); }
+    else if (k === 'ArrowLeft' || k === 'ArrowDown' || k === 'PageDown') { e.preventDefault(); stopPlay(); go(current - 1); }
   });
 
   /* horizontal swipe on the content pane */

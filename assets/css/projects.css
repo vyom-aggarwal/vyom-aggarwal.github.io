@@ -200,12 +200,18 @@
   border-radius: var(--r-pill); cursor: pointer;
   border: 1px solid var(--hair); background: var(--raised); color: var(--ink-2);
 }
-.stepper__ctl button:hover:not(:disabled) { color: var(--ink); border-color: var(--hair-2); }
-.stepper__ctl button:disabled { opacity: 0.35; cursor: default; }
-.stepper__ctl svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 1.9; }
+.stepper__ctl button:hover { color: var(--ink); border-color: var(--hair-2); }
+.stepper__ctl svg { width: 16px; height: 16px; fill: currentColor; }
 
-/* A real range input, styled. Dragging it, clicking a tick and the
-   buttons all drive the same value. */
+/* One control, two states. The trial plays from wherever the slider
+   sits; pressing it at the end starts over. */
+.stepper__play[data-playing] { color: var(--signal); border-color: var(--signal-line); }
+.stepper__play .i-pause,
+.stepper__play[data-playing] .i-play { display: none; }
+.stepper__play[data-playing] .i-pause { display: block; }
+
+/* A real range input, styled. Dragging it, clicking a tick and
+   pressing play all drive the same value. */
 .stepper__range {
   -webkit-appearance: none; appearance: none;
   display: block; width: 100%; height: 26px; margin: 0;

@@ -63,9 +63,10 @@ Measured, most recently before the hero became the Earth scene:
 **These numbers predate the Earth hero, the project launcher and both in-dialog
 simulations. They need re-running.** That is the first thing to do.
 
-The mobile accessibility 96 is one finding: the decorative pixel wordmark at
-1.65:1. That contrast is deliberate, it carries no information, and WCAG exempts
-incidental text. Do not "fix" it by raising the contrast.
+The mobile accessibility 96 is one finding: the decorative pixel wordmark, now
+1.42:1 against the window. That contrast is deliberate, it carries no
+information, and WCAG exempts incidental text. Do not "fix" it by raising the
+contrast.
 
 ---
 
@@ -110,8 +111,8 @@ scene modules expose `snapshot()` for exactly this.
 2. **The Codon Lab repository is private.** The panel currently ends with a line
    saying it is available on request. Decide: link it, make it public, or drop
    the line.
-3. **Safari is untested.** `backdrop-filter` on the glass and the masked wordmark
-   layering are the two things most likely to differ.
+3. **Safari is untested.** `backdrop-filter` on the glass is the thing most
+   likely to differ.
 4. **The quadruped is a stand-in.** It is geometry authored from primitives in
    Laikago proportions. The URDF the research actually trains on ships inside
    pybullet's own data directory, not in the project repository, so its

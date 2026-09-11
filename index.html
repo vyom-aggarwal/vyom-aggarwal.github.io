@@ -22,11 +22,11 @@
 <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
 
 <link rel="preload" href="assets/fonts/Archivo-var.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/css/tokens.css?v=60873462">
-<link rel="stylesheet" href="assets/css/base.css?v=60873462">
-<link rel="stylesheet" href="assets/css/hero.css?v=60873462">
-<link rel="stylesheet" href="assets/css/projects.css?v=60873462">
-<link rel="stylesheet" href="assets/css/sections.css?v=60873462">
+<link rel="stylesheet" href="assets/css/tokens.css?v=fa8951bc">
+<link rel="stylesheet" href="assets/css/base.css?v=fa8951bc">
+<link rel="stylesheet" href="assets/css/hero.css?v=fa8951bc">
+<link rel="stylesheet" href="assets/css/projects.css?v=fa8951bc">
+<link rel="stylesheet" href="assets/css/sections.css?v=fa8951bc">
 
 <noscript><style>
   /* The project write-ups exist only inside these dialogs, so without
@@ -111,18 +111,7 @@
     </div>
     <div class="scrim" aria-hidden="true"></div>
 
-    <div class="word word--back" aria-hidden="true">
-      <i class="w-vyom">Vyom</i>
-      <i class="w-agg">Aggarwal</i>
-    </div>
-    <div class="word word--front" aria-hidden="true">
-      <i class="w-vyom">Vyom</i>
-      <i class="w-agg">Aggarwal</i>
-    </div>
-    <div class="word word--spill" aria-hidden="true">
-      <i class="w-vyom">Vyom</i>
-      <i class="w-agg">Aggarwal</i>
-    </div>
+    <p class="word" aria-hidden="true"><i>Vyom</i><i>Aggarwal</i></p>
 
     <div class="foot">
       <p class="foot__lede">I work on control that has to <em>hold after something breaks</em> — simulation, fault tolerance, and the math underneath.</p>
@@ -300,8 +289,11 @@
             <p class="stepper__pos"><b data-step-num>01</b> / 06</p>
             <p class="stepper__name" data-step-name>Premise</p>
             <div class="stepper__ctl">
-              <button type="button" data-step-prev aria-label="Previous step" disabled><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 2 4 8l6 6"/></svg></button>
-              <button type="button" data-step-next aria-label="Next step"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 2l6 6-6 6"/></svg></button>
+              <button class="stepper__play" type="button" data-step-play
+                      aria-label="Play the trial">
+                <svg class="i-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 2.6 13 8l-8.5 5.4Z"/></svg>
+                <svg class="i-pause" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 2.8h2.6v10.4H4.5zM8.9 2.8h2.6v10.4H8.9z"/></svg>
+              </button>
             </div>
           </div>
           <input class="stepper__range" type="range" min="0" max="500" step="1" value="0"
@@ -820,8 +812,8 @@
 }
 </script>
 
-<script type="module" src="assets/js/hero.js?v=60873462"></script>
-<script type="module" src="assets/js/projects.js?v=60873462"></script>
-<script type="module" src="assets/js/sections.js?v=60873462"></script>
+<script type="module" src="assets/js/hero.js?v=fa8951bc"></script>
+<script type="module" src="assets/js/projects.js?v=fa8951bc"></script>
+<script type="module" src="assets/js/sections.js?v=fa8951bc"></script>
 </body>
 </html>
