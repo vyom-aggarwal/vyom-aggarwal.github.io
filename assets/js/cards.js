@@ -9,8 +9,8 @@
    as the hero, because they are objects in the same room.
    ═══════════════════════════════════════════════════════════ */
 
-import { THREE, makeMaterials, makeHalo, buildQuadruped, sph } from './kit.js?v=fa8951bc';
-import { CA, RESIDUES, TRIAD } from './lipase.js?v=fa8951bc';
+import { THREE, makeMaterials, makeHalo, buildQuadruped, sph } from './kit.js?v=caeddb67';
+import { CA, RESIDUES, TRIAD } from './lipase.js?v=caeddb67';
 
 /* ── shared scaffolding ──────────────────────────────────── */
 function stage(canvas, { fov = 30, at = [2.6, 0.9, 3.4], look = [0, 0, 0] } = {}) {

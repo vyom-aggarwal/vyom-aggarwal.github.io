@@ -63,7 +63,7 @@ const wantsGL = stage && canvas && !reducedMotion && innerWidth > 860;
 
 if (wantsGL) {
   const boot = () => {
-    import('./earth.js?v=fa8951bc')
+    import('./earth.js?v=caeddb67')
       .then(({ initEarth }) => {
         const rig = initEarth(canvas, { reducedMotion });
         canvas.classList.add('is-live');
