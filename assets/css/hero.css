@@ -69,12 +69,6 @@
 /* ═══ 2 · middle band ═══════════════════════════════════ */
 .head { grid-column: 1 / 8; align-self: center; position: relative; z-index: 4; }
 
-.counter {
-  font-family: var(--font-mono); font-size: var(--fs-mono);
-  letter-spacing: var(--track-wide); color: var(--ink-3);
-  margin-bottom: var(--s-4);
-}
-.counter b { color: var(--signal); font-weight: 500; }
 
 .display {
   font-size: var(--fs-display);
