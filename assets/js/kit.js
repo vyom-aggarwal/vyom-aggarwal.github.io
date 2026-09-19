@@ -12,7 +12,7 @@
    and a weak bounce from below to keep the underside off black.
    ═══════════════════════════════════════════════════════════ */
 
-import * as THREE from './three.module.min.js?v=092f5109';
+import * as THREE from './three.module.min.js?v=1a9e9250';
 
 export const KEY = new THREE.Vector3(-0.78, 0.40, 0.52);
 
