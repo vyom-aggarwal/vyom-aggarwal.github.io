@@ -22,11 +22,11 @@
 <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
 
 <link rel="preload" href="assets/fonts/Archivo-var.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/css/tokens.css?v=1a9e9250">
-<link rel="stylesheet" href="assets/css/base.css?v=1a9e9250">
-<link rel="stylesheet" href="assets/css/hero.css?v=1a9e9250">
-<link rel="stylesheet" href="assets/css/projects.css?v=1a9e9250">
-<link rel="stylesheet" href="assets/css/sections.css?v=1a9e9250">
+<link rel="stylesheet" href="assets/css/tokens.css?v=8e184715">
+<link rel="stylesheet" href="assets/css/base.css?v=8e184715">
+<link rel="stylesheet" href="assets/css/hero.css?v=8e184715">
+<link rel="stylesheet" href="assets/css/projects.css?v=8e184715">
+<link rel="stylesheet" href="assets/css/sections.css?v=8e184715">
 
 <noscript><style>
   /* The project write-ups exist only inside these dialogs, so without
@@ -248,11 +248,11 @@
             <canvas class="pcard__canvas" data-model="quadruped" aria-hidden="true"></canvas>
           </span>
           <span class="pcard__meta">
-            <span class="pcard__state"><i></i>Baseline complete · adaptation not built</span>
+            <span class="pcard__state"><i></i>Adapter built · correction channel under test</span>
             <span class="pcard__title">Fault-tolerant control</span>
             <span class="pcard__line">Keeping a machine mission-capable after an actuator fails,
               measured on a simulated quadruped.</span>
-            <span class="pcard__chips"><b>10/10 seeds</b><b>5 fault families</b><b>1.2–82.3% recovery</b></span>
+            <span class="pcard__chips"><b>10/10 seeds</b><b>1.2–82.3% recovery</b><b>0.055 m/s offset ceiling</b></span>
           </span>
         </button>
       </li>
@@ -372,11 +372,31 @@
         <div class="beat">
             <p class="beat__no">04 — Method</p>
             <h3 class="beat__title">Correct <em>around</em> the fault, don't retrain through it.</h3>
-            <p class="beat__body">A small residual module sits between the frozen base policy and the
-              actuators, updating online. The seized joint stays seized — the correction
-              redistributes the gait around it. Measured against two bounds: no adaptation, and full
-              retraining.</p>
-            <p class="beat__note">Not built yet — this is the hypothesis the apparatus exists to test.</p></div>
+            <p class="beat__body">A twelve-number residual sits between the frozen base policy and the
+              actuators. It integrates velocity-tracking error and spreads the correction across joints
+              through an influence matrix measured on the healthy robot — no gradients, no network, no
+              fault detector. The ablation is <b>fixed</b> versus <b>re-identified online by recursive
+              least squares</b>: does learning the damaged dynamics buy anything over correcting with a
+              model of the undamaged ones?</p>
+            <p class="beat__note">Built, with the influence matrix fit on all ten seeds. Its first
+              test was a negative result.</p></div>
+        <article class="card">
+        <p class="card__k">First probe · seed 0</p>
+        <dl class="spec">
+          <div><dt>Forward-column agreement</dt><dd>cos 0.29</dd></div>
+          <div><dt>Lateral · yaw agreement</dt><dd>0.77 · 0.75</dd></div>
+          <div><dt>Best forward change, offset</dt><dd>≈ 0.055 m/s</dd></div>
+          <div><dt>Settled deficit, torque_limit</dt><dd>0.106 m/s</dd></div>
+          <div><dt>Settled deficit, joint_lock</dt><dd>0.099 m/s</dd></div>
+          <div><dt>Settled deficit, delay (5)</dt><dd>0.197 m/s</dd></div>
+        </dl>
+        <p class="note">Independent halves of the fit disagreed about how joint offsets move
+          forward speed. Holding one offset for a whole episode showed why: the change saturates
+          near 0.055 m/s however much is asked for, and the same holds on a damaged robot. The base
+          policy tracks velocity in closed loop, so it cancels a posture offset. That is authority,
+          not noise — more data would not fix it. The correction has to act on <b>gait
+          amplitude</b> instead; that probe is written and not yet run.</p>
+      </article>
       </article>
       <article class="step" data-step="5" aria-label="Step 5 of 6, Measurement">
         <div class="beat">
@@ -388,7 +408,11 @@
               velocity smoothed over a 30-step causal window, <b>degradation has to be observed before
               recovery can be</b>, the speed must hold for 30 consecutive steps, and a trial that falls
               is never scored as recovered.</p>
-            <p class="beat__note">Every recovery number predating that change was discarded.</p></div>
+            <p class="beat__note">Every recovery number predating that change was discarded.</p>
+            <p class="beat__note">Revised again on 22 September: degradation and recovery are now
+              judged on 2-second windows, about six strides, and the lasting deficit is recorded
+              separately from the worst transient dip. The Baseline A table predates that revision
+              and is due a re-run.</p></div>
         <article class="card">
         <p class="card__k">Build status</p>
         <ul class="checklist">
@@ -397,9 +421,15 @@
           <li data-state="done"><i></i>Recovery criterion rebuilt</li>
           <li data-state="done"><i></i>Baseline A evaluation</li>
           <li data-state="done"><i></i>Across-seed aggregation</li>
-          <li data-state="partial"><i></i>Severity sweep · built, not run</li>
+          <li data-state="done"><i></i>Residual adapter · fixed and RLS modes</li>
+          <li data-state="done"><i></i>Influence matrix · 10 seeds</li>
+          <li data-state="done"><i></i>Offset authority probe · negative</li>
+          <li data-state="partial"><i></i>Settled deficit · seed 0 only</li>
+          <li data-state="partial"><i></i>Severity sweep · seed 0 only</li>
+          <li data-state="partial"><i></i>Gait-amplitude probe · written, not run</li>
+          <li data-state="todo"><i></i>Baseline A re-run · 2 s criterion</li>
           <li data-state="todo"><i></i>H3 held-out fault split</li>
-          <li data-state="todo"><i></i>Residual adaptation module</li>
+          <li data-state="todo"><i></i>Adapter evaluated under faults</li>
           <li data-state="todo"><i></i>Baseline B · full retraining</li>
         </ul>
       </article>
@@ -416,7 +446,7 @@
             <p class="beat__note">Real headroom for an adaptation method to demonstrate an effect.</p></div>
         <div class="tablewrap">
       <table class="rtable">
-        <caption>Baseline A · no adaptation · 10 seeds × 100 trials · ± is spread across seeds, shown where the aggregation reports one</caption>
+        <caption>Baseline A · no adaptation · 10 seeds × 100 trials · ± is spread across seeds, shown where the aggregation reports one · scored before the 22 September criterion revision</caption>
         <thead>
           <tr>
             <th scope="col">Fault (severity)</th>
@@ -822,8 +852,8 @@
 }
 </script>
 
-<script type="module" src="assets/js/hero.js?v=1a9e9250"></script>
-<script type="module" src="assets/js/projects.js?v=1a9e9250"></script>
-<script type="module" src="assets/js/sections.js?v=1a9e9250"></script>
+<script type="module" src="assets/js/hero.js?v=8e184715"></script>
+<script type="module" src="assets/js/projects.js?v=8e184715"></script>
+<script type="module" src="assets/js/sections.js?v=8e184715"></script>
 </body>
 </html>

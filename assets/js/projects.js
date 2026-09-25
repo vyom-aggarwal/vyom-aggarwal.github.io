@@ -23,7 +23,7 @@ function wakeCard(cardEl, on) {
   if (!on) return;
 
   models.set(canvas, { setActive() {} });      /* claim the slot, once */
-  (cardModule || (cardModule = import('./cards.js?v=1a9e9250')))
+  (cardModule || (cardModule = import('./cards.js?v=8e184715')))
     .then(({ initCardModel }) => {
       const rig = initCardModel(canvas, canvas.dataset.model);
       if (!rig) return;
@@ -47,7 +47,7 @@ const SIM_PHASES = [
   { at: 0.00, status: 'Nominal gait',        detail: 'base policy · healthy',       tone: 'ok' },
   { at: 0.38, status: 'Fault injected',      detail: 'joint_lock · random joint',   tone: 'bad' },
   { at: 0.52, status: 'Residual engaged',    detail: 'correcting around the fault', tone: 'warn' },
-  { at: 0.67, status: 'Speed held 30 steps', detail: 'scored: recovered',           tone: 'ok' },
+  { at: 0.67, status: 'Speed held 2 s', detail: 'scored: recovered',           tone: 'ok' },
 ];
 
 const sims = new Map();
@@ -61,8 +61,8 @@ function startSim(slug, d) {
 
   const kind = canvas.dataset.sim;
   const load = kind === 'fault'
-    ? import('./rig.js?v=1a9e9250').then(({ initRig }) => initRig(canvas, { reducedMotion: reduced }))
-    : import('./cards.js?v=1a9e9250').then(({ initCardModel }) => initCardModel(canvas, 'scan'));
+    ? import('./rig.js?v=8e184715').then(({ initRig }) => initRig(canvas, { reducedMotion: reduced }))
+    : import('./cards.js?v=8e184715').then(({ initCardModel }) => initCardModel(canvas, 'scan'));
 
   load.then((rig) => {
     sims.set(slug, rig);
