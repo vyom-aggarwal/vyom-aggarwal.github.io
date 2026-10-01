@@ -11,7 +11,7 @@ Status and quirks live here and are expected to rot. The code wins.
 
 Vyom Aggarwal's portfolio: a 15-year-old sophomore at River Islands High School,
 dual-enrolled at San Joaquin Delta College, doing student research at MIT CSAIL
-and the AIEA Lab at UC Santa Cruz, plus a Lumiere fellowship.
+and the AIEA Lab at UC Santa Cruz.
 
 The audience is research mentors, lab PIs, internship reviewers and admissions
 readers, and they are skeptical by default. **The site's credibility comes from
