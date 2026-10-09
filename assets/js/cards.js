@@ -9,8 +9,8 @@
    as the hero, because they are objects in the same room.
    ═══════════════════════════════════════════════════════════ */
 
-import { THREE, makeMaterials, makeHalo, buildQuadruped, sph } from './kit.js?v=bcea9a20';
-import { simulate, fromTargets } from './oberth.js?v=bcea9a20';
+import { THREE, makeMaterials, makeHalo, buildQuadruped, sph } from './kit.js?v=d1e996ed';
+import { simulate, fromTargets } from './oberth.js?v=d1e996ed';
 
 /* ── shared scaffolding ──────────────────────────────────── */
 function stage(canvas, { fov = 30, at = [2.6, 0.9, 3.4], look = [0, 0, 0] } = {}) {
