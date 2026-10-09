@@ -333,8 +333,18 @@
    paragraphs; without both, the panel reads as one slab. */
 .proj__body .beat__body,
 .proj__body .beat__note { max-width: var(--measure); }
-.proj__body .beat__body + .beat__body,
-.proj__body .beat__body + .beat__note { margin-top: var(--s-4); }
+.proj__body .beat__body,
+.proj__body .beat__note { margin-top: var(--s-4); }
+.proj__body > :first-child { margin-top: 0; }
+
+/* the same left rule the step notes carry */
+.proj__body .beat__note {
+  padding-left: 12px; border-left: 2px solid var(--signal);
+  font-size: var(--fs-sm); line-height: 1.7; color: var(--ink-3);
+}
+.proj__body .beat__body { font-size: var(--fs-sm); line-height: 1.7; }
+.proj__body .beat__body b { color: var(--ink); font-weight: 600; }
+.proj__body .repo { margin-top: var(--s-5); }
 
 .proj__body .tablewrap { margin-top: var(--s-4); }
 .proj__body .card { margin-top: var(--s-4); }
@@ -342,6 +352,22 @@
 /* the engine table's first column is a description, so it wraps; the
    figures to its right stay on one line */
 .proj .rtable--engines td:first-child { white-space: normal; min-width: 22ch; line-height: 1.5; }
+
+/* ═══ a dialog that scrolls as one page ═══════════════════
+   Project A keeps its stage and stepper fixed and scrolls only its step
+   pane. Project B's stage is a picture to play with and then leave, and
+   fixed chrome of header, stage and controls leaves a short window about
+   eighty pixels of text. So here the whole panel scrolls, and the close
+   button stays put on top of it. */
+.proj--flow .proj__inner { overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.proj--flow .proj__body { flex: none; overflow: visible; }
+.proj--flow .proj__close {
+  position: sticky; top: var(--s-4); right: auto; align-self: flex-end; flex: none; z-index: 3;
+  margin: var(--s-4) var(--s-5) calc(-44px - var(--s-4)) 0;
+}
+@media (max-width: 860px) {
+  .proj--flow .proj__close { top: var(--s-4); margin-right: var(--s-4); }
+}
 
 /* ═══ project B: findings, not a sequence ═════════════ */
 .inv { display: grid; gap: var(--s-4); }
