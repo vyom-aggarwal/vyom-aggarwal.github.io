@@ -23,7 +23,7 @@ function wakeCard(cardEl, on) {
   if (!on) return;
 
   models.set(canvas, { setActive() {} });      /* claim the slot, once */
-  (cardModule || (cardModule = import('./cards.js?v=f2b34275')))
+  (cardModule || (cardModule = import('./cards.js?v=bcea9a20')))
     .then(({ initCardModel }) => {
       const rig = initCardModel(canvas, canvas.dataset.model);
       if (!rig) return;
@@ -61,8 +61,8 @@ function startSim(slug, d) {
 
   const kind = canvas.dataset.sim;
   const load = kind === 'fault'
-    ? import('./rig.js?v=f2b34275').then(({ initRig }) => initRig(canvas, { reducedMotion: reduced }))
-    : import('./cards.js?v=f2b34275').then(({ initCardModel }) => initCardModel(canvas, 'scan'));
+    ? import('./rig.js?v=bcea9a20').then(({ initRig }) => initRig(canvas, { reducedMotion: reduced }))
+    : import('./flyby.js?v=bcea9a20').then(({ initFlyby }) => initFlyby(canvas, d, { reducedMotion: reduced }));
 
   load.then((rig) => {
     sims.set(slug, rig);

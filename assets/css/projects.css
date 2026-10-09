@@ -179,8 +179,9 @@
 .simhud[data-tone='bad'] .simhud__dot { background: #E0674A; box-shadow: 0 0 0 3px rgb(224 103 74 / .18); }
 .simhud[data-tone='warn'] .simhud__dot { background: var(--limb); box-shadow: 0 0 0 3px rgb(143 224 245 / .18); }
 .simhud__v { font-variant-numeric: tabular-nums; }
+.simhud--top { top: var(--s-4); bottom: auto; }
 
-@media (prefers-reduced-motion: reduce) { .proj__stage { display: none; } }
+@media (prefers-reduced-motion: reduce) { .proj__stage, .simctl { display: none; } }
 
 /* ═══ the stepper ══════════════════════════════════════ */
 .stepper { flex: none; padding: var(--s-5) var(--s-6) 0; }
@@ -250,6 +251,30 @@
 }
 .stepper__ticks button:hover { color: var(--ink-2); }
 .stepper__ticks button[aria-current='true'] { color: var(--signal); }
+
+/* The same strip drives project B's stage. It is a stepper with one
+   continuous control and no steps, so it reuses the stepper's pieces and
+   only tightens them: the strip is chrome, and whatever it takes the
+   scrolling body below loses. */
+.simctl { padding-top: var(--s-4); padding-bottom: var(--s-3); border-bottom: 1px solid var(--hair); }
+.simctl .stepper__bar { margin-bottom: var(--s-2); }
+.simctl .stepper__pos output { font-variant-numeric: tabular-nums; color: var(--ink); }
+.simctl .stepper__name { font-weight: 400; color: var(--ink-2); font-size: var(--fs-sm); }
+
+/* the key sits in the stage's free corner rather than taking a row */
+.simkey {
+  position: absolute; left: var(--s-5); bottom: var(--s-3);
+  display: flex; flex-wrap: wrap; gap: 4px var(--s-3);
+  max-width: calc(100% - var(--s-6));
+  padding: 6px 12px; border-radius: var(--r-pill);
+  background: rgb(12 16 23 / 0.82); border: 1px solid var(--hair);
+  font-family: var(--font-mono); font-size: var(--fs-micro);
+  letter-spacing: var(--track-mono); color: var(--ink-3);
+}
+.simkey span { display: inline-flex; align-items: center; gap: 7px; }
+.simkey span::before { content: ''; width: 18px; height: 0; border-top: 2px solid var(--signal); }
+.simkey [data-k='burn']::before { border-top: 4px solid var(--limb); border-radius: 2px; }
+.simkey [data-k='dash']::before { border-top: 2px dashed var(--ink-3); }
 
 /* ═══ the step panes ═══════════════════════════════════
    The pane's height is measured from the tallest step when the
@@ -322,6 +347,11 @@
 .proj .rtable--refusals td:last-child { color: var(--ink-2); }
 .proj .rtable--refusals { table-layout: fixed; }
 .proj__body .tablewrap { margin-top: var(--s-4); }
+.proj__body .card { margin-top: var(--s-4); }
+
+/* the engine table's first column is a description, so it wraps; the
+   figures to its right stay on one line */
+.proj .rtable--engines td:first-child { white-space: normal; min-width: 22ch; line-height: 1.5; }
 
 /* ═══ project B: invariants, not a sequence ════════════ */
 .inv { display: grid; gap: var(--s-4); }
@@ -375,4 +405,6 @@
   .proj__head { padding-right: calc(var(--s-4) + 56px); }
   .proj__close { top: var(--s-4); right: var(--s-4); }
   .stepper__ticks { display: none; }   /* six labels do not fit; the range and the buttons remain */
+  .simctl .stepper__ticks { display: grid; }   /* except here: 0.01 to 1000 is short */
+  .simhud__v--wide, .simkey { display: none; }   /* the strip below says the same, and the stage is small */
 }

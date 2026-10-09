@@ -9,8 +9,8 @@
    as the hero, because they are objects in the same room.
    ═══════════════════════════════════════════════════════════ */
 
-import { THREE, makeMaterials, makeHalo, buildQuadruped, sph } from './kit.js?v=f2b34275';
-import { CA, RESIDUES, TRIAD } from './lipase.js?v=f2b34275';
+import { THREE, makeMaterials, makeHalo, buildQuadruped, sph } from './kit.js?v=bcea9a20';
+import { simulate, fromTargets } from './oberth.js?v=bcea9a20';
 
 /* ── shared scaffolding ──────────────────────────────────── */
 function stage(canvas, { fov = 30, at = [2.6, 0.9, 3.4], look = [0, 0, 0] } = {}) {
@@ -69,125 +69,84 @@ function quadruped(canvas) {
   };
 }
 
-/* ── card B: the target, and what the app refuses to do to it ──
-   Not a protein for decoration. The model is the seeded target with
-   the app's defining behaviour drawn on it:
+/* ── card B: one flyby, with the burn picked out ─────────────
+   A planet, the path a spacecraft takes past it, and the stretch of
+   that path on which the engine is on.
 
-     · the real backbone of B. subtilis lipase A, from AlphaFold
-     · its catalytic triad picked out as the constraint set, which
-       the app suggests from annotations and will not apply on your
-       behalf, and will not let you mutate once you have set it
-     · the catalytic serine carrying two labels at once, Ser77 and
-       Ser108, because that residue has two numbers and refusing to
-       guess between them is the first thing the product does
+   The path is not drawn by hand. It is the Oberth atlas's own
+   simulator flown once, for a burn lasting three periapsis
+   timescales (Π = 3) at an arrival speed of 0.45 of the escape
+   speed at periapsis; the bright arc is the segment it reports as
+   thrusting. The planet is drawn larger than the point
+   mass the model uses, so there is something to look at.
 
-   Everything shown is read from the structure file. No score, no
-   ranking and no mutation code appears here, because those would be
-   predictions and this site does not invent them. */
-function protein(canvas) {
-  const s = stage(canvas, { fov: 30, at: [0, 0.15, 3.5], look: [0, 0, 0] });
+   No number appears here, because the card is a door and the
+   numbers are behind it. */
+function oberth(canvas) {
+  const s = stage(canvas, { fov: 30, at: [0, 0.45, 5.1], look: [0, 0.0, 0] });
 
-  const halo = makeHalo(s.M.LIMB, { size: 3.6, strength: 0.17 });
-  halo.position.set(-0.10, 0.02, -1.4);
+  const halo = makeHalo(s.M.LIMB, { size: 4.2, strength: 0.15 });
+  halo.position.set(0, -0.2, -1.6);
   s.scene.add(halo);
+
+  const run = simulate({ ...fromTargets(3, 0.45, 0.1, 0.3), record: true });
+
+  /* sim x is toward periapsis and y along the flight; the scene puts
+     periapsis above the planet and the flight left to right */
+  const pts = { pre: [], burn: [], post: [] };
+  const names = ['pre', 'burn', 'post'];
+  run.segments.forEach((seg, i) => {
+    seg.y.forEach((st, k) => {
+      /* the legs are cut where they leave the frame */
+      if (Math.hypot(st[0], st[1]) <= 3.0 && (i === 0 || k > 0)) pts[names[i]].push(new THREE.Vector3(st[1], st[0], 0));
+    });
+  });
+  /* each part starts where the last one ended, so the tubes meet */
+  pts.burn.unshift(pts.pre[pts.pre.length - 1].clone());
+  pts.post.unshift(pts.burn[pts.burn.length - 1].clone());
 
   const group = new THREE.Group();
 
-  const at = (i) => new THREE.Vector3(CA[i * 3], CA[i * 3 + 1], CA[i * 3 + 2]);
-  const points = [];
-  for (let i = 0; i < RESIDUES; i++) points.push(at(i));
-
-  /* The backbone as a tube through the alpha carbons. A CA trace of a
-     helix is itself a helix, so the secondary structure reads without
-     a cartoon renderer. */
-  const curve = new THREE.CatmullRomCurve3(points, false, 'catmullrom', 0.4);
-  const ribbon = new THREE.Mesh(
-    new THREE.TubeGeometry(curve, RESIDUES * 5, 0.026, 8, false),
-    s.M.mat(s.M.SIGNAL.clone(), { amb: 0.20, rimStr: 1.5 })
+  const planet = new THREE.Mesh(
+    new THREE.SphereGeometry(0.5, 40, 28),
+    s.M.mat('#26303C', { amb: 0.30, rimStr: 1.9, rimPow: 2.4 })
   );
-  group.add(ribbon);
+  group.add(planet);
 
-  /* the constraint set: the three residues the app will not touch */
-  const LOCK = s.M.mat(s.M.LIMB.clone(), { amb: 0.45, rimStr: 1.1 });
-  const labels = [];
-  for (const t of TRIAD) {
-    const p = at(t.at - 1);                 /* file numbering is 1-based */
-    const node = sph(0.075, LOCK);
-    node.position.copy(p);
-    group.add(node);
-
-    const ring = new THREE.Mesh(new THREE.TorusGeometry(0.115, 0.011, 6, 22), LOCK);
-    ring.position.copy(p);
-    group.add(ring);
-    labels.push({ ring });
-  }
-
-  /* The serine gets both of its numbers, side by side. This is the
-     product's worked example: one residue, two schemes, 31 apart. */
-  const ser = at(TRIAD[0].at - 1);
-  for (const [text, dy] of [['Ser77 · mature', 0.30], ['Ser108 · precursor', 0.16]]) {
-    const tag = makeLabel(text, '#8FE0F5');
-    tag.position.set(ser.x + 0.46, ser.y + dy, ser.z);
-    group.add(tag);
-  }
-  const leader = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.006, 0.006, 0.34, 4),
-    s.M.mat(s.M.LIMB.clone(), { amb: 0.6, rimStr: 0 })
+  const coast = s.M.mat(s.M.SIGNAL.clone(), { amb: 0.34, rimStr: 1.4 });
+  const burnMat = s.M.mat(s.M.LIMB.clone(), { amb: 0.85, rimStr: 0.6 });
+  const tube = (list, radius, mat) => new THREE.Mesh(
+    new THREE.TubeGeometry(new THREE.CatmullRomCurve3(list, false, 'catmullrom', 0.4), list.length * 3, radius, 8, false),
+    mat
   );
-  leader.position.set(ser.x + 0.17, ser.y + 0.09, ser.z);
-  leader.rotation.z = -1.05;
-  group.add(leader);
+  group.add(tube(pts.pre, 0.03, coast));
+  group.add(tube(pts.post, 0.03, coast));
+  group.add(tube(pts.burn, 0.07, burnMat));
 
-  group.rotation.set(0.1, -0.5, 0.15);
-  group.position.set(-0.30, -0.05, 0);
-  group.scale.setScalar(1.34);
+  /* the craft rides the whole path when the card is live and rests at
+     the middle of the burn when it is not */
+  const whole = new THREE.CatmullRomCurve3([...pts.pre, ...pts.burn.slice(1), ...pts.post.slice(1)], false, 'catmullrom', 0.4);
+  const craft = sph(0.095, s.M.mat('#E8EBEE', { amb: 0.9, rimStr: 0.5 }));
+  group.add(craft);
+  const rest = pts.burn[Math.floor(pts.burn.length / 2)];
+  craft.position.copy(rest);
+
+  group.rotation.set(-0.30, 0, 0);
+  group.position.set(0, -0.38, 0);
   s.scene.add(group);
 
   return {
     ...s,
     tick(t, active) {
-      group.rotation.y = -0.5 + (active ? Math.sin(t * 0.4) * 0.22 : 0);
-      for (const l of labels) l.ring.rotation.z += active ? 0.006 : 0;
+      group.rotation.y = active ? Math.sin(t * 0.35) * 0.22 : 0;
+      if (active) craft.position.copy(whole.getPointAt((t * 0.09) % 1));
+      else craft.position.copy(rest);
     },
   };
 }
 
-/* a flat mono tag that always faces the camera */
-function makeLabel(text, colour) {
-  const pad = 18, size = 34;
-  const m = document.createElement('canvas').getContext('2d');
-  m.font = `500 ${size}px "JetBrains Mono", monospace`;
-  const w = Math.ceil(m.measureText(text).width) + pad * 2;
-  const h = size + pad * 2;
-
-  const c = document.createElement('canvas');
-  c.width = w; c.height = h;
-  const g = c.getContext('2d');
-  g.fillStyle = 'rgba(12,16,23,.88)';
-  g.strokeStyle = 'rgba(143,224,245,.34)';
-  g.lineWidth = 2;
-  const r = 14;
-  g.beginPath();
-  g.moveTo(r, 1); g.arcTo(w - 1, 1, w - 1, h - 1, r); g.arcTo(w - 1, h - 1, 1, h - 1, r);
-  g.arcTo(1, h - 1, 1, 1, r); g.arcTo(1, 1, w - 1, 1, r); g.closePath();
-  g.fill(); g.stroke();
-
-  g.fillStyle = colour;
-  g.font = `500 ${size}px "JetBrains Mono", monospace`;
-  g.textBaseline = 'middle';
-  g.fillText(text, pad, h / 2 + 1);
-
-  const tex = new THREE.CanvasTexture(c);
-  tex.anisotropy = 4;
-  tex.colorSpace = THREE.SRGBColorSpace;
-  const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false }));
-  sprite.renderOrder = 5;
-  sprite.scale.set((w / h) * 0.115, 0.115, 1);
-  return sprite;
-}
-
 /* ── public entry ────────────────────────────────────────── */
-const BUILDERS = { quadruped, protein, scan: initProteinScan };
+const BUILDERS = { quadruped, oberth };
 
 export function initCardModel(canvas, kind) {
   const build = BUILDERS[kind];
@@ -224,155 +183,6 @@ export function initCardModel(canvas, kind) {
       rig.tick(0, false);
       rig.renderer.render(rig.scene, rig.camera);
       return canvas.toDataURL('image/webp', 0.88);
-    },
-  };
-}
-
-/* ═══════════════════════════════════════════════════════════
-   The project-B simulation: scoring the substitution space.
-
-   The app scores every single-point substitution and then
-   narrows. This runs that sweep down the chain — a marker
-   travelling residue by residue, each scored position left
-   behind as a dot — and when it reaches one of the three
-   constrained residues it refuses and steps over it.
-
-   Nothing here is a prediction. A dot means "this position was
-   visited", not "this substitution is good"; the constrained
-   three are the ones the README says the app will not touch.
-   ═══════════════════════════════════════════════════════════ */
-
-const SCAN_VERT = `
-  attribute float aOn;
-  varying float vOn;
-  void main() {
-    vOn = aOn;
-    vec4 mv = modelViewMatrix * vec4(position, 1.0);
-    gl_PointSize = (3.0 + aOn * 7.0) * (2.6 / -mv.z);
-    gl_Position = projectionMatrix * mv;
-  }`;
-
-const SCAN_FRAG = `
-  uniform vec3 uDim;
-  uniform vec3 uHot;
-  varying float vOn;
-  void main() {
-    vec2 d = gl_PointCoord - 0.5;
-    float r = length(d);
-    if (r > 0.5) discard;
-    float edge = smoothstep(0.5, 0.34, r);
-    vec3 col = mix(uDim, uHot, vOn);
-    float a = edge * (0.16 + vOn * 0.84);
-    gl_FragColor = vec4(col * a, a);        /* premultiplied */
-  }`;
-
-export function initProteinScan(canvas, { reducedMotion = false } = {}) {
-  const s = stage(canvas, { fov: 30, at: [0, 0.1, 3.15], look: [0, 0, 0] });
-
-  const halo = makeHalo(s.M.LIMB, { size: 3.8, strength: 0.16 });
-  halo.position.set(0, 0, -1.5);
-  s.scene.add(halo);
-
-  const group = new THREE.Group();
-  const at = (i) => new THREE.Vector3(CA[i * 3], CA[i * 3 + 1], CA[i * 3 + 2]);
-  const points = [];
-  for (let i = 0; i < RESIDUES; i++) points.push(at(i));
-
-  const curve = new THREE.CatmullRomCurve3(points, false, 'catmullrom', 0.4);
-  group.add(new THREE.Mesh(
-    new THREE.TubeGeometry(curve, RESIDUES * 5, 0.022, 8, false),
-    s.M.mat(s.M.SIGNAL.clone(), { amb: 0.16, rimStr: 1.3 })
-  ));
-
-  /* one dot per residue, lit as the sweep passes it */
-  const geo = new THREE.BufferGeometry().setFromPoints(points);
-  const on = new Float32Array(RESIDUES);
-  geo.setAttribute('aOn', new THREE.BufferAttribute(on, 1));
-  const dots = new THREE.Points(geo, new THREE.ShaderMaterial({
-    vertexShader: SCAN_VERT,
-    fragmentShader: SCAN_FRAG,
-    uniforms: {
-      uDim: { value: new THREE.Color('#3E5568') },
-      uHot: { value: s.M.LIMB.clone() },
-    },
-    transparent: true,
-    depthWrite: false,
-    blending: THREE.AdditiveBlending,
-  }));
-  group.add(dots);
-
-  /* the constraint set, refused rather than scored */
-  const LOCK = s.M.mat('#E0674A', { amb: 0.5, rimStr: 1.0 });
-  const locked = new Set(TRIAD.map((t) => t.at - 1));
-  const rings = TRIAD.map((t) => {
-    const ring = new THREE.Mesh(new THREE.TorusGeometry(0.10, 0.010, 6, 22), LOCK);
-    ring.position.copy(at(t.at - 1));
-    group.add(ring);
-    return ring;
-  });
-
-  group.rotation.set(0.08, -0.5, 0.12);
-  group.position.set(-1.05, 0, 0);
-  group.scale.setScalar(1.45);
-  s.scene.add(group);
-
-  /* readout, redrawn a few times a second rather than every frame */
-  const read = document.createElement('canvas');
-  read.width = 512; read.height = 96;
-  const rg = read.getContext('2d');
-  const readTex = new THREE.CanvasTexture(read);
-  readTex.colorSpace = THREE.SRGBColorSpace;
-  const readout = new THREE.Sprite(new THREE.SpriteMaterial({ map: readTex, transparent: true, depthTest: false }));
-  readout.renderOrder = 6;
-  readout.scale.set(1.62, 0.304, 1);
-  readout.position.set(0.85, 0.06, 0);
-  s.scene.add(readout);
-
-  let lastText = '';
-  const draw = (text, refusing) => {
-    if (text === lastText) return;
-    lastText = text;
-    rg.clearRect(0, 0, 512, 96);
-    rg.fillStyle = 'rgba(12,16,23,.86)';
-    rg.strokeStyle = refusing ? 'rgba(224,103,74,.5)' : 'rgba(143,224,245,.28)';
-    rg.lineWidth = 2;
-    rg.beginPath(); rg.roundRect(1, 1, 510, 94, 16); rg.fill(); rg.stroke();
-    rg.fillStyle = refusing ? '#E0674A' : '#8FE0F5';
-    rg.font = '500 30px "JetBrains Mono", monospace';
-    rg.textBaseline = 'middle';
-    rg.fillText(text, 26, 50);
-    readTex.needsUpdate = true;
-  };
-
-  let i = 0, acc = 0, hold = 0, refusing = false;
-  const step = () => {
-    if (hold > 0) { hold -= 1; return; }
-    if (locked.has(i)) {
-      refusing = true;
-      hold = 26;                       /* stop, say why, then step over */
-      const t = TRIAD.find((x) => x.at - 1 === i);
-      draw('refused · ' + t.code + ' · constrained', true);
-      i += 1;
-      return;
-    }
-    refusing = false;
-    on[i] = 1;
-    draw('scoring ' + String(i + 1).padStart(3, '0') + ' / ' + RESIDUES, false);
-    i += 1;
-    if (i >= RESIDUES) { i = 0; on.fill(0); }
-    geo.attributes.aOn.needsUpdate = true;
-  };
-
-  draw('scoring 001 / ' + RESIDUES, false);
-
-  return {
-    ...s,
-    tick(t, active) {
-      group.rotation.y = -0.5 + Math.sin(t * 0.16) * 0.34;
-      for (const r of rings) r.rotation.z += 0.02;
-      if (reducedMotion) return;
-      acc += 1;
-      if (acc % 2 === 0) step();
     },
   };
 }

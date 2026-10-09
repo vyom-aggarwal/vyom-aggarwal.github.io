@@ -12,7 +12,7 @@
    HUD says "Schematic" so the two are never confused.
    ═══════════════════════════════════════════════════════════ */
 
-import { THREE, makeMaterials, makeHalo, buildQuadruped } from './kit.js?v=f2b34275';
+import { THREE, makeMaterials, makeHalo, buildQuadruped } from './kit.js?v=bcea9a20';
 
 const lerp = (a, b, t) => a + (b - a) * t;
 const clamp01 = (v) => Math.min(Math.max(v, 0), 1);

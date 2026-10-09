@@ -22,11 +22,11 @@
 <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
 
 <link rel="preload" href="assets/fonts/Archivo-var.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/css/tokens.css?v=f2b34275">
-<link rel="stylesheet" href="assets/css/base.css?v=f2b34275">
-<link rel="stylesheet" href="assets/css/hero.css?v=f2b34275">
-<link rel="stylesheet" href="assets/css/projects.css?v=f2b34275">
-<link rel="stylesheet" href="assets/css/sections.css?v=f2b34275">
+<link rel="stylesheet" href="assets/css/tokens.css?v=bcea9a20">
+<link rel="stylesheet" href="assets/css/base.css?v=bcea9a20">
+<link rel="stylesheet" href="assets/css/hero.css?v=bcea9a20">
+<link rel="stylesheet" href="assets/css/projects.css?v=bcea9a20">
+<link rel="stylesheet" href="assets/css/sections.css?v=bcea9a20">
 
 <noscript><style>
   /* The project write-ups exist only inside these dialogs, so without
@@ -236,8 +236,8 @@
 
     <div class="section__head">
       <h2 class="section__title">Two projects, both built <em>instrument-first</em>.</h2>
-      <p class="section__lede">Each one spent its first months on the measurement rather than on the
-        result, because a number you cannot defend is worse than no number at all.</p>
+      <p class="section__lede">Each one built and checked its instrument before it quoted a result,
+        because a number you cannot defend is worse than no number at all.</p>
     </div>
 
     <ul class="launcher">
@@ -257,18 +257,18 @@
         </button>
       </li>
       <li>
-        <button class="pcard" type="button" aria-haspopup="dialog" data-open="codon-lab">
+        <button class="pcard" type="button" aria-haspopup="dialog" data-open="oberth-efficiency-atlas">
           <span class="pcard__stage">
-            <img class="pcard__poster" src="assets/img/card-protein.webp?v=3d4d1e4e" alt="" width="720" height="450" loading="lazy" decoding="async">
-            <canvas class="pcard__canvas" data-model="protein" aria-hidden="true"></canvas>
+            <img class="pcard__poster" src="assets/img/card-oberth.webp?v=cac33565" alt="" width="720" height="450" loading="lazy" decoding="async">
+            <canvas class="pcard__canvas" data-model="oberth" aria-hidden="true"></canvas>
           </span>
           <span class="pcard__meta">
-            <span class="pcard__state"><i></i>Eight of ten clauses closed · primers not built</span>
-            <span class="pcard__title">Codon Lab</span>
-            <span class="pcard__line">You describe what the protein should do, in English. It returns a
-              ranked, constrained list of specific mutations, every number traceable to the model that
-              produced it.</span>
-            <span class="pcard__chips"><b>10,450 ranked variants</b><b>2,172 measured T50</b><b>263 gate checks</b></span>
+            <span class="pcard__state"><i></i>Analysis frozen · novelty claims provisional</span>
+            <span class="pcard__title">Oberth Efficiency Atlas</span>
+            <span class="pcard__line">How much of the Oberth benefit does a real burn keep? A finite-burn
+              flyby simulator, swept across six bodies and five engine classes, and a one-number test
+              for when the textbook model holds.</span>
+            <span class="pcard__chips"><b>135,720-run sweep</b><b>509 tests</b><b>56/56 outputs reproduced</b></span>
           </span>
         </button>
       </li>
@@ -496,142 +496,201 @@
     </dialog>
 
     <!-- ── Project B ── -->
-    <dialog class="proj" id="project-codon-lab" aria-labelledby="cl-title">
+    <dialog class="proj" id="project-oberth-efficiency-atlas" aria-labelledby="oa-title">
       <div class="proj__inner">
         <header class="proj__head">
-          <p class="proj__eyebrow">Project B · Protein design copilot</p>
-          <h2 class="proj__title" id="cl-title">Codon Lab</h2>
-          <p class="proj__lede">A protein-engineering copilot. You describe what you want the protein
-            to do, in English; it returns a ranked, constrained list of specific mutations. It also
-            <em>refuses</em> — when it cannot know something, it says so and says why, instead of
-            returning a plausible number.</p>
+          <p class="proj__eyebrow">Project B · Spacecraft dynamics</p>
+          <h2 class="proj__title" id="oa-title">Oberth Efficiency Atlas</h2>
+          <p class="proj__lede">A real burn is not instantaneous, so it keeps only part of the textbook
+            Oberth benefit. This project measures <em>how much</em>, across six bodies and five engine
+            classes, and tests whether one dimensionless number organises the answer.</p>
           <button class="proj__close" type="button" data-close><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3l10 10M13 3L3 13"/></svg><span class="u-sr">Close project</span></button>
         </header>
 
 
         <div class="proj__stage">
-          <canvas class="proj__canvas" data-sim="scan" aria-hidden="true"></canvas>
+          <canvas class="proj__canvas" data-sim="flyby" aria-hidden="true"></canvas>
+          <div class="simhud simhud--top" data-tone="warn" aria-hidden="true">
+            <i class="simhud__dot"></i>
+            <b data-fly-status>Finite-burn loss</b>
+            <span class="simhud__v">η <b data-fly-eta>0.532</b></span>
+            <span class="simhud__v simhud__v--wide">loss <b data-fly-loss>12.7%</b> of Δv</span>
+          </div>
+          <p class="simkey" aria-hidden="true"><span data-k="burn">burn</span><span data-k="coast">coast</span><span data-k="dash">unpowered arrival, impulsive departure</span></p>
         </div>
-        <div class="proj__body">
-          <p class="beat__body">The models that could help a wet-lab protein engineer — ESM,
-            ProteinMPNN, ThermoMPNN, RFdiffusion, AlphaFold — are Python repositories with CUDA
-            requirements, not tools. So bench scientists either do not use them at all, or get a
-            one-off notebook from a computational colleague, run it once, and never trust the output
-            enough to spend $4,000 of ordering budget on it. <b>The gap is not capability. It is
-            trust.</b> A scientist will not order oligos off the back of a number they cannot
-            interrogate.</p>
+        <div class="stepper simctl">
+          <div class="stepper__bar">
+            <p class="stepper__pos"><b>Π</b> <output data-fly-pi>10.0</output></p>
+            <p class="stepper__name" data-fly-kept>keeps 53.2% of the impulsive Oberth bonus · loss 12.7% of Δv</p>
+            <div class="stepper__ctl">
+              <button class="stepper__play" type="button" data-fly-play
+                      aria-label="Play the sweep">
+                <svg class="i-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 2.6 13 8l-8.5 5.4Z"/></svg>
+                <svg class="i-pause" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 2.8h2.6v10.4H4.5zM8.9 2.8h2.6v10.4H8.9z"/></svg>
+              </button>
+            </div>
+          </div>
+          <input class="stepper__range" type="range" min="0" max="1000" step="1" value="600"
+                 aria-label="Burn length Π" aria-valuetext="Π 10.0, keeps 53.2% of the impulsive Oberth bonus, loss 12.7% of Δv" data-fly-range>
+          <ol class="stepper__ticks">
+            <li><button type="button" data-fly-go="0.01" aria-label="Set Π to 0.01">0.01</button></li>
+            <li><button type="button" data-fly-go="0.1" aria-label="Set Π to 0.1">0.1</button></li>
+            <li><button type="button" data-fly-go="1" aria-label="Set Π to 1">1</button></li>
+            <li><button type="button" data-fly-go="10" aria-label="Set Π to 10">10</button></li>
+            <li><button type="button" data-fly-go="100" aria-label="Set Π to 100">100</button></li>
+            <li><button type="button" data-fly-go="1000" aria-label="Set Π to 1000">1000</button></li>
+          </ol>
+        </div>
 
-          <h3 class="proj__sub">Three <em>invariants</em>.</h3>
+        <div class="proj__body">
+          <p class="beat__body">The Oberth effect is that the same Δv buys more energy when it is spent
+            deep in a gravity well, at high speed. Mission design usually approximates the burn as
+            instantaneous, at periapsis. This project measures the correction. <b>η</b> is the share of
+            the impulsive Oberth bonus (the gain in excess speed beyond Δv itself) that a real burn
+            keeps, and <b>Π</b> is how long the burn lasts compared with the time to cover a periapsis
+            distance at periapsis speed.</p>
+          <p class="beat__body">The picture above is the simulator, not a recording of a result. Move the
+            slider and it integrates the whole flyby again, with the same Δv spent over a longer or
+            shorter burn. The bright arc is the burn and the blue line is coast; the dashed lines are the
+            unpowered arrival and the textbook impulsive departure. η and the loss are read straight
+            from the simulator's output.</p>
+          <p class="beat__note">Held fixed: arrival speed equal to the escape speed at periapsis,
+            Δv = 0.1 v<sub>p</sub>, Δv/c = 0.3, prograde thrust centred on periapsis, a point-mass
+            planet. An illustrative case, not a mission. Π is the burn's duration in units of
+            r<sub>p</sub>/v<sub>p</sub>.</p>
+
+          <h3 class="proj__sub">What the sweep <em>found</em>.</h3>
           <div class="inv">
             <article class="inv__item">
-              <p class="inv__no">01 — Parse, then confirm</p>
-              <p class="inv__title">Never silently interpret.</p>
-              <p class="inv__body">You type a goal in English. The app parses it into an explicit
-                objective — target, budget, host, assay — and shows that parse back as editable chips.
-                <b>Nothing runs until you confirm it.</b> A tool that guesses what "more thermostable"
-                means, and quietly proceeds, is a tool you abandon after the first surprising result.</p>
-              <p class="inv__body">The refusal is enforced in the service layer, not in a route. The
-                job queue is a second caller, and a check placed in a route can be routed around.</p>
+              <p class="inv__no">01 — Short burns</p>
+              <p class="inv__title">The loss is quadratic in Π.</p>
+              <p class="inv__body">For a prograde burn centred on periapsis, the loss is at most about
+                <b>Π²/96 of Δv</b>, for Π up to about 1 and modest Δv/v<sub>p</sub> and mass ratio; larger
+                values scale it by a closed-form factor. A burn shorter than r<sub>p</sub>/v<sub>p</sub>
+                (about 16% of a circular orbit's period at r<sub>p</sub>) therefore loses roughly 1% of
+                its Δv or less. Across the 20,860 prograde sweep runs with Π ≤ 1, none exceeds 1.010
+                times the closed-form bound for its own Δv/v<sub>p</sub> and Δv/c.</p>
+              <p class="inv__body">It is a leading-order bound, not a strict inequality, and it is
+                probably close to a rule of thumb practitioners already use. It is reported as a clean
+                statement for flybys, not as a discovery.</p>
             </article>
             <article class="inv__item">
-              <p class="inv__no">02 — Provenance</p>
-              <p class="inv__title">Every number is traceable.</p>
-              <p class="inv__body">Any score on any screen reaches its model, version and weights hash
-                <b>in two clicks</b>, counted in tests with trusted events. Provenance is a first-class
-                table, not a log file, and the database refuses to store a score without a model
-                version and a run.</p>
-              <p class="inv__body">The weights hash is a SHA-256 of the bytes actually loaded, never a
-                placeholder. A made-up hash is indistinguishable from a real one in a provenance trail,
-                which turns the entire traceability claim into a lie.</p>
+              <p class="inv__no">02 — Long burns</p>
+              <p class="inv__title">Half the bonus is gone at Π of about 8–40.</p>
+              <p class="inv__body">The energy-based efficiency falls to one half at <b>Π between 8.4
+                and 40</b> across all 1,143 engine and arrival families in the sweep, with a median of
+                26. The sweep is dimensionless, so this holds at every body: a burn longer than 10–40
+                periapsis timescales forfeits about half the Oberth bonus.</p>
+              <p class="inv__body">Beyond the quadratic regime, slow arrivals (v<sub>∞</sub>/v<sub>esc</sub>
+                ≲ 0.5) follow a Π<sup>−1/3</sup> law until a crossover set by the arrival speed, then
+                ln&nbsp;Π&nbsp;/&nbsp;Π; faster arrivals have no such middle regime. That is why the Sun,
+                Jupiter and Saturn, with low arrival speeds, keep far more at a given Π.</p>
             </article>
             <article class="inv__item">
-              <p class="inv__no">03 — Fabrication</p>
-              <p class="inv__title">Never invent a scientific number.</p>
-              <p class="inv__body">A model that cannot run <b>reports why</b>. The cell reads as an em
-                dash with the reason on hover — never an imputed value, never an estimated placeholder.
-                The one provider allowed to invent numbers badges every one of them, watermarks
-                exports, and refuses to generate primers.</p>
+              <p class="inv__no">03 — One number, nearly</p>
+              <p class="inv__title">Π alone does not collapse the data.</p>
+              <p class="inv__body">At small Π, log(1−η) scatters by 0.2–0.3 dex against Π. Against
+                <b>Π√C</b>, with C the closed-form prefactor from the theory, it scatters by about 0.001
+                dex, some 200 times tighter. The scatter that remains after collapsing on Π alone is
+                mostly the arrival speed: v<sub>∞</sub>/v<sub>esc</sub> explains 73–92% of it for
+                prograde burns, and the mass ratio is irrelevant to the collapse.</p>
+            </article>
+            <article class="inv__item">
+              <p class="inv__no">04 — Real engines</p>
+              <p class="inv__title">Retiming the burn barely helps.</p>
+              <p class="inv__body">Optimising where the burn sits relative to periapsis recovers a median
+                of <b>7×10<sup>−6</sup> percentage points</b> of η for chemical engines, 8×10<sup>−5</sup>
+                for nuclear thermal and 0.0068 for electric, over 5,895 valid mission samples. The
+                largest single case is 4.1 points (nuclear thermal), and every gain above 0.1 points comes
+                from starting the burn later than centred. A chemical burn centred on periapsis is within about 0.1
+                points of the optimum of the prograde family.</p>
             </article>
           </div>
 
-          <h3 class="proj__sub">What it <em>refuses</em> to do, and why.</h3>
-          <p class="beat__body">The refusals are the product. Each one names what is wrong and what
-            would fix it.</p>
+          <h3 class="proj__sub">One solar burn, <em>three engines</em>.</h3>
+          <p class="beat__body">Hibberd, Eubanks and Hein's solar Oberth burn to catch 3I/ATLAS spends
+            8.36 km/s at 3.2 solar radii. Flown with their motors, the impulsive model holds. Flown
+            with other engines at the same geometry, it does not.</p>
           <div class="tablewrap">
-            <table class="rtable rtable--refusals">
+            <table class="rtable rtable--engines">
+              <caption>Same 8.36 km/s prograde burn, centred in time on perihelion at 3.2 R☉, bound arrival from 5.2 au · loss is the equivalent-Δv loss</caption>
               <thead>
-                <tr><th scope="col">It refuses to</th><th scope="col">Because</th></tr>
+                <tr>
+                  <th scope="col">Engine</th>
+                  <th scope="col">Burn time</th>
+                  <th scope="col">Π</th>
+                  <th scope="col">Δv lost</th>
+                  <th scope="col">Share of Δv</th>
+                </tr>
               </thead>
               <tbody>
-                <tr data-power><td>Accept a mutation code before you confirm a numbering scheme</td><td>Ser77 and Ser108 can be the same residue. Guessing is the most expensive error in the domain.</td></tr>
-                <tr><td>Start a run from an unconfirmed parse</td><td>A tool that guesses what your goal meant is one you stop trusting after the first surprise.</td></tr>
-                <tr data-power><td>Report a ΔΔG interval it does not have</td><td>ThermoMPNN has no per-variant uncertainty. A benchmark RMSE dressed as an interval renders identically to a real one.</td></tr>
-                <tr><td>Compute an error term across incompatible units</td><td>A measured T50 in °C and a predicted ΔΔG in kcal/mol cannot be subtracted. The card says so instead of producing a number.</td></tr>
-                <tr><td>Fall back to another model when one is unavailable</td><td>You would get numbers from a model you did not choose, labelled as the one you did.</td></tr>
-                <tr><td>Generate primers from synthetic scores</td><td>A synthetic ΔΔG is recognisable as synthetic on screen. An oligo ordered off one is not.</td></tr>
-                <tr><td>Generate primers without your construct's DNA</td><td>A primer anneals to the plasmid on your bench. Back-translating the protein invents a sequence that is nobody's plasmid.</td></tr>
-                <tr><td>Trim a signal peptide to make your DNA fit</td><td>Every primer position would shift by the length of the leader, and a primer at the wrong position anneals to nothing.</td></tr>
-                <tr><td>Apply a numbering offset on your behalf</td><td>Even when one constant shift explains every unplaced row, it proposes and waits.</td></tr>
+                <tr><td>Solid stack, CASTOR 30B + STAR 48B</td><td>210.8 s</td><td>0.033</td><td>0.099 m/s</td><td>0.0012%</td></tr>
+                <tr><td>Nuclear thermal, Isp 900 s, a₀ 0.5 m/s²</td><td>10,808 s (3.0 h)</td><td>1.67</td><td>233 m/s</td><td>2.8%</td></tr>
+                <tr><td>SEP-class, Isp 6000 s, a₀ 3.3×10⁻³ m/s²</td><td>2.38×10⁶ s (27.5 days)</td><td>368</td><td>6,344 m/s</td><td>75.9%</td></tr>
               </tbody>
             </table>
           </div>
+          <p class="beat__note">The solid stack loses 0.099 m/s when the burn is centred in time and
+            0.090 m/s at the best timing, and stays under 0.2 m/s across every sensitivity tried
+            (staging coast, arrival conic, thrust profile). The SEP row is hypothetical: that thruster
+            could not operate at 3.2 R☉, and it is there to show the propulsion physics at fixed
+            geometry. It keeps 24.1% of its Δv, against 23.0% from the large-Π law.</p>
+          <p class="beat__body">The loss reaches 1% of Δv at Π of about 1. For the solid stack that means
+            cutting the thrust by about 30; a single nuclear-thermal stage crosses it at an initial
+            acceleration of roughly 0.83–0.88 m/s².</p>
 
-          <h3 class="proj__sub">The measurement is the <em>moat</em>.</h3>
-          <p class="beat__body">You upload measured values from your assay. The app joins them to the
-            variants it predicted — exactly, with no similarity threshold anywhere, because
-            <b>A123V</b> and <b>A123L</b> differ by one character and are different experiments. A
-            persistent scorecard then accumulates per predictor, so across three projects a lab learns
-            which predictor to trust for its own chemistry.</p>
-          <p class="beat__body">It ships against real data. The build seeds <b>2,172 measured T50
-            values</b> for <em>B. subtilis</em> lipase A from ProteinGym, vendored with its SHA-256 and
-            checked byte-identical against UniProt P37957. Against those measurements, real ESM-2 650M
-            scores <b>Spearman ρ = 0.30</b> where the synthetic predictor scores <b>−0.06</b> —
-            measured on this machine, not quoted from a paper.</p>
-          <p class="beat__note">A DSSP-agreement test was supposed to validate the van der Waals radii
-            set and could not: swapping ProtOr for a uniform radius <em>raised</em> correlation to
-            r = 0.998 while moving 8 of 1BTL's 263 residues across a region boundary. Correlation is
-            invariant to monotonic transforms, and a systematic offset, a scale error and a
-            miscalibration are all monotonic. So the scorecard reports a rank metric <b>and</b> an
-            error metric <b>and</b> a bias term, with bias rendered next to rank.</p>
+          <h3 class="proj__sub">Built so it can be <em>checked</em>.</h3>
+          <p class="beat__body">Every number and figure comes from code in the repository, and figures
+            carry the script and the git commit that made them in their metadata. The in-browser
+            simulator above is the repository's own JavaScript port, checked against the Python one on
+            ten cases to within 10<sup>−8</sup> in η.</p>
+          <article class="card">
+            <p class="card__k">Verification</p>
+            <dl class="spec">
+              <div><dt>Tests passing</dt><dd>509</dd></div>
+              <div><dt>Fresh-clone rebuild</dt><dd>56 / 56 outputs identical</dd></div>
+              <div><dt>Sweep</dt><dd>135,720 runs · 0 errors</dd></div>
+              <div><dt>Sweep η error, 99th percentile</dt><dd>3.3×10⁻⁸</dd></div>
+              <div><dt>Rebuild, one command</dt><dd>43–79 min</dd></div>
+            </dl>
+            <p class="note">Every run carries its own numerical error estimate, from an
+              energy-balance residual integrated alongside the orbit.</p>
+          </article>
+          <p class="beat__note">The rebuild audit found problems before it passed. Committed outputs had
+            gone stale after later code changes (Phase 1 files, one numbers file and the Phase 3
+            optimisation campaign), and an animation's first frame kept a marker from the still drawn before it. Each was regenerated or fixed, with a regression test for the bug, and none of the
+            numbers quoted in the paper outline changed.</p>
 
-          <h3 class="proj__sub">What is <em>not</em> verified.</h3>
-          <p class="beat__body">Tracked as carefully as the code, because on this project the
-            distinction is the point.</p>
+          <h3 class="proj__sub">What is <em>not</em> established.</h3>
+          <p class="beat__body">Tracked as carefully as the code, because the distinction is the point.</p>
           <ul class="unverified">
-            <li><b>Nobody has looked at these screens with a design eye.</b> The brief is emphatic
-              about how this must look, and no human has judged it. No test can.</li>
-            <li><b>Nothing has ever been signed in to.</b> Identity is wired end to end, but no account
-              exists, so no real token has reached the verifier outside synthetic key pairs in tests.</li>
-            <li><b>The containerised real-model path.</b> Real predictors are verified on this machine,
-              not in the deployed image.</li>
-            <li><b>A screen reader.</b> Structure and computed contrast are asserted on every build;
-              nobody has opened the app in NVDA or VoiceOver.</li>
+            <li><b>The novelty is provisional.</b> The literature check was a web search, not a database
+              search, and the 1966 paper by Robbins that the small-Π result is compared with had not
+              yet been read when the register was last updated. The repository's claim register lists
+              nine claims as provisional or assumption-dependent, each with what would settle it.</li>
+            <li><b>Point-mass gravity.</b> Planet oblateness is neglected. A check on ten Jupiter and
+              Saturn cases at 1.1 radii changes η by at most 0.0026, but absolute outgoing speeds shift
+              by 21–28 m/s, so absolute results stay point-mass.</li>
+            <li><b>The planet-centred frame stops being valid</b> for a burn that starts outside the
+              planet's sphere of influence. Those mission samples are flagged and reported separately.</li>
+            <li><b>The mission atlas uses representative presets,</b> not hardware data, and only smooth
+              steering laws were tested.</li>
+            <li><b>One earlier result is only partly reproduced.</b> A thesis figure by Confraria (2020) agrees
+              with the model at a thrust-to-weight of 0.1 and leaves an unresolved gap at 0.5. The raw
+              data behind that figure were not pursued.</li>
+            <li><b>The solar case is planar and point-mass,</b> with constant thrust per motor, bracketed
+              by two-level profiles. The unknown coast between stages is bracketed at 10 s and 60 s, and
+              thermal limits are not modelled.</li>
           </ul>
 
-          <h3 class="proj__sub">Known gaps.</h3>
-          <ul class="unverified">
-            <li><b>Primers and the one-page PDF are not built</b> — the last clause of the definition
-              of done that is not met. The blocker is gone, a target can carry its construct's DNA, and
-              the chemistry is decided and recorded. The designer itself remains.</li>
-            <li><b>The hour-long job timeout is still marginal.</b> A 550-residue target needs about
-              142 minutes, so it finishes across two or three runs rather than one. Continuation is
-              manual.</li>
-            <li><b>ΔΔG intervals.</b> The brief requires an interval and ThermoMPNN has none to give.
-              It reports the point estimate with the reason stated, which leaves the requirement
-              formally unmet, and visibly so.</li>
-            <li><b>Projects cannot be shared.</b> Ownership is per user; a lab wanting a shared project
-              needs an organisation model that is not built.</li>
-          </ul>
+          <p class="beat__note">Not yet a paper. The repository holds a working outline, the figures and
+            the numbers behind it, and has been in feature freeze since 6 October. The only planned
+            follow-up is the check against Robbins (1966).</p>
 
-          <p class="beat__note">Eight of ten clauses in the definition of done are closed. One is
-            knowingly open behind named work. One cannot be closed by anyone who has not looked at the
-            screens.</p>
-
-          <a class="repo" href="https://codon-lab.vercel.app/" target="_blank" rel="noopener">
-            <span class="repo__k">Live at</span>
-            <span class="repo__v">codon-lab.vercel.app</span>
+          <a class="repo" href="https://github.com/vyom-aggarwal/oberth-efficiency-atlas" target="_blank" rel="noopener">
+            <span class="repo__k">Repository · reproducible from a clean clone, with a self-contained explorer</span>
+            <span class="repo__v">github.com/vyom-aggarwal/oberth-efficiency-atlas</span>
           </a>
-          <p class="privnote">Source is private. Available on request.</p>
         </div>
       </div>
     </dialog>
@@ -845,8 +904,8 @@
 }
 </script>
 
-<script type="module" src="assets/js/hero.js?v=f2b34275"></script>
-<script type="module" src="assets/js/projects.js?v=f2b34275"></script>
-<script type="module" src="assets/js/sections.js?v=f2b34275"></script>
+<script type="module" src="assets/js/hero.js?v=bcea9a20"></script>
+<script type="module" src="assets/js/projects.js?v=bcea9a20"></script>
+<script type="module" src="assets/js/sections.js?v=bcea9a20"></script>
 </body>
 </html>
