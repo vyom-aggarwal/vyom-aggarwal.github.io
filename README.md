@@ -31,8 +31,8 @@ index.html          The whole page. Every word of both project write-ups is in
 404.html
 
 assets/css/         tokens · base · hero · projects · sections
-assets/js/          hero · earth · projects · cards · rig · sections · kit
-                    lipase.js   baked alpha-carbon trace of the seeded target
+assets/js/          hero · earth · projects · cards · rig · flyby · sections · kit
+                    oberth.js   the Oberth atlas's flyby simulator, vendored
                     three.module.min.js   vendored, MIT
 assets/fonts/       Archivo, JetBrains Mono, Departure Mono — all SIL OFL
 assets/img/         Earth texture and poster, card posters, grain, icons
@@ -78,7 +78,7 @@ that is used.
 
 The research section is a launcher for two projects. Each card opens a native
 `<dialog>` carrying the full write-up, deep-linkable at
-`#project/fault-tolerant-control` and `#project/codon-lab`, with the first also
+`#project/fault-tolerant-control` and `#project/oberth-efficiency-atlas`, with the first also
 addressable per step, `#project/fault-tolerant-control/3`.
 
 ---
@@ -86,6 +86,8 @@ addressable per step, `#project/fault-tolerant-control/3`.
 ## Credits
 
 Earth imagery is NASA public domain; provenance and the exact processing are in
-`assets/img/CREDITS.md`. The alpha-carbon trace in `assets/js/lipase.js` is the
-AlphaFold DB model for UniProt P37957, with its source recorded in the file.
+`assets/img/CREDITS.md`. `assets/js/oberth.js` is `explorer/sim.js` from
+[oberth-efficiency-atlas](https://github.com/vyom-aggarwal/oberth-efficiency-atlas),
+with its commit recorded in the file header. It is vendored, not rewritten: to change
+it, change it there and copy it over.
 Font licences are in `assets/fonts/LICENSES.md`.

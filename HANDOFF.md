@@ -32,7 +32,7 @@ does not exist. The headline carries the direction instead.
 ## 2. Ground rules that shaped the build
 
 - **No invented facts.** Every number on the page traces to something real: the
-  research repository's CSVs, the Codon Lab README, or a structure file. Where a
+  research repository's CSVs, the Oberth atlas repository's numbers files, or a simulator run. Where a
   figure could only be obtained by inventing it, there is no figure.
 - **No build step.** Static files, served as-is. `tools/stamp.py` writes cache
   busters into the source and its output is committed; the site never needs it
@@ -108,9 +108,11 @@ scene modules expose `snapshot()` for exactly this.
 ## 5. Open threads
 
 1. **Re-run Lighthouse.** See §3.
-2. **The Codon Lab repository is private.** The panel currently ends with a line
-   saying it is available on request. Decide: link it, make it public, or drop
-   the line.
+2. **The Oberth write-up quotes the repository as it stood on 6 October.** Its
+   figures (509 tests, 56/56 outputs reproduced, the 135,720-run sweep) and its
+   "novelty is provisional" paragraph, which says the 1966 Robbins paper had not
+   yet been read, are dated by that state. Re-check them against the repository
+   before the site is shown to anyone.
 3. **Safari is untested.** `backdrop-filter` on the glass is the thing most
    likely to differ.
 4. **The quadruped is a stand-in.** It is geometry authored from primitives in
