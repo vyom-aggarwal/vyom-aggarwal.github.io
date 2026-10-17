@@ -3,24 +3,11 @@
 
    Everything here is progressive enhancement. With this file
    removed the panel still renders, reads, and navigates; only
-   the clock, the 3D object, and the stage-2 comparison controls
-   go away.
+   the 3D object and the stage-2 comparison controls go away.
    ═══════════════════════════════════════════════════════════ */
 
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const params = new URLSearchParams(location.search);
-
-/* ── local clock, Lathrop ─────────────────────────────────── */
-const clock = document.getElementById('clock');
-if (clock) {
-  const fmt = new Intl.DateTimeFormat('en-GB', {
-    timeZone: 'America/Los_Angeles',
-    hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false,
-  });
-  const tick = () => { clock.textContent = fmt.format(new Date()); };
-  tick();
-  setInterval(tick, 1000);
-}
 
 /* Capture aid: ?still drops the .js flag the entrance animations are
    gated on, so a headless screenshot lands on the final state instead
