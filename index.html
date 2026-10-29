@@ -230,7 +230,7 @@
     <span class="u-anchor" id="projects" aria-hidden="true"></span>
 
     <div class="section__head">
-      <h2 class="section__title">Two projects, both built <em>instrument-first</em>.</h2>
+      <h2 class="section__title">Selected work, <em>built instrument-first</em>.</h2>
       <p class="section__lede">Each one built and checked its instrument before it quoted a result,
         because a number you cannot defend is worse than no number at all.</p>
     </div>
@@ -245,8 +245,8 @@
           <span class="pcard__meta">
             <span class="pcard__state"><i></i>Adapter built · correction channel under test</span>
             <span class="pcard__title">Fault-tolerant control</span>
-            <span class="pcard__line">Keeping a machine mission-capable after an actuator fails,
-              measured on a simulated quadruped.</span>
+            <span class="pcard__line">Exploring how a simulated quadruped can remain capable after an
+              actuator failure.</span>
             <span class="pcard__chips"><b>10/10 seeds</b><b>1.2–82.3% recovery</b><b>0.055 m/s offset ceiling</b></span>
           </span>
         </button>
@@ -260,9 +260,9 @@
           <span class="pcard__meta">
             <span class="pcard__state"><i></i>Analysis frozen · novelty claims provisional</span>
             <span class="pcard__title">Oberth Efficiency Atlas</span>
-            <span class="pcard__line">How much of the Oberth benefit does a real burn keep? A finite-burn
-              flyby simulator, swept across six bodies and five engine classes, and a one-number test
-              for when the textbook model holds.</span>
+            <span class="pcard__line">How much of the Oberth benefit survives a real, finite burn? A
+              flyby simulator across six bodies and five engine classes, with a compact test for when
+              the textbook model holds.</span>
             <span class="pcard__chips"><b>135,720-run sweep</b><b>509 tests</b><b>56/56 outputs reproduced</b></span>
           </span>
         </button>
@@ -278,7 +278,7 @@
           <p class="proj__eyebrow">Project A · UC Santa Cruz AIEA Lab</p>
           <h2 class="proj__title" id="ftc-title">Fault Recovery in RL Locomotion Through Online Residual Adaptation</h2>
           <p class="proj__lede">Can a small correction module, updated <em>during</em> execution, restore a
-            quadruped's gait after a hardware fault without retraining the policy underneath?</p>
+            quadruped's gait after a hardware fault without retraining its underlying policy?</p>
           <button class="proj__close" type="button" data-close><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3l10 10M13 3L3 13"/></svg><span class="u-sr">Close project</span></button>
         </header>
 
@@ -321,7 +321,7 @@
       <article class="step is-active" data-step="1" aria-label="Step 1 of 6, Premise">
         <div class="beat">
             <p class="beat__no">01 — Premise</p>
-            <h3 class="beat__title">Policies are trained on robots that <em>never break</em>.</h3>
+            <h3 class="beat__title">Most policies are trained on robots that <em>never break</em>.</h3>
             <p class="beat__body">In the real world motors weaken, joints seize, and sensors start
               reporting values that aren't true. A locomotion policy trained only under ideal
               conditions has never once been shown what failure feels like — so it has no
@@ -330,7 +330,7 @@
       <article class="step" data-step="2" aria-label="Step 2 of 6, Apparatus">
         <div class="beat">
             <p class="beat__no">02 — Apparatus</p>
-            <h3 class="beat__title">A quadruped you can break <em>on purpose</em>.</h3>
+            <h3 class="beat__title">A quadruped designed to fail <em>on purpose</em>.</h3>
             <p class="beat__body">Twelve revolute joints in PyBullet, physics at 240&nbsp;Hz stepped
               down to 60&nbsp;Hz control. PPO trained across <b>ten seeds at 1.5M timesteps</b> —
               all ten converged to a usable gait, so every one of them is in the experiment.</p>
@@ -396,7 +396,7 @@
       <article class="step" data-step="5" aria-label="Step 5 of 6, Measurement">
         <div class="beat">
             <p class="beat__no">05 — Measurement</p>
-            <h3 class="beat__title">First, build an instrument <em>you can trust</em>.</h3>
+            <h3 class="beat__title">First, build an instrument <em>worth trusting</em>.</h3>
             <p class="beat__body">The original recovery criterion latched onto the first instantaneous
               velocity crossing and scored ~100% recovery on every fault — including 100%
               recovery alongside a 36.5% fall rate, which cannot both be true. It was rebuilt:
@@ -497,9 +497,9 @@
         <header class="proj__head">
           <p class="proj__eyebrow">Project B · Spacecraft dynamics</p>
           <h2 class="proj__title" id="oa-title">Oberth Efficiency Atlas</h2>
-          <p class="proj__lede">A real burn is not instantaneous, so it keeps only part of the textbook
-            Oberth benefit. This project measures <em>how much</em>, across six bodies and five engine
-            classes, and tests whether one dimensionless number organises the answer.</p>
+          <p class="proj__lede">A real burn is not instantaneous, so it retains only part of the textbook
+            Oberth benefit. This project measures <em>how much</em> across six bodies and five engine
+            classes, then tests whether one dimensionless number organizes the result.</p>
         </header>
 
 
@@ -538,27 +538,27 @@
         </div>
 
         <div class="proj__body">
-          <p class="beat__body">The Oberth effect is that the same Δv buys more energy when it is spent
-            deep in a gravity well, at high speed. Mission design usually approximates the burn as
-            instantaneous, at periapsis. This project measures the correction. <b>η</b> is the share of
-            the impulsive Oberth bonus (the gain in excess speed beyond Δv itself) that a real burn
-            keeps, and <b>Π</b> is how long the burn lasts compared with the time to cover a periapsis
-            distance at periapsis speed.</p>
-          <p class="beat__body">The picture above is the simulator, not a recording of a result. Move the
-            slider and it integrates the whole flyby again, with the same Δv spent over a longer or
-            shorter burn. The bright arc is the burn and the blue line is coast; the dashed lines are the
-            unpowered arrival and the textbook impulsive departure. η and the loss are read straight
-            from the simulator's output.</p>
+          <p class="beat__body">The Oberth effect means that the same Δv adds more energy when it is spent
+            deep in a gravity well, at high speed. Mission design often treats that burn as instantaneous
+            at periapsis. This project measures the correction. <b>η</b> is the share of the impulsive
+            Oberth bonus — the gain in excess speed beyond Δv itself — retained by a real burn, and
+            <b>Π</b> compares the burn duration with the time required to travel one periapsis distance
+            at periapsis speed.</p>
+          <p class="beat__body">The view above is a simulator, not a recording of a result. Moving the
+            slider integrates the full flyby again with the same Δv distributed across a longer or shorter
+            burn. The bright arc marks the burn and the blue line marks coast; dashed lines show the
+            unpowered arrival and textbook impulsive departure. η and loss come directly from the
+            simulator output.</p>
           <p class="beat__note">Held fixed: arrival speed equal to the escape speed at periapsis,
             Δv = 0.1 v<sub>p</sub>, Δv/c = 0.3, prograde thrust centred on periapsis, a point-mass
             planet. An illustrative case, not a mission. Π is the burn's duration in units of
             r<sub>p</sub>/v<sub>p</sub>.</p>
 
-          <h3 class="proj__sub">What the sweep <em>found</em>.</h3>
+          <h3 class="proj__sub">What the sweep <em>shows</em>.</h3>
           <div class="inv">
             <article class="inv__item">
               <p class="inv__no">01 — Short burns</p>
-              <p class="inv__title">The loss is quadratic in Π.</p>
+              <p class="inv__title">Loss scales quadratically with Π.</p>
               <p class="inv__body">For a prograde burn centred on periapsis, the loss is at most about
                 <b>Π²/96 of Δv</b>, for Π up to about 1 and modest Δv/v<sub>p</sub> and mass ratio; larger
                 values scale it by a closed-form factor. A burn shorter than r<sub>p</sub>/v<sub>p</sub>
@@ -592,7 +592,7 @@
             </article>
             <article class="inv__item">
               <p class="inv__no">04 — Real engines</p>
-              <p class="inv__title">Retiming the burn barely helps.</p>
+              <p class="inv__title">Retiming the burn rarely changes much.</p>
               <p class="inv__body">Optimising where the burn sits relative to periapsis recovers a median
                 of <b>7×10<sup>−6</sup> percentage points</b> of η for chemical engines, 8×10<sup>−5</sup>
                 for nuclear thermal and 0.0068 for electric, over 5,895 valid mission samples. The
@@ -602,7 +602,7 @@
             </article>
           </div>
 
-          <h3 class="proj__sub">One solar burn, <em>three engines</em>.</h3>
+          <h3 class="proj__sub">One solar burn, <em>three engine classes</em>.</h3>
           <p class="beat__body">Hibberd, Eubanks and Hein's solar Oberth burn to catch 3I/ATLAS spends
             8.36 km/s at 3.2 solar radii. Flown with their motors, the impulsive model holds. Flown
             with other engines at the same geometry, it does not.</p>
@@ -656,7 +656,7 @@
             optimisation campaign), and an animation's first frame kept a marker from the still drawn before it. Each was regenerated or fixed, with a regression test for the bug, and none of the
             numbers quoted in the paper outline changed.</p>
 
-          <h3 class="proj__sub">What is <em>not</em> established.</h3>
+          <h3 class="proj__sub">What is <em>not yet</em> established.</h3>
           <p class="beat__body">Tracked as carefully as the code, because the distinction is the point.</p>
           <ul class="unverified">
             <li><b>The novelty is provisional.</b> The literature check was a web search, not a database
@@ -715,21 +715,21 @@
         <span class="role__title"><i class="role__dot" aria-hidden="true"></i>Student Researcher</span>
         <span class="role__org">Massachusetts Institute of Technology</span>
         <span class="role__date">Jul 2026 — Present</span>
-        <span class="role__desc">Assisting in the development of a next-generation AI platform that connects knowledge, reveals insights, and powers collaboration.</span>
+        <span class="role__desc">Contributing to a next-generation AI platform designed to connect knowledge, surface insight, and support collaboration.</span>
       </li>
       <li class="role" data-tags="research">
         <span class="role__no">02</span>
         <span class="role__title"><i class="role__dot" aria-hidden="true"></i>Student Researcher</span>
         <span class="role__org">University of California, Santa Cruz</span>
         <span class="role__date">Jul 2026 — Present</span>
-        <span class="role__desc">Machine learning applied to robot control, and the recovery behaviour that has to follow a fault.</span>
+        <span class="role__desc">Applying machine learning to robot control and to recovery behavior following faults.</span>
       </li>
       <li class="role" data-tags="research">
         <span class="role__no">03</span>
         <span class="role__title"><i class="role__dot" aria-hidden="true"></i>Research Fellow</span>
         <span class="role__org">Lumiere Education</span>
         <span class="role__date">Jun 2026 — Sep 2026</span>
-        <span class="role__desc">Program ended in September. Conducted research alongside Fernanda-Maria Lugo-Bolanos from Brown University.</span>
+        <span class="role__desc">Completed research with Fernanda-Maria Lugo-Bolanos of Brown University.</span>
       </li>
       <li class="role" data-tags="robotics leadership">
         <span class="role__no">04</span>
@@ -743,24 +743,24 @@
         <span class="role__title"><i class="role__dot" aria-hidden="true"></i>Founder</span>
         <span class="role__org">Apex STEM</span>
         <span class="role__date">Dec 2024 — Present</span>
-        <span class="role__desc">Founded and runs a STEM initiative from the ground up.</span>
+        <span class="role__desc">Founded and leads an independent STEM initiative.</span>
       </li>
       <li class="role" data-tags="math">
         <span class="role__no">06</span>
         <span class="role__title">Academic Writing Intern</span>
         <span class="role__org">TMAS Academy</span>
         <span class="role__date">Jun 2025 — Aug 2026</span>
-        <span class="role__desc">Wrote a free AMC 8 preparation book, now in publication.</span>
+        <span class="role__desc">Authored a free AMC 8 preparation book, now in publication.</span>
       </li>
       <li class="role" data-tags="leadership">
         <span class="role__no">07</span>
         <span class="role__title"><i class="role__dot" aria-hidden="true"></i>Troop Guide</span>
         <span class="role__org">Boy Scouts of America · Manteca, CA</span>
         <span class="role__date">Nov 2023 — Present</span>
-        <span class="role__desc">Mentors younger scouts in outdoor skills and leadership.</span>
+        <span class="role__desc">Mentors younger scouts in outdoor skills and leadership development.</span>
       </li>
     </ol>
-    <p class="roles__empty" id="rolesEmpty" hidden>No entries in this discipline.</p>
+    <p class="roles__empty" id="rolesEmpty" hidden>No entries match this filter.</p>
   </section>
 </div>
 
@@ -776,8 +776,8 @@
         <span class="edu__chip">High school</span>
         <h3 class="edu__name">River Islands High School</h3>
         <p class="edu__meta">Aug 2025 — Jun 2029 · Diploma candidate</p>
-        <div class="prose"><p>Sophomore year, <b>4.86 weighted GPA</b>. Electives: AP Computer Science
-          Principles, STEM Leadership, and AP Psychology.</p></div>
+        <div class="prose"><p>Currently a sophomore with a <b>4.86 weighted GPA</b>. Coursework includes
+          AP Computer Science Principles, STEM Leadership, and AP Psychology.</p></div>
         <dl class="spec">
           <div><dt>GPA</dt><dd>4.86 W</dd></div>
           <div><dt>Class of</dt><dd>2029</dd></div>
@@ -787,8 +787,8 @@
         <span class="edu__chip">Dual enrollment</span>
         <h3 class="edu__name">San Joaquin Delta College</h3>
         <p class="edu__meta">Jun 2025 — May 2029 · A.S. candidate</p>
-        <div class="prose"><p>Early College Pathway program, <b>4.0 unweighted GPA</b>. Currently
-          enrolled in CS11, POLS C1000, and PSYC C1000.</p></div>
+        <div class="prose"><p>Early College Pathway program with a <b>4.0 unweighted GPA</b>. Current
+          coursework includes CS11, POLS C1000, and PSYC C1000.</p></div>
         <dl class="spec">
           <div><dt>GPA</dt><dd>4.0 UW</dd></div>
           <div><dt>Track</dt><dd>Early College Pathway</dd></div>
@@ -802,7 +802,7 @@
 <div class="panel">
   <section class="section" id="awards">
     <div class="section__head">
-      <h2 class="section__title">Awards</h2>
+      <h2 class="section__title">Recognition and <em>competition</em>.</h2>
     </div>
 
     <div class="awards">
@@ -814,7 +814,7 @@
       <article class="card award">
         <span class="award__result">Top ~14%</span>
         <h3 class="award__name">AIME Qualifier</h3>
-        <div class="prose"><p>Scored in the top ~14% of competitors on the AMC 12.</p></div>
+        <div class="prose"><p>Placed among roughly the top 14% of AMC 12 competitors.</p></div>
       </article>
       <article class="card award">
         <span class="award__result">Winner · CA-13</span>
@@ -824,17 +824,17 @@
       <article class="card award">
         <span class="award__result">Honorable mention</span>
         <h3 class="award__name">Stanford Math Tournament</h3>
-        <div class="prose"><p>Top 25% of competitors.</p></div>
+        <div class="prose"><p>Placed in the top 25% of competitors.</p></div>
       </article>
       <article class="card award">
         <span class="award__result">Distinguished honor roll</span>
         <h3 class="award__name">Berkeley Math Tournament</h3>
-        <div class="prose"><p>Top 20% of competitors.</p></div>
+        <div class="prose"><p>Placed in the top 20% of competitors.</p></div>
       </article>
       <article class="card award">
         <span class="award__result">2026 · 2nd contest</span>
         <h3 class="award__name">USACO Silver</h3>
-        <div class="prose"><p>Silver division standing in the USA Computing Olympiad.</p></div>
+        <div class="prose"><p>Achieved Silver division standing in the USA Computing Olympiad.</p></div>
       </article>
     </div>
   </section>
@@ -845,8 +845,8 @@
   <section class="section contact" id="contact">
     <div class="section__head" style="max-width: none">
       <h2 class="contact__title">Let's build something</h2>
-      <p class="contact__sub">Open to <b>aerospace engineering internships</b>, research collaborations,
-        and math problems worth arguing about.</p>
+      <p class="contact__sub">Open to <b>engineering internships</b>, research collaborations, and
+        challenging problems worth working through.</p>
     </div>
 
     <div class="contact__links">
