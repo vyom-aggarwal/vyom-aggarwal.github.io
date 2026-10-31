@@ -20,7 +20,7 @@
    unpowered arrival and the textbook impulsive departure.
    ═══════════════════════════════════════════════════════════ */
 
-import { simulate, fromTargets } from './oberth.js?v=ade0bd71';
+import { simulate, fromTargets } from './oberth.js?v=748f5497';
 
 const CASE = { vOverVesc: 1.0, dvOverVp: 0.1, dvOverC: 0.3 };
 
@@ -123,11 +123,13 @@ export function initFlyby(canvas, root, { reducedMotion = false } = {}) {
     loss: $('[data-fly-loss]'),
   };
 
+  /* read off the canvas, not the root: the stage is an instrument
+     surface with its own dark tokens in either page theme */
   const col = (name, fallback) =>
-    getComputedStyle(document.documentElement).getPropertyValue(name).trim() || fallback;
+    getComputedStyle(canvas).getPropertyValue(name).trim() || fallback;
   const C = {
-    limb: col('--limb', '#8FE0F5'),
-    signal: col('--signal', '#4A9EE0'),
+    limb: col('--limb', '#FF7A45'),
+    signal: col('--signal', '#5B7CFF'),
     ink: col('--ink', '#E8EBEE'),
     ink2: col('--ink-2', '#A3ACB6'),
     ink3: col('--ink-3', '#8C95A1'),
@@ -252,8 +254,8 @@ export function initFlyby(canvas, root, { reducedMotion = false } = {}) {
 
     /* the planet's pull, as light rather than as a disc */
     const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(40, s * 1.5));
-    g.addColorStop(0, 'rgba(143,224,245,.16)');
-    g.addColorStop(1, 'rgba(143,224,245,0)');
+    g.addColorStop(0, 'rgba(91,124,255,.16)');
+    g.addColorStop(1, 'rgba(91,124,255,0)');
     ctx.fillStyle = g;
     ctx.fillRect(0, 0, w, h);
 
@@ -265,7 +267,7 @@ export function initFlyby(canvas, root, { reducedMotion = false } = {}) {
       ctx.setLineDash([]);
       ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx, cy - s); ctx.stroke();
       ctx.fillStyle = C.ink3;
-      ctx.font = '500 11px "JetBrains Mono", ui-monospace, monospace';
+      ctx.font = '500 11px "Geist Mono", ui-monospace, monospace';
       ctx.fillText('r_p', cx + 7, cy - s * 0.5);
       ctx.restore();
     }
@@ -286,7 +288,7 @@ export function initFlyby(canvas, root, { reducedMotion = false } = {}) {
     path(smooth(last, track.length - 1)); ctx.stroke();
 
     const burnPts = smooth(first, last);
-    ctx.strokeStyle = 'rgba(143,224,245,.22)'; ctx.lineWidth = 11;
+    ctx.strokeStyle = 'rgba(255,122,69,.22)'; ctx.lineWidth = 11;
     path(burnPts); ctx.stroke();
     ctx.strokeStyle = C.limb; ctx.lineWidth = 4;
     path(burnPts); ctx.stroke();
@@ -320,8 +322,8 @@ export function initFlyby(canvas, root, { reducedMotion = false } = {}) {
         ctx.stroke();
       }
       const halo = ctx.createRadialGradient(X, Y, 0, X, Y, 14);
-      halo.addColorStop(0, m.burn ? 'rgba(143,224,245,.55)' : 'rgba(232,235,238,.35)');
-      halo.addColorStop(1, 'rgba(143,224,245,0)');
+      halo.addColorStop(0, m.burn ? 'rgba(255,122,69,.55)' : 'rgba(232,235,238,.35)');
+      halo.addColorStop(1, 'rgba(255,122,69,0)');
       ctx.fillStyle = halo;
       ctx.beginPath(); ctx.arc(X, Y, 14, 0, 2 * Math.PI); ctx.fill();
       ctx.fillStyle = m.burn ? C.limb : C.ink;
