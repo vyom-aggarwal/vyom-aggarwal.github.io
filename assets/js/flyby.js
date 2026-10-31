@@ -20,7 +20,7 @@
    unpowered arrival and the textbook impulsive departure.
    ═══════════════════════════════════════════════════════════ */
 
-import { simulate, fromTargets } from './oberth.js?v=3fcce214';
+import { simulate, fromTargets } from './oberth.js?v=39b3c8e2';
 
 const CASE = { vOverVesc: 1.0, dvOverVp: 0.1, dvOverC: 0.3 };
 

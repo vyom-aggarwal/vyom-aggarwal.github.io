@@ -9,7 +9,7 @@
    and navigates.
    ═══════════════════════════════════════════════════════════ */
 
-import { initCursor } from './cursor.js?v=3fcce214';
+import { initCursor } from './cursor.js?v=39b3c8e2';
 
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const finePointer = matchMedia('(hover: hover) and (pointer: fine)').matches;
@@ -110,7 +110,7 @@ const toggleTheme = (() => {
   };
 
   const boot = () => {
-    import('./terrain.js?v=3fcce214')
+    import('./terrain.js?v=39b3c8e2')
       .then(({ initTerrain }) => initTerrain(canvas, { reducedMotion, onRead }))
       .catch(() => { /* the hero is the type on the sheet without it */ });
   };

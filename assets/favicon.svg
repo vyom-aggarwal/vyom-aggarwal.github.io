@@ -2,18 +2,14 @@
   <!--
     The mark: an A drawn as a flyby. The path is the letter, its two
     legs the A's sides and its turn at periapsis the apex; the planet
-    sits inside the turn as the A's counter; the stretch around
-    periapsis, where a burn does the most, is the one blue stroke.
+    sits inside the turn as the A's counter. One colour throughout.
 
     On a dark tile so it reads on light and dark browser chrome alike.
-    The burn is the same curve dashed to its middle quarter, so it sits
-    on the path exactly at any size.
   -->
   <rect width="32" height="32" rx="7" fill="#0A0A0B"/>
   <rect x="0.5" y="0.5" width="31" height="31" rx="6.5" fill="none" stroke="#EDEDE7" stroke-opacity=".12"/>
   <g transform="translate(16 16) scale(0.86) translate(-16 -16.5)">
-    <circle cx="16" cy="16" r="2.9" fill="#EDEDE7"/>
+    <circle cx="16" cy="17.6" r="2.9" fill="#EDEDE7"/>
     <path d="M5 27 C10.5 15.5 12.6 5.5 16 5.5 C19.4 5.5 21.5 15.5 27 27" fill="none" stroke="#EDEDE7" stroke-width="2.7" stroke-linecap="round"/>
-    <path d="M5 27 C10.5 15.5 12.6 5.5 16 5.5 C19.4 5.5 21.5 15.5 27 27" pathLength="100" fill="none" stroke="#5B7CFF" stroke-width="3.1" stroke-linecap="round" stroke-dasharray="26 100" stroke-dashoffset="-37"/>
   </g>
 </svg>

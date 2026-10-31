@@ -159,23 +159,16 @@ em { font-style: normal; }
 }
 .brand { display: inline-flex; align-items: center; gap: 12px; justify-self: start; }
 .brand__mark { width: 30px; height: 30px; color: var(--ink); overflow: visible; }
-.brand__path, .brand__burn { fill: none; stroke-width: 2.4; stroke-linecap: round; }
-.brand__path { stroke: currentColor; }
-/* the burn is the same curve, dashed to show only the stretch around
-   periapsis, so it sits on the path exactly at any size */
-.brand__burn { stroke: var(--accent); stroke-width: 2.8; stroke-dasharray: 26 100; stroke-dashoffset: -37; }
+.brand__path { fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; }
 .brand__planet { fill: currentColor; }
-/* On load the mark is flown, not written: the planet appears, the path
-   is traced from one leg to the other, and the burn lights as the
-   trace passes periapsis. */
+/* On load the mark is flown, not written: the planet appears, then the
+   path is traced from one leg to the other. */
 @media (prefers-reduced-motion: no-preference) {
   .js .brand__planet { transform-box: fill-box; transform-origin: center; animation: planet-in 0.45s var(--ease) both; }
   .js .brand__path { stroke-dasharray: 1; animation: fly 1.2s var(--ease-in-out) 0.25s both; }
-  .js .brand__burn { animation: burn-on 0.5s var(--ease) 0.75s both; }
 }
 @keyframes planet-in { from { transform: scale(0); } to { transform: none; } }
 @keyframes fly { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
-@keyframes burn-on { from { opacity: 0; } to { opacity: 1; } }
 .brand__name { color: var(--ink); font-family: var(--font-mono); font-size: var(--fs-micro); font-weight: 500; letter-spacing: var(--track-wide); text-transform: uppercase; }
 .brand__role { color: var(--ink-3); font-family: var(--font-mono); font-size: var(--fs-micro); letter-spacing: var(--track-wide); text-transform: uppercase; }
 
