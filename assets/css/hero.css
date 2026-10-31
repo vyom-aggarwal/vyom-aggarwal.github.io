@@ -1,266 +1,186 @@
 /* ═══════════════════════════════════════════════════════════
-   HERO — the studio panel, stage 2
+   HERO — a title block on a topographic sheet.
 
-   z-order, declared once so the wordmark interleave stays
-   readable instead of becoming a pile of magic numbers:
-     1  wordmark, back half
-     2  robot canvas and its halo
-     3  wordmark, front half + rim spill
-     4  copy, nav, rail, anything you can read or click
+   The map is a WebGL canvas behind everything (terrain.js); the
+   type sits on top and never depends on it. Then a ticker, and
+   the figure parts that Fig. 02 in the research section reuses.
    ═══════════════════════════════════════════════════════════ */
 
 .hero {
-  position: relative;
-  /* The scroll cue sits in a notch bitten out of the panel's bottom
-     edge, so for the cue to land on the bottom of the window the panel
-     has to reach it. Only the top inset and the two 1px borders come
-     off the viewport height; the bottom inset does not. */
-  min-height: calc(100svh - var(--inset) - 2px);
-  padding: var(--gutter);
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  grid-template-rows: auto 1fr auto;
-  column-gap: var(--s-4);
-  row-gap: var(--s-5);
-  isolation: isolate;
+  position: relative; isolation: isolate;
+  min-height: 100svh;
+  padding-top: calc(var(--nav-h) + 8px);
+  overflow: hidden;
+}
+.hero__map {
+  position: absolute; inset: 0; z-index: -1;
+  width: 100%; height: 100%;
+  opacity: 0; transition: opacity 1.6s var(--ease);
+  touch-action: pan-y;
+}
+.hero__map.is-on { opacity: 1; }
+.hero__wrap {
+  display: flex; flex-direction: column;
+  min-height: calc(100svh - var(--nav-h) - 8px);
 }
 
-/* ═══ 1 · top bar ═══════════════════════════════════════ */
-.bar {
-  grid-column: 1 / -1;
-  display: flex; align-items: center; gap: var(--s-4);
-  position: relative; z-index: 4;
+.strip {
+  display: grid; grid-template-columns: 1fr auto 1fr; gap: var(--s-3);
+  padding: 16px 0; border-bottom: 1px solid var(--hair);
+  color: var(--ink-3);
+}
+.strip__mid { text-align: center; }
+.strip__end { justify-self: end; display: inline-flex; align-items: center; gap: 10px; }
+@media (max-width: 900px) {
+  .strip { grid-template-columns: 1fr auto; }
+  .strip__mid { display: none; }
+}
+@media (max-width: 480px) {
+  .strip > :first-child { display: none; }
+  .strip { grid-template-columns: 1fr; }
+  .strip__end { justify-self: start; }
 }
 
-.ident { display: flex; align-items: center; gap: 12px; text-decoration: none; }
-.ident__mark { width: 30px; height: 30px; border-radius: 7px; display: block; }
-.ident__name { color: var(--ink); font-weight: 600; font-size: var(--fs-sm); letter-spacing: -0.01em; }
-
-.navpill {
-  margin-inline: auto;
-  display: flex; align-items: center; gap: 2px;
-  padding: 5px; border-radius: var(--r-pill);
-}
-.navpill a {
-  padding: 9px 16px; border-radius: var(--r-pill);
-  font-size: var(--fs-sm); font-weight: var(--wt-ui); color: var(--ink-2);
-  text-decoration: none; white-space: nowrap;
-  transition: color var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease);
-}
-.navpill a:hover { color: var(--ink); }
-.navpill a[aria-current="true"] {
-  background: rgb(255 255 255 / 0.09);
+/* ── the headline ───────────────────────────────────────── */
+.hero__title {
+  margin-top: auto;
+  padding-top: clamp(40px, 7vh, 96px);
+  font-size: var(--fs-hero);
+  font-weight: 500;
+  line-height: 0.86;
+  letter-spacing: var(--track-display);
   color: var(--ink);
+  font-feature-settings: 'ss01', 'kern';
 }
+/* the headline's box hugs its text, so the cursor reads the map beside
+   it as map, not as text */
+.hero__title { width: fit-content; max-width: 100%; }
+.hero__title .line { display: block; width: fit-content; overflow: hidden; padding-bottom: 0.07em; margin-bottom: -0.07em; }
+.hero__title .line > span { display: block; }
 
-/* ═══ 2 · middle band ═══════════════════════════════════ */
-.head { grid-column: 1 / 8; align-self: center; position: relative; z-index: 4; }
+/* transform only: the headline is the LCP element */
+@media (prefers-reduced-motion: no-preference) {
+  .js .hero__title .line > span { animation: rise 1.1s var(--ease) both; }
+  .js .hero__title .line:nth-child(3) > span { animation-delay: 0.08s; }
+}
+@keyframes rise { from { transform: translateY(105%); } to { transform: none; } }
 
-
-.display {
-  font-size: var(--fs-display);
-  font-weight: var(--wt-display);
-  line-height: var(--lh-display);
+.hero__sub {
+  margin-top: clamp(14px, 1.6vw, 24px);
+  font-size: var(--fs-sub);
+  font-weight: 500; line-height: 0.98;
   letter-spacing: var(--track-tight);
   color: var(--ink);
-  text-transform: uppercase;
+  max-width: 27ch;
 }
-/* the stagger: each line carries its own left offset, so the block
-   reads as a shape rather than as a paragraph */
-.display > span { display: block; white-space: nowrap; }
-
-.display > span:nth-child(1) { margin-left: 12%; }
-.display > span:nth-child(2) { margin-left: 0; }
-.display > span:nth-child(3) { margin-left: 17%; }
-.display > span:nth-child(4) { margin-left: 4%; }
-.display em { font-style: normal; color: var(--signal); }
-
-/* ═══ 3 · bottom band ═══════════════════════════════════ */
-.foot { grid-column: 1 / 6; align-self: end; position: relative; z-index: 4; }
-.foot__lede { max-width: 42ch; font-size: var(--fs-lede); color: var(--ink-2); }
-.foot__lede em { font-style: normal; color: var(--signal); }
-.foot__cta { display: flex; gap: 12px; margin-top: var(--s-4); flex-wrap: wrap; }
-
-
-/* ═══ the window ════════════════════════════════════════
-   The panel is no longer a card with an object on it. It is a
-   viewport, and the scene fills it edge to edge; Earth is cropped
-   by the panel so its full curve is implied rather than drawn. */
-.stage {
-  position: absolute; inset: 0; z-index: 2;
-  border-radius: inherit; overflow: hidden;
-  pointer-events: none;
-}
-.stage__canvas, .stage__poster {
-  position: absolute; inset: 0; width: 100%; height: 100%;
-  object-fit: cover; object-position: 62% 62%;
-}
-/* A scrim under the chrome. The window is a photograph with a wide
-   brightness range, and copy sitting straight on it is unreadable
-   wherever the city lights are dense. Three soft gradients hold the
-   edges down without closing the window. */
-.scrim {
-  position: absolute; inset: 0; z-index: 3; pointer-events: none;
-  border-radius: inherit;
-  background:
-    linear-gradient(to bottom, rgb(0 0 0 / 0.78) 0%, rgb(0 0 0 / 0) 20%),
-    linear-gradient(to right,  rgb(0 0 0 / 0.80) 0%, rgb(0 0 0 / 0.30) 32%, rgb(0 0 0 / 0) 48%),
-    linear-gradient(to top,    rgb(0 0 0 / 0.62) 0%, rgb(0 0 0 / 0) 24%);
-}
-
-.stage__canvas { opacity: 0; transition: opacity 0.6s var(--ease); }
-.stage__canvas.is-live { opacity: 1; }
-.stage__poster { transition: opacity 0.6s var(--ease); }
-.stage.is-live .stage__poster { opacity: 0; }
-
-/* ═══ the pixel wordmark ════════════════════════════════
-   One block, not two halves in opposite corners. It sits in the dark
-   band between the nav and the planet's limb, right-aligned against
-   the same edge as the rail, at one size for both words — so it reads
-   as a signature rather than as debris.
-
-   --ghost is white at 8%. That is deliberate: it carries no
-   information, the name is in the heading and the nav, and it must
-   never compete with the headline. It lives here, on the dark side of
-   the frame, because over the city lights it would disappear
-   entirely. */
-.word {
-  position: absolute; z-index: 1;
-  top: 15%; right: var(--gutter);
-  margin: 0; text-align: right;
-  pointer-events: none; user-select: none;
-  font-family: var(--font-pixel);
-  font-size: var(--fs-word);
-  line-height: 1.06;
-  color: var(--ghost);
-  text-transform: uppercase;
-}
-.word i { display: block; font-style: normal; }
-
-/* ═══ social rail ═══════════════════════════════════════ */
-.rail {
-  position: absolute; z-index: 4;
-  right: var(--gutter); top: 50%; transform: translateY(-50%);
-  display: flex; flex-direction: column;
-  border-radius: var(--r-pill); padding: 6px;
-}
-.rail a {
-  display: grid; place-items: center;
-  width: 40px; height: 40px; border-radius: var(--r-pill);
-  color: var(--ink-3);
-  transition: color var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease);
-}
-.rail a:hover { color: var(--limb); background: rgb(255 255 255 / 0.07); }
-.rail svg { width: 17px; height: 17px; }
-
-/* ═══ scroll cue, sitting in a notch cut out of the panel ═══ */
-.notch {
-  position: absolute; z-index: 4; left: 50%; bottom: 0;
-  transform: translateX(-50%);
-  width: 208px; padding: 12px 0 10px;
-  background: var(--void);
-  border-radius: 22px 22px 0 0;
-  text-align: center;
-}
-.notch::before, .notch::after {
-  content: ""; position: absolute; bottom: 0; width: 22px; height: 22px;
-  background: radial-gradient(circle at 0 0, transparent 21px, var(--void) 22px);
-}
-.notch::before { left: -22px; }
-.notch::after  { right: -22px; transform: scaleX(-1); }
-.notch span {
-  display: block; font-family: var(--font-mono);
-  font-size: var(--fs-micro); letter-spacing: var(--track-wide);
-  text-transform: uppercase; color: var(--ink-3); line-height: 1.35;
-}
-.notch svg { width: 13px; height: 20px; margin: 0 auto 6px; stroke: var(--ink-3); fill: none; }
-.notch__wheel { animation: wheel 2.4s var(--ease-in-out) infinite; }
-@keyframes wheel {
-  0%, 100% { transform: translateY(0); opacity: 1; }
-  50%      { transform: translateY(3px); opacity: 0.35; }
-}
-
-/* ═══ page-load orchestration ═══════════════════════════
-   One sequence, about 900ms end to end, then nothing moves on
-   its own except the props drifting. */
+/* the sub line streams in word by word; each word is a span made by hero.js */
+.hero__sub .tok { display: inline-block; white-space: pre; }
 @media (prefers-reduced-motion: no-preference) {
-  .js .panel { animation: panel-in 0.62s var(--ease) both; }
-  .js .display > span { animation: line-in 0.62s var(--ease) both; }
-  .js .display > span:nth-child(1) { animation-delay: 0.16s; }
-  .js .display > span:nth-child(2) { animation-delay: 0.23s; }
-  .js .display > span:nth-child(3) { animation-delay: 0.30s; }
-  .js .display > span:nth-child(4) { animation-delay: 0.37s; }
-  .js .bar, .js .foot, .js .rail, .js .notch {
-    animation: soft-in 0.5s var(--ease) both; animation-delay: 0.34s;
-  }
-  .js .word, .js .stage { animation: soft-in 0.7s var(--ease) both; animation-delay: 0.52s; }
+  .hero__sub .tok { animation: tok 0.5s var(--ease) both; animation-delay: calc(var(--n) * 38ms + 0.45s); }
 }
-/* Scale only, never opacity. A transparent ancestor removes every
-   descendant from Chrome's LCP candidate set, and fading the whole
-   panel in was suppressing the metric outright. */
-@keyframes panel-in { from { transform: scale(0.985); } to { transform: none; } }
-@keyframes line-in  { from { opacity: 0; transform: translateY(0.24em); } to { opacity: 1; transform: none; } }
-@keyframes soft-in  { from { opacity: 0; } to { opacity: 1; } }
+@keyframes tok { from { opacity: 0; filter: blur(6px); transform: translateY(0.12em); } to { opacity: 1; filter: none; transform: none; } }
+.caret {
+  display: inline-block; width: 0.06em; height: 0.9em; margin-left: 0.08em;
+  background: var(--accent); vertical-align: -0.08em;
+}
+@media (prefers-reduced-motion: no-preference) { .caret { animation: blink 1.1s steps(1) infinite; } }
+@keyframes blink { 50% { opacity: 0; } }
 
-/* ═══ short viewports ══════════════════════════════════
-   Below about 760px tall the four display lines plus the two copy
-   blocks no longer fit above the fold, and the scroll cue gets
-   pushed off the bottom of the window. Tighten the type and the
-   row rhythm rather than letting the cue disappear. */
-@media (max-height: 760px) and (min-width: 861px) {
-  .hero { row-gap: var(--s-4); }
-  .display { font-size: clamp(1.8rem, 0.3rem + 3.4vw, 3.4rem); }
-  .foot__lede { font-size: var(--fs-body); }
-  /* the wordmark's band closes up as the hero shortens, so it has to
-     give way to the copy rather than sit on top of it */
-  :root { --fs-word: clamp(2.6rem, 0.4rem + 5.6vw, 5.6rem); }
+.hero__notes { display: flex; flex-wrap: wrap; gap: 10px 32px; margin-top: var(--s-4); color: var(--ink-3); }
+.sq { display: inline-block; width: 6px; height: 6px; border: 1px solid var(--accent); }
+.hero__notes li { display: inline-flex; align-items: center; gap: 10px; }
+/* written in capitals at the source so φ can stay a lowercase phi */
+.hero__read { font-variant-numeric: tabular-nums; text-transform: none; }
+.mass { text-transform: none; }
+html:not(.js) .hero__read { display: none; }
+
+.hero__foot {
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;
+  gap: var(--s-4) var(--s-6);
+  margin-top: clamp(28px, 4vh, 56px);
+  padding: var(--s-4) 0;
+  border-top: 1px solid var(--hair);
 }
-@media (max-height: 620px) and (min-width: 861px) {
-  .display { font-size: clamp(1.6rem, 0.3rem + 2.8vw, 2.8rem); }
-  .notch { display: none; }   /* nowhere honest to put it */
+.hero__lede { font-size: var(--fs-lede); color: var(--ink-3); max-width: 30ch; line-height: 1.35; letter-spacing: -0.015em; }
+.hero__cta { display: flex; flex-wrap: wrap; gap: 10px; }
+@media (max-width: 560px) {
+  .hero__cta { width: 100%; }
+  .hero__cta .btn { flex: 1 1 auto; }
 }
 
-/* ═══ narrow ═══════════════════════════════════════════
-   The panel goes full-bleed, the stagger flattens flush left,
-   the object drops to the poster, the stat block moves below the
-   CTAs and the rail moves out of the hero.
-
-   Note: the desktop rules use align-self for grid row alignment.
-   In this column flex container align-self is the CROSS axis, so
-   every one of them has to be reset to stretch or the copy
-   shrink-wraps and overflows. */
-@media (max-width: 860px) {
-  .hero {
-    display: flex; flex-direction: column; align-items: stretch;
-    row-gap: var(--s-5);
-    padding-bottom: var(--s-7);
-  }
-  .bar    { order: 1; align-self: stretch; }
-  .head   { order: 2; align-self: stretch; }
-  /* the window keeps filling the panel; it does not become a card */
-  .stage  { position: absolute; inset: 0; }
-  .foot   { order: 4; align-self: stretch; }
-  .word   { order: 7; align-self: stretch; }
-
-  .bar .btn--solid { margin-left: auto; }
-  .navpill, .rail, .notch { display: none; }
-
-  .display > span { margin-left: 0 !important; white-space: normal; }
-  .foot__lede { max-width: none; }
-
-  /* In the flow at the end, flush left like everything else here.
-     It cannot be occluded by the object the way it is on a wide
-     screen — the scene fills the whole panel here, so the mark would
-     simply be buried and read as half-drawn letters. It sits above
-     the window instead, still dim enough to stay decoration. */
-  .word {
-    position: relative; inset: auto; height: auto; z-index: 4;
-    text-align: left; margin-top: var(--s-5);
-    font-size: clamp(2rem, 11vw, 3rem);
-  }
-
-  /* The poster is the largest paint on a phone. Fading it in from
-     zero opacity delays or suppresses the LCP candidate entirely,
-     so the entrance sequence skips it here. */
-  .js .stage, .js .word { animation: none; }
+/* ── the compile intro ──────────────────────────────────────
+   Once per session: blueprint boxes are drawn around the hero's
+   parts, labelled with their size, then lifted away. Built by
+   hero.js; it is an overlay, so nothing under it moves or fades. */
+.compile { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+.compile__box {
+  position: absolute;
+  border: 1px solid var(--accent-line);
+  background: var(--accent-soft);
+  animation: compile-box 1.9s var(--ease) both;
 }
+.compile__box::before {
+  content: attr(data-label);
+  position: absolute; left: -1px; bottom: 100%;
+  padding: 2px 6px; background: var(--accent); color: var(--accent-ink);
+  font-family: var(--font-mono); font-size: 0.625rem; letter-spacing: 0.04em; white-space: nowrap;
+}
+.compile__rule { position: absolute; background: var(--accent-line); animation: compile-rule 1.9s var(--ease) both; }
+.compile__rule--h { left: 0; right: 0; height: 1px; transform-origin: left; }
+.compile__rule--v { top: 0; bottom: 0; width: 1px; transform-origin: top; }
+@keyframes compile-box {
+  0% { clip-path: inset(0 100% 100% 0); opacity: 1; }
+  35% { clip-path: inset(0 0 0 0); opacity: 1; }
+  70% { opacity: 1; }
+  100% { clip-path: inset(0 0 0 0); opacity: 0; }
+}
+@keyframes compile-rule {
+  0% { transform: scale(0); opacity: 1; }
+  40% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(1); opacity: 0; }
+}
+
+/* ── the ticker ─────────────────────────────────────────── */
+.ticker {
+  overflow: hidden; border-top: 1px solid var(--hair); border-bottom: 1px solid var(--hair);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+          mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+.ticker__track { display: flex; width: max-content; padding: 16px 0; color: var(--ink-3); }
+.ticker__track span { display: inline-flex; align-items: center; gap: 48px; padding-right: 48px; white-space: nowrap; }
+.ticker__track span::after { content: ''; width: 5px; height: 5px; background: var(--accent); transform: rotate(45deg); }
+@media (prefers-reduced-motion: no-preference) {
+  .ticker__track { animation: marquee 48s linear infinite; }
+  .ticker:hover .ticker__track { animation-play-state: paused; }
+}
+@keyframes marquee { to { transform: translateX(-50%); } }
+
+/* corner registration ticks, on any framed figure */
+.tick { position: absolute; width: 10px; height: 10px; pointer-events: none; z-index: 2; }
+.tick::before, .tick::after { content: ''; position: absolute; background: var(--ink-3); }
+.tick::before { width: 10px; height: 1px; }
+.tick::after { width: 1px; height: 10px; }
+.tick--tl { top: 6px; left: 6px; }
+.tick--tr { top: 6px; right: 6px; } .tick--tr::before { right: 0; } .tick--tr::after { right: 0; }
+.tick--bl { bottom: 6px; left: 6px; } .tick--bl::before { bottom: 0; } .tick--bl::after { bottom: 0; }
+.tick--br { bottom: 6px; right: 6px; } .tick--br::before { right: 0; bottom: 0; } .tick--br::after { right: 0; bottom: 0; }
+
+/* a mass dropped on the field: a crosshair and its label */
+.mass {
+  position: absolute; z-index: 1; pointer-events: none;
+  width: 0; height: 0;
+  color: var(--accent);
+  transition: opacity 0.3s linear;
+}
+.mass i { position: absolute; left: -9px; top: -9px; width: 18px; height: 18px; }
+.mass i::before, .mass i::after { content: ''; position: absolute; background: currentColor; }
+.mass i::before { left: 0; right: 0; top: 50%; height: 1px; }
+.mass i::after { top: 0; bottom: 0; left: 50%; width: 1px; }
+.mass b {
+  position: absolute; left: 14px; top: -22px; white-space: nowrap;
+  font-weight: 400; color: var(--accent);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .mass i { animation: mass-in 0.6s var(--ease) both; }
+}
+@keyframes mass-in { from { transform: scale(2.4) rotate(45deg); opacity: 0; } to { transform: none; opacity: 1; } }
