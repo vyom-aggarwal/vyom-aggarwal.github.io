@@ -25,8 +25,8 @@
    loops: each change of state renders a single settled frame.
    ═══════════════════════════════════════════════════════════ */
 
-import * as THREE from './three.module.min.js?v=748f5497';
-import { simulate, fromTargets } from './oberth.js?v=748f5497';
+import * as THREE from './three.module.min.js?v=3fcce214';
+import { simulate, fromTargets } from './oberth.js?v=3fcce214';
 
 const COL = {
   bg: 0x08090b,

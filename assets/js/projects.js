@@ -32,8 +32,8 @@ function startSim(slug, d) {
 
   const kind = canvas.dataset.sim;
   const load = kind === 'fault'
-    ? import('./demos.js?v=748f5497').then(({ initQuadruped }) => initQuadruped(canvas, { reducedMotion: reduced }))
-    : import('./flyby.js?v=748f5497').then(({ initFlyby }) => initFlyby(canvas, d, { reducedMotion: reduced }));
+    ? import('./demos.js?v=3fcce214').then(({ initQuadruped }) => initQuadruped(canvas, { reducedMotion: reduced }))
+    : import('./flyby.js?v=3fcce214').then(({ initFlyby }) => initFlyby(canvas, d, { reducedMotion: reduced }));
 
   load.then((rig) => {
     sims.set(slug, rig);
