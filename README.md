@@ -30,12 +30,17 @@ index.html          The whole page. Every word of both project write-ups is in
                     and a visitor without JavaScript both read all of it.
 404.html
 
-assets/css/         tokens · base · hero · projects · sections
-assets/js/          hero · earth · projects · cards · rig · flyby · sections · kit
+assets/css/         tokens · base · hero · sections · projects
+assets/js/          hero      page chrome: theme, menu, ruler, ⌘K, G grid, entrances
+                    cursor    the custom cursor (point, lagging ring, hover states)
+                    terrain   the hero's potential-field map (raw WebGL)
+                    demos     the two research demos in 3D: the quadruped, the flyby
+                    sections  experience filter and the pinned research slides
+                    projects · flyby   the write-up dialogs and the 2D flyby explorer
                     oberth.js   the Oberth atlas's flyby simulator, vendored
                     three.module.min.js   vendored, MIT
-assets/fonts/       Archivo, JetBrains Mono, Departure Mono — all SIL OFL
-assets/img/         Earth texture and poster, card posters, grain, icons
+assets/fonts/       Geist, Geist Mono — SIL OFL
+assets/img/         icons
 tools/stamp.py      Cache-busting stamper. See below.
 ```
 
@@ -68,15 +73,24 @@ the site serves correctly without ever running it again.
 
 ## What the page is
 
-Six sections behind one set of anchors: `#overview`, `#research` (also
-`#projects`), `#work`, `#education`, `#awards`, `#contact`.
+Sections behind one set of anchors: `#overview`, `#profile`, `#research` (also
+`#projects`), `#method`, `#work`, `#education`, `#awards`, `#contact`.
 
-The hero is a window onto Earth at night, rendered in WebGL with a static poster
-as the LCP element. The poster ships in the HTML and the 3D loads after first
-paint; on a narrow viewport or under `prefers-reduced-motion` the poster is all
-that is used.
+Dark by default with a light theme on the toggle, saved per visitor. The
+simulation stages and figure panels stay dark in both themes; they carry
+scoped tokens under `.instrument`.
 
-The research section is a launcher for two projects. Each card opens a native
+The hero sits on a potential field drawn as contour lines (`terrain.js`). The
+pointer is a softened point mass that bends the equipotentials; a click drops a
+labelled mass that fades. It is decorative and aria-hidden, and without WebGL
+the hero is just its type. Once per session the hero is shown as its own
+wireframe for a moment (the compile intro). ⌘K / Ctrl K opens a command menu;
+G toggles a 12-column grid.
+
+The research section pins each project for three screens of scroll and plays
+its live 3D demo through three states. The quadruped is a schematic of the
+mechanism (nominal, fault at step 200, correction), labelled as such; the flyby
+is the vendored simulator's own output for Π = 1, 10 and 100. Each project's button opens a native
 `<dialog>` carrying the full write-up, deep-linkable at
 `#project/fault-tolerant-control` and `#project/oberth-efficiency-atlas`, with the first also
 addressable per step, `#project/fault-tolerant-control/3`.
@@ -85,8 +99,7 @@ addressable per step, `#project/fault-tolerant-control/3`.
 
 ## Credits
 
-Earth imagery is NASA public domain; provenance and the exact processing are in
-`assets/img/CREDITS.md`. `assets/js/oberth.js` is `explorer/sim.js` from
+`assets/js/oberth.js` is `explorer/sim.js` from
 [oberth-efficiency-atlas](https://github.com/vyom-aggarwal/oberth-efficiency-atlas),
 with its commit recorded in the file header. It is vendored, not rewritten: to change
 it, change it there and copy it over.
