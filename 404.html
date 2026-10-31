@@ -1,55 +1,65 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>404 — Vyom Aggarwal</title>
 <meta name="robots" content="noindex">
-<meta name="theme-color" content="#000000">
+<meta name="theme-color" content="#0A0A0B">
 
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/assets/img/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
 
+<script>
+  (function () {
+    var t = null;
+    try { t = localStorage.getItem('theme'); } catch (e) {}
+    if (t === 'light') document.documentElement.setAttribute('data-theme', 'light');
+  })();
+</script>
+
 <link rel="stylesheet" href="/assets/css/tokens.css">
 <link rel="stylesheet" href="/assets/css/base.css">
 
 <style>
-  /* One panel on the canvas, same as every other surface on the site. */
   .lost {
-    min-height: calc(100svh - (var(--inset) * 2));
-    display: grid; place-content: center; justify-items: start;
-    gap: var(--s-4); padding: var(--gutter);
+    min-height: 100svh;
+    display: grid; align-content: space-between; gap: var(--s-6);
+    padding-block: var(--s-4);
   }
-  .lost__no {
-    font-family: var(--font-mono); font-size: var(--fs-mono);
-    letter-spacing: var(--track-wide); color: var(--ink-3);
+  .lost__strip {
+    display: flex; justify-content: space-between; gap: var(--s-3);
+    padding-bottom: 14px; border-bottom: 1px solid var(--hair); color: var(--ink);
   }
-  .lost__no b { color: var(--signal); font-weight: 500; }
   .lost__code {
-    font-size: clamp(3.4rem, 1rem + 9vw, 8rem);
-    font-weight: var(--wt-display); line-height: 0.9;
-    letter-spacing: var(--track-tight); color: var(--ink);
+    font-size: clamp(6rem, 2rem + 22vw, 22rem);
+    font-weight: 500; line-height: 0.8; letter-spacing: -0.06em; color: var(--ink);
   }
-  .lost__msg { color: var(--ink-2); max-width: 46ch; font-size: var(--fs-lede); }
-  .lost__msg b { color: var(--ink); font-weight: 600; }
-  .lost__cta { margin-top: var(--s-3); }
+  .lost__code span { color: transparent; -webkit-text-stroke: 1px var(--ink-3); }
+  .lost__foot {
+    display: flex; align-items: end; justify-content: space-between; flex-wrap: wrap; gap: var(--s-4);
+    padding-top: var(--s-4); border-top: 1px solid var(--hair);
+  }
+  .lost__msg { color: var(--ink-2); max-width: 40ch; font-size: var(--fs-lede); line-height: 1.5; }
+  .lost__msg b { display: block; color: var(--ink); font-size: var(--fs-h3); font-weight: 500; letter-spacing: -0.03em; margin-bottom: 8px; }
 </style>
 </head>
 
 <body>
-<div class="grain" aria-hidden="true"></div>
-
-<main>
-<div class="panel">
-  <section class="lost">
-    <p class="lost__no">[ <b>404</b> ]</p>
-    <h1 class="lost__code">This page is out of range.</h1>
-    <p class="lost__msg">That URL does not point to a page on this site. It may have moved, or it may
-      never have existed.</p>
-    <a class="btn btn--solid lost__cta" href="/">Return to the portfolio</a>
+<main class="sheet">
+  <section class="lost wrap">
+    <div class="lost__strip mono">
+      <a href="/">Vyom Aggarwal</a>
+      <span class="dim">Error · out of range</span>
+    </div>
+    <h1 class="lost__code" aria-label="404">4<span>0</span>4</h1>
+    <div class="lost__foot">
+      <p class="lost__msg"><b>This page is out of range.</b>That URL does not point to a page on
+        this site. It may have moved, or it may never have existed.</p>
+      <a class="btn btn--solid" href="/">Return to the portfolio <span class="arr" aria-hidden="true">→</span></a>
+    </div>
   </section>
-</div>
 </main>
 </body>
 </html>

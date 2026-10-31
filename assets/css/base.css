@@ -1,69 +1,53 @@
 /* ═══════════════════════════════════════════════════════════
-   BASE — self-hosted faces, reset, panel, glass, controls
+   BASE — faces, reset, the page frame, the bar, and the small
+   parts every section shares: tags, buttons, dots, cards, specs.
    ═══════════════════════════════════════════════════════════ */
 
-/* ── faces. All three are SIL OFL; see assets/fonts/LICENSES.md ── */
 @font-face {
-  font-family: 'Archivo';
-  src: url('../fonts/Archivo-var.woff2') format('woff2-variations');
-  font-weight: 400 700; font-style: normal; font-display: swap;
+  font-family: 'Geist';
+  src: url('../fonts/Geist-var.woff2') format('woff2');
+  font-weight: 100 900; font-style: normal; font-display: swap;
 }
 @font-face {
-  font-family: 'JetBrains Mono';
-  src: url('../fonts/JetBrainsMono-var.woff2') format('woff2-variations');
-  font-weight: 400 500; font-style: normal; font-display: swap;
+  font-family: 'Geist Mono';
+  src: url('../fonts/GeistMono-var.woff2') format('woff2');
+  font-weight: 100 900; font-style: normal; font-display: swap;
 }
-@font-face {
-  font-family: 'Departure Mono';
-  src: url('../fonts/DepartureMono-Regular.woff2') format('woff2');
-  font-weight: 400; font-style: normal; font-display: swap;
-  /* the wordmark needs A G L M O R V W Y and nothing else */
-  unicode-range: U+0041, U+0047, U+004C, U+004D, U+004F, U+0052, U+0056, U+0057, U+0059;
-}
+
 /* ── reset ─────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; scrollbar-color: var(--raised) var(--void); }
+* { margin: 0; }
+dialog { margin: auto; }   /* the reset above would pin a modal to the top left */
+html {
+  -webkit-text-size-adjust: 100%; text-size-adjust: 100%;
+  scroll-padding-top: calc(var(--nav-h) + 16px);
+}
 body {
-  margin: 0;
-  background: var(--void);
-  color: var(--ink-2);
-  font-family: var(--font-display);
-  font-size: var(--fs-body);
+  min-height: 100vh;
+  background: var(--bg); color: var(--ink-2);
+  font-family: var(--font-sans); font-size: var(--fs-body);
   line-height: var(--lh-body);
-  font-weight: 400;
-  -webkit-font-smoothing: antialiased;
+  -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  font-feature-settings: 'ss01', 'cv11';
+  overflow-x: clip;
+  transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease);
 }
-h1, h2, h3 { margin: 0; color: var(--ink); font-weight: var(--wt-display); line-height: var(--lh-tight); letter-spacing: var(--track-tight); }
-p { margin: 0; }
-ul, ol { margin: 0; padding: 0; list-style: none; }
-img, canvas, svg { display: block; max-width: 100%; }
-/* The rule above is an author style, so it outranks the UA's
-   [hidden] { display: none } and would keep a hidden <img> in the
-   layout. Restore the attribute's meaning. */
-[hidden] { display: none !important; }
-a { color: inherit; }
-button { font: inherit; color: inherit; background: none; border: 0; }
+img, svg, canvas { display: block; max-width: 100%; }
+ul, ol { list-style: none; padding: 0; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+h1, h2, h3, h4 { color: var(--ink); font-weight: 500; line-height: var(--lh-snug); letter-spacing: var(--track-tight); }
+b, strong { color: var(--ink); font-weight: 500; }
+em { font-style: normal; }
+::selection { background: var(--accent); color: var(--accent-ink); }
 
-::selection { background: var(--signal); color: var(--void); }
-
-/* Focus rides --limb, which clears 3:1 against every surface it can
-   land on. --signal does not clear it against --panel. */
-:focus-visible {
-  outline: 2px solid var(--limb);
-  outline-offset: 2px;
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar { width: 12px; height: 12px; }
-::-webkit-scrollbar-track { background: var(--void); }
-::-webkit-scrollbar-thumb { background: var(--raised); border: 3px solid var(--void); border-radius: var(--r-pill); }
-::-webkit-scrollbar-thumb:hover { background: #2A313B; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
 
 .skip-link {
-  position: fixed; top: var(--s-2); left: var(--s-2); z-index: 200;
-  padding: 10px 16px; border-radius: var(--r-btn);
-  background: var(--signal); color: var(--void); font-weight: 600;
+  position: fixed; top: 8px; left: 8px; z-index: 300;
+  padding: 10px 16px; border-radius: var(--r-pill);
+  background: var(--btn-bg); color: var(--btn-ink); font-weight: 500;
   transform: translateY(-200%);
 }
 .skip-link:focus-visible { transform: none; }
@@ -72,83 +56,283 @@ button { font: inherit; color: inherit; background: none; border: 0; }
   position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
   overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
 }
+.u-anchor { display: block; height: 0; }
 
-/* ── grain. 2% monochrome noise over the whole canvas, there to
-   break up the banding the wide cyan halo would otherwise show
-   on an 8-bit display. Tiled 64px, 3KB, no LCP cost. ─────── */
-.grain {
-  position: fixed; inset: 0; z-index: 90; pointer-events: none;
-  background-image: url('../img/grain.png');
-  background-size: 64px 64px;
-  opacity: 0.028;
-  mix-blend-mode: overlay;
-}
-
-/* ── the studio panel ──────────────────────────────────────
-   A drop shadow does nothing over a near-black canvas, so the
-   panel reads as raised through a lit top edge and a hairline
-   border. The shadow only adds a wide ambient settle. */
-.panel {
+/* ── the frame ─────────────────────────────────────────────
+   One centred column with hairline rules down both sides, like
+   the border of a drawing sheet. Every section sits inside it. */
+.wrap {
   position: relative;
-  margin: var(--inset) auto;
-  max-width: var(--max);
-  border-radius: var(--r-panel);
-  background: var(--panel);
-  border: 1px solid var(--hair);
-  /* The lit top edge is an inset shadow, not a positioned bar. A bar
-     runs straight across at y=0, where a rounded shape is much
-     narrower, so it juts out past both curves as a floating line. */
-  box-shadow: inset 0 1px 0 var(--edge-top), var(--shadow-panel);
-  overflow: hidden;
+  width: 100%; max-width: var(--max);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
 }
-/* A scroll-clipping ancestor disables position: sticky in every
-   browser, so the panel holding the research stage opts out. It has
-   no bleeding content, so there is nothing for it to clip anyway. */
-.panel--stage { overflow: visible; }
-
-/* The hero panel is a window. Its backdrop is --window rather than
-   --panel, so the scene has somewhere black to sit before it loads. */
-.panel--window { background: var(--window); }
-
-/* ── glass ─────────────────────────────────────────────── */
-.glass {
+.sheet {
   position: relative;
-  background: var(--glass-solid);
-  border: 1px solid var(--glass-edge);
-  /* follows the pill's curve; a positioned bar would overshoot it */
-  box-shadow: inset 0 1px 0 var(--glass-top);
+  max-width: var(--max); margin-inline: auto;
+  border-inline: 1px solid var(--hair);
 }
-@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .glass {
-    background: var(--glass-bg);
-    -webkit-backdrop-filter: var(--glass-blur);
-    backdrop-filter: var(--glass-blur);
+@media (max-width: 1500px) { .sheet { border-inline: 0; } }
+
+/* the faint drawing grid, on surfaces that ask for it */
+.gridded {
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 32px 32px;
+  background-position: -1px -1px;
+}
+
+/* ── mono labels ─────────────────────────────────────────── */
+.mono {
+  font-family: var(--font-mono); font-size: var(--fs-micro);
+  letter-spacing: var(--track-wide); text-transform: uppercase;
+  line-height: 1.5;
+}
+/* units and symbols keep their case: m/s is not M/S, and an
+   uppercased η is a capital eta, a different letter */
+.mono.keep-case { text-transform: none; letter-spacing: var(--track-mono); }
+.tag { color: var(--ink); }
+.tag i { font-style: normal; color: var(--accent); }
+.dim { color: var(--ink-3); }
+
+.dot {
+  display: inline-block; flex: none;
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent); vertical-align: middle;
+}
+.dot--live { background: var(--burn); position: relative; }
+@media (prefers-reduced-motion: no-preference) {
+  .dot--live::after {
+    content: ''; position: absolute; inset: -4px; border-radius: 50%;
+    border: 1px solid var(--burn); opacity: 0;
+    animation: ping 2.4s var(--ease) infinite;
   }
 }
+@keyframes ping { 0% { transform: scale(0.4); opacity: 0.9; } 80%, 100% { transform: scale(1.6); opacity: 0; } }
+.dia {
+  display: inline-block; flex: none; width: 7px; height: 7px;
+  background: var(--accent); transform: rotate(45deg); vertical-align: middle;
+}
 
-/* ── controls ──────────────────────────────────────────── */
+/* ── buttons ─────────────────────────────────────────────── */
 .btn {
-  display: inline-flex; align-items: center; gap: 10px;
-  padding: 13px 22px; border-radius: var(--r-btn);
-  font-size: var(--fs-sm); font-weight: 600; letter-spacing: 0.01em;
-  text-decoration: none; cursor: pointer;
-  transition: background var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease);
+  position: relative;
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  min-height: 48px; padding: 0 22px;
+  border-radius: var(--r-pill);
+  font-size: var(--fs-sm); font-weight: 500; letter-spacing: -0.005em;
+  white-space: nowrap;
+  transition: background-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease),
+              border-color var(--dur-fast) var(--ease), transform var(--dur) var(--ease);
+  will-change: transform;
 }
-/* white on --signal measures 2.89 and fails; --void measures 6.73 */
-.btn--solid { background: var(--signal); color: var(--void); }
-.btn--solid:hover { background: var(--limb); }
-.btn--glass { color: var(--ink); border-radius: var(--r-btn); }
-.btn--glass:hover { border-color: var(--hair-2); }
-.btn:active { transform: translateY(1px); }
+.btn--solid { background: var(--btn-bg); color: var(--btn-ink); }
+.btn--solid:hover { background: var(--accent); color: var(--accent-ink); }
+.btn--line { border: 1px solid var(--hair-2); color: var(--ink); }
+.btn--line:hover { border-color: var(--ink); }
+.btn--sm { min-height: 36px; padding: 0 16px; font-size: 0.8125rem; }
+.btn .arr { display: inline-block; transition: transform var(--dur) var(--ease); }
+.btn:hover .arr { transform: translateX(3px); }
+.btn--sm .arr { font-size: 0.9em; }
 
-.mono {
-  font-family: var(--font-mono);
-  font-size: var(--fs-mono);
-  letter-spacing: var(--track-mono);
-  color: var(--ink-3);
+.icon-btn {
+  display: grid; place-items: center;
+  width: 36px; height: 36px; border-radius: 50%;
+  border: 1px solid var(--hair-2); color: var(--ink);
+  transition: border-color var(--dur-fast) var(--ease), background-color var(--dur-fast) var(--ease);
 }
-.mono--label {
-  text-transform: uppercase;
-  letter-spacing: var(--track-wide);
-  font-size: var(--fs-micro);
+.icon-btn:hover { border-color: var(--ink); }
+.icon-btn svg { width: 16px; height: 16px; }
+
+/* ── the bar ─────────────────────────────────────────────── */
+.nav {
+  position: fixed; inset: 0 0 auto; z-index: 100;
+  background: var(--nav-bg);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+          backdrop-filter: blur(14px) saturate(1.2);
 }
+.nav__in {
+  display: grid; align-items: center;
+  grid-template-columns: 1fr auto 1fr;
+  height: var(--nav-h);
+}
+.brand { display: inline-flex; align-items: center; gap: 12px; justify-self: start; }
+.brand__mark { width: 30px; height: 30px; color: var(--ink); overflow: visible; }
+.brand__path { fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; }
+.brand__planet { fill: currentColor; }
+/* On load the mark is flown, not written: the planet appears, then the
+   path is traced from one leg to the other. */
+@media (prefers-reduced-motion: no-preference) {
+  .js .brand__planet { transform-box: fill-box; transform-origin: center; animation: planet-in 0.45s var(--ease) both; }
+  .js .brand__path { stroke-dasharray: 1; animation: fly 1.2s var(--ease-in-out) 0.25s both; }
+}
+@keyframes planet-in { from { transform: scale(0); } to { transform: none; } }
+@keyframes fly { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+.brand__name { color: var(--ink); font-family: var(--font-mono); font-size: var(--fs-micro); font-weight: 500; letter-spacing: var(--track-wide); text-transform: uppercase; }
+.brand__role { color: var(--ink-3); font-family: var(--font-mono); font-size: var(--fs-micro); letter-spacing: var(--track-wide); text-transform: uppercase; }
+
+.nav__links { display: flex; gap: clamp(16px, 2.4vw, 36px); }
+.nav__links a {
+  display: inline-flex; align-items: baseline; gap: 6px;
+  color: var(--ink); font-size: 0.95rem; font-weight: 400;
+  padding: 6px 0; position: relative;
+}
+.nav__links a i { font-style: normal; font-family: var(--font-mono); font-size: 0.625rem; color: var(--ink-3); letter-spacing: 0.04em; }
+.nav__links a::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
+  background: currentColor; transform: scaleX(0); transform-origin: right;
+  transition: transform var(--dur) var(--ease);
+}
+.nav__links a:hover::after,
+.nav__links a[aria-current='true']::after { transform: scaleX(1); transform-origin: left; }
+.nav__links a[aria-current='true'] i { color: var(--accent); }
+
+.nav__end { display: flex; align-items: center; gap: 8px; justify-self: end; }
+
+/* theme toggle: one icon per theme, the other hidden */
+.theme-toggle .i-sun { display: none; }
+:root[data-theme='light'] .theme-toggle .i-sun { display: block; }
+:root[data-theme='light'] .theme-toggle .i-moon { display: none; }
+
+/* the ruler: scroll position as a drawing scale */
+.ruler {
+  position: relative; height: 7px;
+  background-image: repeating-linear-gradient(90deg, var(--hair-2) 0 1px, transparent 1px 48px);
+  background-size: 100% 4px; background-repeat: no-repeat; background-position: bottom;
+}
+.ruler__fill {
+  position: absolute; left: 0; bottom: -1px; height: 2px; width: 100%;
+  background: var(--accent); transform-origin: left; transform: scaleX(var(--p, 0));
+}
+.ruler__pct {
+  position: absolute; bottom: -9px; left: clamp(20px, calc(var(--p, 0) * 100%), calc(100% - 20px));
+  transform: translateX(-50%);
+  padding: 1px 5px; border-radius: 3px;
+  background: var(--accent); color: var(--accent-ink);
+  font-family: var(--font-mono); font-size: 0.5625rem; line-height: 1.4; letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+}
+html:not(.js) .ruler { display: none; }
+
+.nav__menu { display: none; }
+
+/* the mobile sheet */
+.menu {
+  position: fixed; inset: var(--nav-h) 0 0; z-index: 99;
+  background: var(--bg);
+  padding: var(--s-5) var(--gutter);
+  display: flex; flex-direction: column; justify-content: space-between;
+  visibility: hidden; opacity: 0;
+  transition: opacity var(--dur) var(--ease), visibility 0s linear var(--dur);
+}
+.nav-open .menu { visibility: visible; opacity: 1; transition: opacity var(--dur) var(--ease); }
+.menu__links a {
+  display: flex; align-items: baseline; gap: 14px;
+  padding: 14px 0; border-bottom: 1px solid var(--hair);
+  color: var(--ink); font-size: clamp(2rem, 9vw, 3rem); font-weight: 500;
+  letter-spacing: var(--track-display); line-height: 1.1;
+}
+.menu__links a i { font-style: normal; font-family: var(--font-mono); font-size: var(--fs-micro); color: var(--accent); letter-spacing: 0.04em; }
+.menu__foot { display: flex; flex-wrap: wrap; gap: 8px 20px; }
+.menu__foot a { color: var(--ink-2); }
+
+.nav__menu .i-close { display: none; }
+.nav-open .nav__menu .i-close { display: block; }
+.nav-open .nav__menu .i-open { display: none; }
+
+@media (max-width: 960px) {
+  .nav__in { grid-template-columns: 1fr auto; }
+  .nav__links, .nav__talk { display: none; }
+  .nav__menu { display: grid; }
+}
+@media (max-width: 520px) { .brand__role { display: none; } }
+@media (min-width: 961px) { .menu { display: none; } }
+
+/* ── shared parts ────────────────────────────────────────── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--hair);
+  border-radius: var(--r);
+  padding: var(--s-4);
+}
+.card__k {
+  font-family: var(--font-mono); font-size: var(--fs-micro);
+  text-transform: uppercase; letter-spacing: var(--track-wide);
+  color: var(--ink-3); margin-bottom: var(--s-3);
+}
+
+.spec { margin: 0; font-family: var(--font-mono); font-size: var(--fs-mono); letter-spacing: var(--track-mono); }
+.spec > div {
+  display: flex; justify-content: space-between; align-items: baseline; gap: var(--s-3);
+  padding: 10px 0; border-bottom: 1px solid var(--hair);
+}
+.spec > div:last-child { border-bottom: 0; padding-bottom: 0; }
+.spec > div:first-child { padding-top: 0; }
+.spec dt { color: var(--ink-3); }
+.spec dd { margin: 0; color: var(--ink); text-align: right; }
+
+.note { margin-top: var(--s-3); font-size: var(--fs-sm); color: var(--ink-3); line-height: 1.6; }
+.note b { color: var(--ink-2); font-weight: 500; }
+
+/* ── entrances ───────────────────────────────────────────────
+   Transform-only on anything that might be the LCP element:
+   opacity on an ancestor removes it from Chrome's candidate set.
+   Gated on .js so a visitor without scripting sees everything. */
+@media (prefers-reduced-motion: no-preference) {
+  .js [data-reveal] {
+    opacity: 0; transform: translateY(24px);
+    transition: opacity 0.9s var(--ease), transform 0.9s var(--ease);
+    transition-delay: calc(var(--d, 0) * 80ms);
+  }
+  .js [data-reveal].is-in { opacity: 1; transform: none; }
+}
+
+/* ── the command menu ─────────────────────────────────────── */
+.nav__cmd { width: auto; padding: 0 9px; border-radius: var(--r-pill); }
+.nav__cmd kbd { border: 0; padding: 0; min-width: 0; font-size: 0.6875rem; }
+@media (max-width: 960px) { .nav__cmd { display: none; } }
+@media (max-width: 1240px) { .brand__role { display: none; } }
+
+.cmdk {
+  width: min(620px, calc(100vw - 32px)); max-width: none;
+  margin: 14vh auto auto; padding: 0;
+  border: 1px solid var(--hair-2); border-radius: var(--r-lg);
+  background: var(--surface); color: var(--ink-2);
+  box-shadow: var(--shadow);
+}
+.cmdk::backdrop { background: var(--scrim); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+@media (prefers-reduced-motion: no-preference) { .cmdk[open] { animation: cmdk-in 0.24s var(--ease); } }
+@keyframes cmdk-in { from { opacity: 0; transform: translateY(-8px) scale(0.985); } to { opacity: 1; transform: none; } }
+.cmdk__field { display: flex; align-items: center; gap: 12px; padding: 0 16px; border-bottom: 1px solid var(--hair); }
+.cmdk__input {
+  flex: 1; min-width: 0; height: 56px; border: 0; outline: 0; background: none;
+  color: var(--ink); font: inherit; font-size: 1rem;
+}
+.cmdk__input::placeholder { color: var(--ink-3); }
+.cmdk__list { max-height: min(52vh, 420px); overflow-y: auto; padding: 8px; }
+.cmdk__group {
+  padding: 10px 10px 6px; color: var(--ink-3);
+  font-family: var(--font-mono); font-size: 0.625rem; letter-spacing: var(--track-wide); text-transform: uppercase;
+}
+.cmdk__item {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 10px 12px; border-radius: var(--r-sm); cursor: pointer;
+  color: var(--ink); font-size: var(--fs-sm);
+}
+.cmdk__item span:last-child { color: var(--ink-3); font-family: var(--font-mono); font-size: 0.6875rem; }
+.cmdk__item[aria-selected='true'] { background: var(--accent-soft); box-shadow: inset 2px 0 0 var(--accent); }
+.cmdk__empty { padding: 18px 12px; color: var(--ink-3); font-size: var(--fs-sm); }
+.cmdk__foot { display: flex; gap: 18px; padding: 10px 16px; border-top: 1px solid var(--hair); }
+.cmdk__esc { color: var(--ink-3); }
+
+/* ── the grid overlay, on G ───────────────────────────────── */
+.gridlay {
+  position: fixed; inset: 0; z-index: 90; pointer-events: none;
+  opacity: 0; transition: opacity var(--dur) var(--ease);
+}
+.gridlay.is-on { opacity: 1; }
+.gridlay__cols { height: 100%; display: grid; grid-template-columns: repeat(12, 1fr); gap: clamp(12px, 1.6vw, 24px); }
+.gridlay__cols i { background: var(--accent-soft); border-inline: 1px solid var(--accent-line); }
+@media (max-width: 700px) { .gridlay__cols { grid-template-columns: repeat(4, 1fr); } .gridlay__cols i:nth-child(n + 5) { display: none; } }

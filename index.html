@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -9,7 +9,7 @@
 <meta name="author" content="Vyom Aggarwal">
 <link rel="canonical" href="https://vyom-aggarwal.github.io/">
 
-<meta name="theme-color" content="#0A0D11">
+<meta name="theme-color" content="#0A0A0B">
 
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://vyom-aggarwal.github.io/">
@@ -21,12 +21,27 @@
 <link rel="icon" href="assets/img/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
 
-<link rel="preload" href="assets/fonts/Archivo-var.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/css/tokens.css?v=ade0bd71">
-<link rel="stylesheet" href="assets/css/base.css?v=ade0bd71">
-<link rel="stylesheet" href="assets/css/hero.css?v=ade0bd71">
-<link rel="stylesheet" href="assets/css/projects.css?v=ade0bd71">
-<link rel="stylesheet" href="assets/css/sections.css?v=ade0bd71">
+<script>
+  /* Before any paint: the JS flag the entrances are gated on, and the
+     saved theme, so a light-theme visitor never sees a dark flash. */
+  (function () {
+    var d = document.documentElement, t = null;
+    d.classList.add('js');
+    try { t = localStorage.getItem('theme'); } catch (e) {}
+    if (t === 'light') {
+      d.setAttribute('data-theme', 'light');
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#F1F0EB');
+    }
+  })();
+</script>
+
+<link rel="preload" href="assets/fonts/Geist-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/GeistMono-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/css/tokens.css?v=39b3c8e2">
+<link rel="stylesheet" href="assets/css/base.css?v=39b3c8e2">
+<link rel="stylesheet" href="assets/css/hero.css?v=39b3c8e2">
+<link rel="stylesheet" href="assets/css/sections.css?v=39b3c8e2">
+<link rel="stylesheet" href="assets/css/projects.css?v=39b3c8e2">
 
 <noscript><style>
   /* The project write-ups exist only inside these dialogs, so without
@@ -34,10 +49,10 @@
      ignores scripts still reads every word. */
   .proj:not([open]) {
     display: block; position: static; width: auto; max-width: none;
-    max-height: none; margin: var(--s-4) 0 0; box-shadow: none;
+    max-height: none; margin: var(--s-6) 0 0; box-shadow: none;
   }
   .proj__inner { max-height: none; }
-  .proj__close, .stepper { display: none; }
+  .proj__close, .stepper, .proj__stage, [data-open], .nav__cmd { display: none; }
   .steps { height: auto !important; }
   .step {
     position: static; opacity: 1; visibility: visible;
@@ -45,141 +60,143 @@
   }
   .nojs-note { display: block; }
 </style></noscript>
-<script>document.documentElement.classList.add('js');</script>
 </head>
 
 <body>
 
 <a class="skip-link" href="#main">Skip to content</a>
-<div class="grain" aria-hidden="true"></div>
+
+<!-- ═══════════════ THE BAR ═══════════════ -->
+<header class="nav" id="nav">
+  <div class="wrap nav__in">
+    <a class="brand" href="#overview" aria-label="Vyom Aggarwal, back to top">
+      <svg class="brand__mark" viewBox="0 0 32 32" aria-hidden="true">
+        <!-- an A drawn as a flyby: the path is the letter, the planet
+             its counter -->
+        <circle class="brand__planet" cx="16" cy="17.6" r="2.7"/>
+        <path class="brand__path" pathLength="1" d="M5 27 C10.5 15.5 12.6 5.5 16 5.5 C19.4 5.5 21.5 15.5 27 27"/>
+      </svg>
+      <span class="brand__name">Vyom Aggarwal</span>
+      <span class="brand__role">/ Dynamics &amp; control</span>
+    </a>
+
+    <nav class="nav__links" aria-label="Sections">
+      <a href="#profile"><i>01</i>About</a>
+      <a href="#research"><i>02</i>Research</a>
+      <a href="#method"><i>03</i>Method</a>
+      <a href="#work"><i>04</i>Work</a>
+      <a href="#awards"><i>05</i>Awards</a>
+    </nav>
+
+    <div class="nav__end">
+      <button class="icon-btn theme-toggle" type="button" data-theme-toggle aria-label="Switch to light theme">
+        <svg class="i-moon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><circle cx="8" cy="8" r="5.6"/><path d="M8 2.4a5.6 5.6 0 0 1 0 11.2Z" fill="currentColor"/></svg>
+        <svg class="i-sun" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true"><circle cx="8" cy="8" r="3"/><path d="M8 1.2v1.6M8 13.2v1.6M1.2 8h1.6M13.2 8h1.6M3.2 3.2l1.1 1.1M11.7 11.7l1.1 1.1M3.2 12.8l1.1-1.1M11.7 4.3l1.1-1.1"/></svg>
+      </button>
+      <button class="icon-btn nav__cmd" type="button" data-cmdk-open aria-label="Open command menu" aria-keyshortcuts="Control+K Meta+K"><kbd data-cmdk-key>⌘K</kbd></button>
+      <a class="btn btn--solid btn--sm nav__talk" href="#contact">Let's talk</a>
+      <button class="icon-btn nav__menu" type="button" data-menu aria-expanded="false" aria-controls="menu" aria-label="Open menu">
+        <svg class="i-open" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M2.5 5.5h11M2.5 10.5h11"/></svg>
+        <svg class="i-close" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M3.5 3.5l9 9M12.5 3.5l-9 9"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="wrap"><div class="ruler" aria-hidden="true"><i class="ruler__fill"></i><span class="ruler__pct">0%</span></div></div>
+</header>
+
+<div class="menu" id="menu" aria-label="Menu" hidden>
+  <nav class="menu__links" aria-label="Sections">
+    <a href="#profile"><i>01</i>About</a>
+    <a href="#research"><i>02</i>Research</a>
+    <a href="#method"><i>03</i>Method</a>
+    <a href="#work"><i>04</i>Work</a>
+    <a href="#awards"><i>05</i>Awards</a>
+    <a href="#contact"><i>06</i>Contact</a>
+  </nav>
+  <div class="menu__foot mono">
+    <a href="mailto:aggarw.vyom@gmail.com">Email</a>
+    <a href="https://github.com/vyom-aggarwal" target="_blank" rel="noopener">GitHub ↗</a>
+    <a href="https://www.linkedin.com/in/vyom-aggarwal/" target="_blank" rel="noopener">LinkedIn ↗</a>
+  </div>
+</div>
+
+<!-- ═══════════════ COMMAND MENU ═══════════════ -->
+<dialog class="cmdk" id="cmdk" aria-label="Command menu">
+  <div class="cmdk__in">
+    <div class="cmdk__field">
+      <span class="mono dim" aria-hidden="true">›</span>
+      <input class="cmdk__input" type="text" placeholder="Jump to a section, open a project, copy the email…" aria-label="Search commands" aria-controls="cmdk-list" aria-autocomplete="list" autocomplete="off" spellcheck="false" data-cmdk-input>
+      <kbd class="cmdk__esc">esc</kbd>
+    </div>
+    <ul class="cmdk__list" id="cmdk-list" role="listbox" aria-label="Commands" data-cmdk-list></ul>
+    <p class="cmdk__foot mono dim"><span>↑↓ move</span><span>↵ run</span><span>G grid</span></p>
+  </div>
+</dialog>
+
+<div class="gridlay" aria-hidden="true"><div class="wrap gridlay__cols"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
 
 <main id="main">
 
-<!-- ═══════════════ 01 · OVERVIEW ═══════════════ -->
-<div class="panel panel--window">
-  <section class="hero" id="overview">
+<!-- ═══════════════ OVERVIEW ═══════════════ -->
+<section class="hero" id="overview" data-compile>
+  <canvas class="hero__map" aria-hidden="true" data-terrain></canvas>
+  <div class="wrap hero__wrap">
 
-    <div class="bar">
-      <a class="ident" href="#overview">
-        <span class="ident__mark" aria-hidden="true">
-          <svg viewBox="0 0 32 32" width="30" height="30">
-      <rect width="32" height="32" rx="7.5" fill="#0B0F14"/>
-      <rect x="0.5" y="0.5" width="31" height="31" rx="7" fill="none" stroke="#ffffff" stroke-opacity=".10"/>
-      <g fill="#4A9EE0">
-        <rect x="4" y="8" width="3.4" height="3.4"/>
-        <rect x="4" y="12" width="3.4" height="3.4"/>
-        <rect x="7.4" y="16" width="3.4" height="3.4"/>
-        <rect x="10.8" y="20" width="3.4" height="3.4"/>
-        <rect x="14.2" y="16" width="3.4" height="3.4"/>
-        <rect x="14.2" y="12" width="3.4" height="3.4"/>
-        <rect x="14.2" y="8" width="3.4" height="3.4"/>
-      </g>
-      <g fill="#8FE0F5">
-        <rect x="21" y="8" width="3.4" height="3.4"/>
-        <rect x="24.4" y="12" width="3.4" height="3.4"/>
-        <rect x="17.6" y="12" width="3.4" height="3.4"/>
-        <rect x="17.6" y="16" width="3.4" height="3.4"/>
-        <rect x="21" y="16" width="3.4" height="3.4"/>
-        <rect x="24.4" y="16" width="3.4" height="3.4"/>
-        <rect x="17.6" y="20" width="3.4" height="3.4"/>
-        <rect x="24.4" y="20" width="3.4" height="3.4"/>
-      </g>
-          </svg>
-        </span>
-        <span class="ident__name">Vyom Aggarwal</span>
-      </a>
-
-      <nav class="navpill glass" aria-label="Sections">
-        <a href="#overview" aria-current="true">Overview</a>
-        <a href="#research">Research</a>
-        <a href="#work">Work</a>
-        <a href="#education">Education</a>
-        <a href="#awards">Awards</a>
-        <a href="#contact">Contact</a>
-      </nav>
-
-      <a class="btn btn--solid" href="mailto:aggarw.vyom@gmail.com">Get in touch</a>
+    <div class="strip mono">
+      <span>Vyom Aggarwal · Student researcher</span>
+      <span class="strip__mid">MIT CSAIL · UC Santa Cruz AIEA Lab</span>
+      <span class="strip__end">Open to internships</span>
     </div>
 
-    <div class="head">
-      <h1 class="display" id="display">
-        <span><span class="u-sr">Vyom Aggarwal. </span>Where</span>
-        <span>Curiosity</span>
-        <span>Meets</span>
-        <span>Precision</span>
-      </h1>
-    </div>
+    <h1 class="hero__title" data-c="h1.display">
+      <span class="u-sr">Vyom Aggarwal. </span>
+      <span class="line"><span>Where curiosity</span></span>
+      <span class="line"><span>meets precision.</span></span>
+    </h1>
 
+    <p class="hero__sub" data-c="p.sub" data-stream>Spacecraft dynamics, navigation and the uncertainty in it, and control that has to hold after something fails.<span class="caret" aria-hidden="true"></span></p>
 
-    <div class="stage" id="stage">
-      <img class="stage__poster" id="poster" src="assets/img/earth-poster.webp?v=7a37e421" alt="" width="1440" height="860" fetchpriority="high" decoding="async">
-      <canvas class="stage__canvas" id="heroRig" aria-hidden="true"></canvas>
-    </div>
-    <div class="scrim" aria-hidden="true"></div>
+    <ul class="hero__notes mono">
+      <li><i class="dot" aria-hidden="true"></i>15 · Sophomore · Class of 2029</li>
+      <li><i class="dia" aria-hidden="true"></i>Two labs · MIT CSAIL · UC Santa Cruz</li>
+      <li class="hero__read" aria-hidden="true"><i class="sq" aria-hidden="true"></i><span data-terrain-read>FIELD · POINT TO BEND IT · CLICK TO DROP A MASS</span></li>
+    </ul>
 
-    <p class="word" aria-hidden="true"><i>Vyom</i><i>Aggarwal</i></p>
-
-    <div class="foot">
-      <p class="foot__lede">Student researcher across two labs — <b>MIT CSAIL</b> and the
-        <b>AIEA Lab at UC Santa Cruz</b>. I work on the mathematics of things that move:
-        <em>spacecraft dynamics, navigation and the uncertainty in it, and control that has to hold after
-        something fails</em>.</p>
-      <div class="foot__cta">
-        <a class="btn btn--solid" href="#work">See the work</a>
-        <a class="btn btn--glass glass" href="mailto:aggarw.vyom@gmail.com">Get in touch</a>
+    <div class="hero__foot">
+      <p class="hero__lede" data-c="p.lead">Student researcher across two labs, MIT CSAIL and the AIEA Lab at UC Santa Cruz. Aiming at aerospace.</p>
+      <div class="hero__cta" data-c="nav.cta">
+        <a class="btn btn--solid" href="#research" data-magnet>See the research <span class="arr" aria-hidden="true">→</span></a>
+        <a class="btn btn--line" href="mailto:aggarw.vyom@gmail.com" data-magnet>Get in touch</a>
       </div>
     </div>
+  </div>
+</section>
 
+<!-- ═══════════════ 01 · ABOUT ═══════════════ -->
+<section class="sec" id="profile" aria-labelledby="profile-title">
+  <div class="wrap">
+    <header class="sec__head">
+      <p class="mono"><i>[01]</i> Manifesto</p>
+      <p class="mono dim">Fig. 00 · Instrument → result</p>
+    </header>
 
-    <nav class="rail glass" aria-label="Elsewhere">
-      <a href="https://github.com/vyom-aggarwal" target="_blank" rel="noopener">
-        <span class="u-sr">GitHub</span>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true">
-          <circle cx="6.5" cy="5.5" r="2.4"/><circle cx="6.5" cy="18.5" r="2.4"/><circle cx="17.5" cy="5.5" r="2.4"/>
-          <path d="M6.5 7.9v8.2M17.5 7.9v2.6c0 2.4-1.9 4.3-4.3 4.3H8.9"/>
-        </svg>
-      </a>
-      <a href="https://www.linkedin.com/in/vyom-aggarwal/" target="_blank" rel="noopener">
-        <span class="u-sr">LinkedIn</span>
-        <svg viewBox="0 0 24 24" fill="currentColor" fill-rule="evenodd" aria-hidden="true">
-          <path d="M3.6 2h16.8A1.6 1.6 0 0 1 22 3.6v16.8a1.6 1.6 0 0 1-1.6 1.6H3.6A1.6 1.6 0 0 1 2 20.4V3.6A1.6 1.6 0 0 1 3.6 2Zm2.2 7.4h2.9V19H5.8V9.4Zm1.45-4.6a1.7 1.7 0 1 1 0 3.4 1.7 1.7 0 0 1 0-3.4ZM10.6 9.4h2.78v1.31h.04c.39-.73 1.33-1.5 2.74-1.5 2.93 0 3.47 1.93 3.47 4.43V19h-2.9v-4.77c0-1.14-.02-2.6-1.58-2.6-1.59 0-1.83 1.24-1.83 2.52V19h-2.9V9.4Z"/>
-        </svg>
-      </a>
-      <a href="mailto:aggarw.vyom@gmail.com">
-        <span class="u-sr">Email</span>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true">
-          <rect x="2.5" y="4.8" width="19" height="14.4" rx="2.2"/>
-          <path d="m3.4 6.6 8.6 6 8.6-6"/>
-        </svg>
-      </a>
-    </nav>
+    <h2 class="mani" id="profile-title" aria-label="Build the instrument before the result. Know what it's worth.">
+      <span class="mani__line" data-fill data-text="Build the instrument" aria-hidden="true">Build the instrument</span>
+      <span class="mani__line mani__line--in" data-fill data-text="before the result." aria-hidden="true">before the result.</span>
+      <span class="mani__line mani__line--in2" data-fill data-text="Know what it's worth." aria-hidden="true">Know what it's worth.</span>
+      <span class="mani__note mani__note--a mono" aria-hidden="true">↤ 12 col ↦</span>
+      <span class="mani__note mani__note--b mono" aria-hidden="true">font-size: 7.2vw</span>
+      <span class="mani__note mani__note--c mono" aria-hidden="true">ls −0.055em</span>
+    </h2>
 
-    <div class="notch">
-      <svg viewBox="0 0 13 20" stroke-width="1.3" aria-hidden="true">
-        <rect x="0.65" y="0.65" width="11.7" height="18.7" rx="5.85"/>
-        <line class="notch__wheel" x1="6.5" y1="5" x2="6.5" y2="8.5" stroke-linecap="round"/>
-      </svg>
-      <span>Scroll to<br>explore</span>
-    </div>
-
-  </section>
-</div>
-
-<!-- ═══════════════ PROFILE ═══════════════ -->
-<div class="panel">
-  <section class="section" id="profile" aria-label="Profile">
-    <div class="overview__grid">
-
-      <div>
-        <div class="section__head">
-          <h2 class="section__title">Dynamics, estimation, and <em>control that survives failure</em>.</h2>
-        </div>
-        <div class="prose">
-          <p>I'm a sophomore at <b>River Islands High School</b>, dual-enrolled at
-            <b>San Joaquin Delta College</b>, doing student research in <b>two labs</b>. Aerospace is the
-            field I'm aiming at, and I've chosen the work that field runs on: <b>spacecraft dynamics,
-            navigation and the uncertainty in it, fault-tolerant control</b>, and the simulation and
-            mathematics that have to hold underneath all three.</p>
+    <div class="about">
+      <div class="about__text" data-reveal>
+        <p class="about__lead">I'm a sophomore at <b>River Islands High School</b>, dual-enrolled at
+          <b>San Joaquin Delta College</b>, doing student research in <b>two labs</b>. Aerospace is the
+          field I'm aiming at, and I've chosen the work that field runs on: <b>spacecraft dynamics,
+          navigation and the uncertainty in it, fault-tolerant control</b>, and the simulation and
+          mathematics that have to hold underneath all three.</p>
+        <div class="about__cols">
           <p>The range is deliberate, not scattered. <b>Spacecraft dynamics and camera uncertainty,
             navigation, astronomy, climate data, language-model evaluation</b> — different subjects, one
             habit underneath: build the instrument before the result, and know what a number is worth
@@ -191,84 +208,123 @@
         </div>
       </div>
 
-      <div style="display: grid; gap: var(--s-4)">
-        <article class="card">
-          <p class="card__k">Quick spec</p>
-          <dl class="spec">
-            <div><dt>Age</dt><dd>15</dd></div>
-            <div><dt>Year</dt><dd>Sophomore</dd></div>
-            <div><dt>School</dt><dd>River Islands HS</dd></div>
-            <div><dt>Fields</dt><dd>Dynamics · GNC · ML</dd></div>
-            <div><dt>Location</dt><dd>California</dd></div>
-          </dl>
-        </article>
-        <article class="card">
-          <p class="card__k">By the numbers</p>
-          <dl class="spec">
-            <div><dt>Weighted GPA</dt><dd>4.86</dd></div>
-            <div><dt>Dual enrollment</dt><dd>4.0 unweighted</dd></div>
-            <div><dt>Research labs</dt><dd>02</dd></div>
-          </dl>
-          <p class="note">MIT · UC Santa Cruz</p>
-        </article>
-      </div>
+      <aside class="about__side" data-reveal style="--d: 1">
 
+        <dl class="spec">
+          <div><dt>Age</dt><dd>15</dd></div>
+          <div><dt>Year</dt><dd>Sophomore · Class of 2029</dd></div>
+          <div><dt>School</dt><dd>River Islands HS</dd></div>
+          <div><dt>Weighted GPA</dt><dd>4.86</dd></div>
+          <div><dt>Dual enrollment</dt><dd>4.0 unweighted</dd></div>
+          <div><dt>Research labs</dt><dd>02 · MIT · UC Santa Cruz</dd></div>
+          <div><dt>Fields</dt><dd>Dynamics · GNC · ML</dd></div>
+          <div><dt>Location</dt><dd>California</dd></div>
+        </dl>
+      </aside>
     </div>
+  </div>
+</section>
 
-    <div class="marquee" aria-hidden="true">
-      <div class="marquee__track">
-        <span>MIT CSAIL</span><span>UC Santa Cruz</span><span>FTC 36541</span><span>AIME Qualifier</span><span>USACO Silver</span><span>MATHCOUNTS 1st</span><span>Congressional App Challenge</span><span>Apex STEM</span>
-        <span>MIT CSAIL</span><span>UC Santa Cruz</span><span>FTC 36541</span><span>AIME Qualifier</span><span>USACO Silver</span><span>MATHCOUNTS 1st</span><span>Congressional App Challenge</span><span>Apex STEM</span>
-      </div>
-    </div>
-  </section>
-</div>
+<!-- ═══════════════ 02 · RESEARCH ═══════════════ -->
+<section class="sec sec--research" id="research" aria-labelledby="research-title">
+  <span class="u-anchor" id="projects" aria-hidden="true"></span>
+  <div class="wrap">
+    <header class="sec__head">
+      <p class="mono"><i>[02]</i> Selected research</p>
+      <p class="mono dim">Field reports · each with its repository</p>
+    </header>
 
-<!-- ═══════════════ 02 · PROJECTS ═══════════════ -->
-<div class="panel">
-  <section class="section" id="research">
-    <span class="u-anchor" id="projects" aria-hidden="true"></span>
-
-    <div class="section__head">
-      <h2 class="section__title">Selected work, <em>built instrument-first</em>.</h2>
-      <p class="section__lede">Each one built and checked its instrument before it quoted a result,
+    <div class="sec__intro">
+      <h2 class="sec__title" id="research-title">Selected work, <em>built instrument-first</em>.</h2>
+      <p class="sec__lede">Each one built and checked its instrument before it quoted a result,
         because a number you cannot defend is worse than no number at all.</p>
     </div>
+  </div>
 
-    <ul class="launcher">
-      <li>
-        <button class="pcard" type="button" aria-haspopup="dialog" data-open="fault-tolerant-control">
-          <span class="pcard__stage">
-            <img class="pcard__poster" src="assets/img/card-quadruped.webp?v=574f46b7" alt="" width="720" height="450" loading="lazy" decoding="async">
-            <canvas class="pcard__canvas" data-model="quadruped" aria-hidden="true"></canvas>
-          </span>
-          <span class="pcard__meta">
-            <span class="pcard__state"><i></i>Adapter built · correction channel under test</span>
-            <span class="pcard__title">Fault-tolerant control</span>
-            <span class="pcard__line">Exploring how a simulated quadruped can remain capable after an
-              actuator failure.</span>
-            <span class="pcard__chips"><b>10/10 seeds</b><b>1.2–82.3% recovery</b><b>0.055 m/s offset ceiling</b></span>
-          </span>
-        </button>
-      </li>
-      <li>
-        <button class="pcard" type="button" aria-haspopup="dialog" data-open="oberth-efficiency-atlas">
-          <span class="pcard__stage">
-            <img class="pcard__poster" src="assets/img/card-oberth.webp?v=cac33565" alt="" width="720" height="450" loading="lazy" decoding="async">
-            <canvas class="pcard__canvas" data-model="oberth" aria-hidden="true"></canvas>
-          </span>
-          <span class="pcard__meta">
-            <span class="pcard__state"><i></i>Analysis frozen · novelty claims provisional</span>
-            <span class="pcard__title">Oberth Efficiency Atlas</span>
-            <span class="pcard__line">How much of the Oberth benefit survives a real, finite burn? A
-              flyby simulator across six bodies and five engine classes, with a compact test for when
-              the textbook model holds.</span>
-            <span class="pcard__chips"><b>135,720-run sweep</b><b>509 tests</b><b>56/56 outputs reproduced</b></span>
-          </span>
-        </button>
-      </li>
-    </ul>
+  <!-- ── Project A ── -->
+  <article class="slide" data-slide aria-labelledby="slide-a-title">
+    <div class="slide__pin">
+      <div class="wrap slide__grid">
+        <div class="slide__text">
+          <p class="slide__count" aria-hidden="true"><span>01</span><span class="ghost">/02</span></p>
+          <p class="slide__meta mono"><span>UC Santa Cruz · AIEA Lab</span><span class="dim">PyBullet · PPO · RLS</span></p>
+          <h3 class="slide__title" id="slide-a-title">Fault-tolerant control</h3>
+          <p class="slide__line">Exploring how a simulated quadruped can remain capable after an
+            actuator failure.</p>
+          <p class="slide__state mono"><i class="dot dot--live" aria-hidden="true"></i>Adapter built · correction channel under test</p>
+          <button class="btn btn--line" type="button" aria-haspopup="dialog" data-open="fault-tolerant-control" data-magnet>
+            Read the write-up <span class="arr" aria-hidden="true">→</span>
+          </button>
 
+          <ol class="tabs" aria-label="Project steps">
+            <li class="tabs__tab"><span class="mono">01</span>Nominal<i class="tabs__bar"></i></li>
+            <li class="tabs__tab"><span class="mono">02</span>Fault<i class="tabs__bar"></i></li>
+            <li class="tabs__tab"><span class="mono">03</span>Correction<i class="tabs__bar"></i></li>
+          </ol>
+          <div class="tabs__say">
+            <p data-say="1">Trained on a robot that never breaks: twelve joints in PyBullet, PPO across ten seeds, and all ten converged to a usable gait.</p>
+            <p data-say="2">At step 200 something fails. Here it is joint_lock, one of five fault families: three corrupt what the robot can do, two what it knows.</p>
+            <p data-say="3">A twelve-number residual corrects around the fault without retraining the policy. It is built; its evaluation under faults has not been run yet.</p>
+          </div>
+        </div>
+
+        <figure class="demo" data-machine>
+          <div class="demo__panel instrument gridded">
+            <p class="demo__bar mono"><span>Fig. 01 · Quadruped, a schematic of the mechanism</span><span class="demo__live"><i class="dot dot--live" aria-hidden="true"></i>Live</span></p>
+            <canvas class="demo__canvas" data-demo="quadruped" aria-hidden="true"></canvas>
+            <div class="demo__hud mono keep-case" data-tone="ok" aria-hidden="true"><i class="demo__dot"></i><b data-demo-status>Nominal gait</b><span data-demo-detail>base policy · healthy</span></div>
+            <div class="demo__track mono" aria-hidden="true"><span>step 0</span><span class="demo__fault">fault · step 200</span><span>500</span><i class="demo__fill"></i></div>
+            <i class="tick tick--tl"></i><i class="tick tick--tr"></i><i class="tick tick--bl"></i><i class="tick tick--br"></i>
+          </div>
+          <figcaption class="demo__cap">Not a replay of a trial: the measured figures are in the write-up. The robot is a stand-in in Laikago proportions, since the model the research trains on is not cleared for redistribution.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </article>
+
+  <!-- ── Project B ── -->
+  <article class="slide" data-slide aria-labelledby="slide-b-title">
+    <div class="slide__pin">
+      <div class="wrap slide__grid">
+        <div class="slide__text">
+          <p class="slide__count" aria-hidden="true"><span>02</span><span class="ghost">/02</span></p>
+          <p class="slide__meta mono"><span>Spacecraft dynamics</span><span class="dim">Python · JavaScript · Dormand–Prince</span></p>
+          <h3 class="slide__title" id="slide-b-title">Oberth Efficiency Atlas</h3>
+          <p class="slide__line">How much of the Oberth benefit survives a real, finite burn? A
+            flyby simulator across six bodies and five engine classes, with a compact test for when
+            the textbook model holds.</p>
+          <p class="slide__state mono"><i class="dot" aria-hidden="true"></i>Analysis frozen · novelty claims provisional</p>
+          <button class="btn btn--line" type="button" aria-haspopup="dialog" data-open="oberth-efficiency-atlas" data-magnet>
+            Read the write-up <span class="arr" aria-hidden="true">→</span>
+          </button>
+
+          <ol class="tabs" aria-label="Project steps">
+            <li class="tabs__tab"><span class="mono keep-case">01</span>Π = 1<i class="tabs__bar"></i></li>
+            <li class="tabs__tab"><span class="mono keep-case">02</span>Π = 10<i class="tabs__bar"></i></li>
+            <li class="tabs__tab"><span class="mono keep-case">03</span>Π = 100<i class="tabs__bar"></i></li>
+          </ol>
+          <div class="tabs__say">
+            <p data-say="1">Π = 1: the burn lasts about one periapsis timescale. It keeps η = 0.982 of the impulsive Oberth bonus and loses about 1% of its Δv.</p>
+            <p data-say="2">Π = 10: the same Δv, spread over a burn ten times longer. η falls to 0.636, and 20.9% of the Δv is lost.</p>
+            <p data-say="3">Π = 100: η falls to 0.192. Across all 1,143 families in the sweep, half the bonus is gone at Π between 8.4 and 40.</p>
+          </div>
+        </div>
+
+        <figure class="demo demo--flyby" data-machine>
+          <div class="demo__panel instrument gridded">
+            <p class="demo__bar mono"><span>Fig. 02 · One flyby, flown by the atlas's simulator</span><span class="demo__live"><i class="dot dot--live" aria-hidden="true"></i>Live</span></p>
+            <canvas class="demo__canvas" data-demo="flyby" aria-hidden="true"></canvas>
+            <div class="demo__hud mono keep-case" aria-hidden="true"><span>Π <b data-demo-pi>10</b></span><span>η <b data-demo-eta>0.636</b></span><span>loss <b data-demo-loss>20.9%</b> of Δv</span></div>
+            <div class="demo__key mono keep-case" aria-hidden="true"><span class="demo__k demo__k--burn">burn</span><span class="demo__k">coast</span></div>
+            <i class="tick tick--tl"></i><i class="tick tick--tr"></i><i class="tick tick--bl"></i><i class="tick tick--br"></i>
+          </div>
+          <figcaption class="demo__cap">The path, the burn and η are the vendored simulator's output for v∞ = 0.45 v_esc, Δv = 0.1 v_p, Δv/c = 0.3, prograde, centred on periapsis. The model treats the planet as a point mass; it is drawn to scale only so there is something to see.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </article>
+
+  <div class="wrap">
     <p class="nojs-note note">Both projects are shown in full below.</p>
 
     <!-- ── Project A ── -->
@@ -283,7 +339,7 @@
         </header>
 
 
-        <div class="proj__stage">
+        <div class="proj__stage instrument">
           <canvas class="proj__canvas" data-sim="fault" aria-hidden="true"></canvas>
           <div class="simhud" data-tone="ok" aria-hidden="true">
             <i class="simhud__dot"></i>
@@ -503,7 +559,7 @@
         </header>
 
 
-        <div class="proj__stage">
+        <div class="proj__stage instrument">
           <canvas class="proj__canvas" data-sim="flyby" aria-hidden="true"></canvas>
           <div class="simhud simhud--top" data-tone="warn" aria-hidden="true">
             <i class="simhud__dot"></i>
@@ -692,192 +748,252 @@
         </div>
       </div>
     </dialog>
-  </section>
-</div>
+  </div>
+</section>
 
-<!-- ═══════════════ 03 · WORK ═══════════════ -->
-<div class="panel">
-  <section class="section" id="work">
-    <div class="section__head" style="max-width: none">
-      <h2 class="section__title">Two labs, <em>and the work around them</em>.</h2>
+<!-- ═══════════════ 03 · METHOD ═══════════════ -->
+<section class="sec" id="method" aria-labelledby="method-title">
+  <div class="wrap">
+    <header class="sec__head">
+      <p class="mono"><i>[03]</i> Method</p>
+      <p class="mono dim">The same four steps, both projects</p>
+    </header>
+
+    <div class="sec__intro">
+      <h2 class="sec__title" id="method-title">The instrument first.<br><em>The result after.</em></h2>
+    </div>
+
+    <ol class="steps4">
+      <li class="steps4__item" data-reveal>
+        <span class="steps4__dot" aria-hidden="true"></span>
+        <p class="steps4__no mono">01</p>
+        <h3 class="steps4__title">Instrument</h3>
+        <p class="steps4__body">Build the measurement before trusting it. The fault-recovery criterion
+          scored 100% recovery alongside a 36.5% fall rate, so it was rebuilt, and every recovery number
+          from before was discarded.</p>
+      </li>
+      <li class="steps4__item" data-reveal style="--d: 1">
+        <span class="steps4__dot" aria-hidden="true"></span>
+        <p class="steps4__no mono">02</p>
+        <h3 class="steps4__title">Reproduce</h3>
+        <p class="steps4__body">From a clean clone, with one command. The Oberth atlas rebuilds 56 of
+          56 outputs identically, behind 509 passing tests.</p>
+      </li>
+      <li class="steps4__item" data-reveal style="--d: 2">
+        <span class="steps4__dot" aria-hidden="true"></span>
+        <p class="steps4__no mono">03</p>
+        <h3 class="steps4__title">Quote</h3>
+        <p class="steps4__body">Every figure traces to something real: a CSV, a numbers file, or a
+          simulator run. Where a figure could only be invented, there is no figure.</p>
+      </li>
+      <li class="steps4__item" data-reveal style="--d: 3">
+        <span class="steps4__dot" aria-hidden="true"></span>
+        <p class="steps4__no mono">04</p>
+        <h3 class="steps4__title">Bound</h3>
+        <p class="steps4__body">Say what is not established. The atlas's claim register lists nine
+          claims as provisional or assumption-dependent, each with what would settle it.</p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- ═══════════════ 04 · WORK ═══════════════ -->
+<section class="sec" id="work" aria-labelledby="work-title">
+  <div class="wrap">
+    <header class="sec__head">
+      <p class="mono"><i>[04]</i> Experience</p>
       <div class="filters" role="group" aria-label="Filter experience">
-        <button class="filter" type="button" data-filter="all" aria-pressed="true">All <em>7</em></button>
+        <button class="filter" type="button" data-filter="all" aria-pressed="true">All <em>4</em></button>
         <button class="filter" type="button" data-filter="research" aria-pressed="false">Research <em>3</em></button>
-        <button class="filter" type="button" data-filter="robotics" aria-pressed="false">Robotics <em>1</em></button>
-        <button class="filter" type="button" data-filter="math" aria-pressed="false">Math <em>1</em></button>
-        <button class="filter" type="button" data-filter="leadership" aria-pressed="false">Leadership <em>3</em></button>
+        <button class="filter" type="button" data-filter="leadership" aria-pressed="false">Leadership <em>1</em></button>
       </div>
+    </header>
+
+    <div class="sec__intro">
+      <h2 class="sec__title" id="work-title">Two labs, <em>and the work around them</em>.</h2>
     </div>
 
     <ol class="roles" id="roles">
       <li class="role" data-tags="research">
-        <span class="role__no">01</span>
-        <span class="role__title"><i class="role__dot" aria-hidden="true"></i>Student Researcher</span>
-        <span class="role__org">Massachusetts Institute of Technology</span>
-        <span class="role__date">Jul 2026 — Present</span>
-        <span class="role__desc">Contributing to a next-generation AI platform designed to connect knowledge, surface insight, and support collaboration.</span>
+        <span class="role__no mono">01</span>
+        <h3 class="role__org">Massachusetts Institute of Technology</h3>
+        <div class="role__info">
+          <p class="role__title">Student Researcher <span class="role__date mono"><i class="dot dot--live" aria-hidden="true"></i>Jul 2026 — Present</span></p>
+          <p class="role__desc">Contributing to a next-generation AI platform designed to connect knowledge, surface insight, and support collaboration.</p>
+        </div>
       </li>
       <li class="role" data-tags="research">
-        <span class="role__no">02</span>
-        <span class="role__title"><i class="role__dot" aria-hidden="true"></i>Student Researcher</span>
-        <span class="role__org">University of California, Santa Cruz</span>
-        <span class="role__date">Jul 2026 — Present</span>
-        <span class="role__desc">Applying machine learning to robot control and to recovery behavior following faults.</span>
+        <span class="role__no mono">02</span>
+        <h3 class="role__org">University of California, Santa Cruz</h3>
+        <div class="role__info">
+          <p class="role__title">Student Researcher <span class="role__date mono"><i class="dot dot--live" aria-hidden="true"></i>Jul 2026 — Present</span></p>
+          <p class="role__desc">Applying machine learning to robot control and to recovery behavior following faults.</p>
+        </div>
       </li>
       <li class="role" data-tags="research">
-        <span class="role__no">03</span>
-        <span class="role__title"><i class="role__dot" aria-hidden="true"></i>Research Fellow</span>
-        <span class="role__org">Lumiere Education</span>
-        <span class="role__date">Jun 2026 — Sep 2026</span>
-        <span class="role__desc">Completed research with Fernanda-Maria Lugo-Bolanos of Brown University.</span>
-      </li>
-      <li class="role" data-tags="robotics leadership">
-        <span class="role__no">04</span>
-        <span class="role__title"><i class="role__dot" aria-hidden="true"></i>Team Captain</span>
-        <span class="role__org">FIRST Tech Challenge · Team 36541</span>
-        <span class="role__date">Sep 2025 — Present</span>
-        <span class="role__desc">Leads the team and teaches robotics fundamentals to rookie teammates.</span>
+        <span class="role__no mono">03</span>
+        <h3 class="role__org">Lumiere Education</h3>
+        <div class="role__info">
+          <p class="role__title">Research Fellow <span class="role__date mono">Jun 2026 — Sep 2026</span></p>
+          <p class="role__desc">Completed research with Fernanda-Maria Lugo-Bolanos of Brown University.</p>
+        </div>
       </li>
       <li class="role" data-tags="leadership">
-        <span class="role__no">05</span>
-        <span class="role__title"><i class="role__dot" aria-hidden="true"></i>Founder</span>
-        <span class="role__org">Apex STEM</span>
-        <span class="role__date">Dec 2024 — Present</span>
-        <span class="role__desc">Founded and leads an independent STEM initiative.</span>
-      </li>
-      <li class="role" data-tags="math">
-        <span class="role__no">06</span>
-        <span class="role__title">Academic Writing Intern</span>
-        <span class="role__org">TMAS Academy</span>
-        <span class="role__date">Jun 2025 — Aug 2026</span>
-        <span class="role__desc">Authored a free AMC 8 preparation book, now in publication.</span>
-      </li>
-      <li class="role" data-tags="leadership">
-        <span class="role__no">07</span>
-        <span class="role__title"><i class="role__dot" aria-hidden="true"></i>Troop Guide</span>
-        <span class="role__org">Boy Scouts of America · Manteca, CA</span>
-        <span class="role__date">Nov 2023 — Present</span>
-        <span class="role__desc">Mentors younger scouts in outdoor skills and leadership development.</span>
+        <span class="role__no mono">04</span>
+        <h3 class="role__org">Apex STEM</h3>
+        <div class="role__info">
+          <p class="role__title">Founder <span class="role__date mono"><i class="dot dot--live" aria-hidden="true"></i>Dec 2024 — Present</span></p>
+          <p class="role__desc">Founded and leads an independent STEM initiative.</p>
+        </div>
       </li>
     </ol>
     <p class="roles__empty" id="rolesEmpty" hidden>No entries match this filter.</p>
-  </section>
-</div>
+  </div>
+</section>
 
-<!-- ═══════════════ 04 · EDUCATION ═══════════════ -->
-<div class="panel">
-  <section class="section" id="education">
-    <div class="section__head">
-      <h2 class="section__title">Two transcripts, <em>one track</em>.</h2>
-    </div>
+<!-- ═══════════════ 04.1 · EDUCATION ═══════════════ -->
+<section class="sec sec--cont" id="education" aria-labelledby="education-title">
+  <div class="wrap">
+    <header class="sec__head">
+      <p class="mono"><i>[04.1]</i> Education</p>
+      <p class="mono dim">Two transcripts, one track</p>
+    </header>
+    <h2 class="u-sr" id="education-title">Education</h2>
 
     <div class="edu">
-      <article class="card">
-        <span class="edu__chip">High school</span>
+      <article class="edu__item" data-reveal>
+        <p class="mono dim">High school · Aug 2025 — Jun 2029</p>
         <h3 class="edu__name">River Islands High School</h3>
-        <p class="edu__meta">Aug 2025 — Jun 2029 · Diploma candidate</p>
-        <div class="prose"><p>Currently a sophomore with a <b>4.86 weighted GPA</b>. Coursework includes
-          AP Computer Science Principles, STEM Leadership, and AP Psychology.</p></div>
-        <dl class="spec">
-          <div><dt>GPA</dt><dd>4.86 W</dd></div>
-          <div><dt>Class of</dt><dd>2029</dd></div>
-        </dl>
+        <p class="edu__meta">Diploma candidate · Class of 2029</p>
+        <p class="edu__body">Currently a sophomore with a <b>4.86 weighted GPA</b>. Coursework includes
+          AP Computer Science Principles, STEM Leadership, and AP Psychology.</p>
+        <p class="edu__stat"><span class="edu__num">4.86</span><span class="mono dim">GPA · weighted</span></p>
       </article>
-      <article class="card">
-        <span class="edu__chip">Dual enrollment</span>
+      <article class="edu__item" data-reveal style="--d: 1">
+        <p class="mono dim">Dual enrollment · Jun 2025 — May 2029</p>
         <h3 class="edu__name">San Joaquin Delta College</h3>
-        <p class="edu__meta">Jun 2025 — May 2029 · A.S. candidate</p>
-        <div class="prose"><p>Early College Pathway program with a <b>4.0 unweighted GPA</b>. Current
-          coursework includes CS11, POLS C1000, and PSYC C1000.</p></div>
-        <dl class="spec">
-          <div><dt>GPA</dt><dd>4.0 UW</dd></div>
-          <div><dt>Track</dt><dd>Early College Pathway</dd></div>
-        </dl>
+        <p class="edu__meta">A.S. candidate · Early College Pathway</p>
+        <p class="edu__body">Early College Pathway program with a <b>4.0 unweighted GPA</b>. Current
+          coursework includes CS11, POLS C1000, and PSYC C1000.</p>
+        <p class="edu__stat"><span class="edu__num">4.0</span><span class="mono dim">GPA · unweighted</span></p>
       </article>
     </div>
-  </section>
-</div>
+  </div>
+</section>
 
 <!-- ═══════════════ 05 · AWARDS ═══════════════ -->
-<div class="panel">
-  <section class="section" id="awards">
-    <div class="section__head">
-      <h2 class="section__title">Recognition and <em>competition</em>.</h2>
+<section class="sec" id="awards" aria-labelledby="awards-title">
+  <div class="wrap">
+    <header class="sec__head">
+      <p class="mono"><i>[05]</i> Recognition</p>
+      <p class="mono dim">Math · computing · engineering</p>
+    </header>
+
+    <div class="sec__intro">
+      <h2 class="sec__title" id="awards-title">Recognition and <em>competition</em>.</h2>
     </div>
 
-    <div class="awards">
-      <article class="card award">
-        <span class="award__result">1st place</span>
+    <ul class="awards">
+      <li class="award" data-reveal>
+        <p class="award__big">1st</p>
         <h3 class="award__name">MATHCOUNTS</h3>
-        <div class="prose"><p>Took first place at the MATHCOUNTS competition.</p></div>
-      </article>
-      <article class="card award">
-        <span class="award__result">Top ~14%</span>
+        <p class="award__result mono">1st place</p>
+        <p class="award__desc">Took first place at the MATHCOUNTS competition.</p>
+      </li>
+      <li class="award" data-reveal style="--d: 1">
+        <p class="award__big"><small>Top</small>~14%</p>
         <h3 class="award__name">AIME Qualifier</h3>
-        <div class="prose"><p>Placed among roughly the top 14% of AMC 12 competitors.</p></div>
-      </article>
-      <article class="card award">
-        <span class="award__result">Winner · CA-13</span>
+        <p class="award__result mono">Top ~14%</p>
+        <p class="award__desc">Placed among roughly the top 14% of AMC 12 competitors.</p>
+      </li>
+      <li class="award" data-reveal style="--d: 2">
+        <p class="award__big"><small>Winner</small>CA-13</p>
         <h3 class="award__name">Congressional App Challenge</h3>
-        <div class="prose"><p>Built <b>LifeLine</b>, an app for people affected by natural disasters.</p></div>
-      </article>
-      <article class="card award">
-        <span class="award__result">Honorable mention</span>
+        <p class="award__result mono">Winner · CA-13</p>
+        <p class="award__desc">Built <b>LifeLine</b>, an app for people affected by natural disasters.</p>
+      </li>
+      <li class="award" data-reveal>
+        <p class="award__big"><small>Top</small>25%</p>
         <h3 class="award__name">Stanford Math Tournament</h3>
-        <div class="prose"><p>Placed in the top 25% of competitors.</p></div>
-      </article>
-      <article class="card award">
-        <span class="award__result">Distinguished honor roll</span>
+        <p class="award__result mono">Honorable mention</p>
+        <p class="award__desc">Placed in the top 25% of competitors.</p>
+      </li>
+      <li class="award" data-reveal style="--d: 1">
+        <p class="award__big"><small>Top</small>20%</p>
         <h3 class="award__name">Berkeley Math Tournament</h3>
-        <div class="prose"><p>Placed in the top 20% of competitors.</p></div>
-      </article>
-      <article class="card award">
-        <span class="award__result">2026 · 2nd contest</span>
+        <p class="award__result mono">Distinguished honor roll</p>
+        <p class="award__desc">Placed in the top 20% of competitors.</p>
+      </li>
+      <li class="award" data-reveal style="--d: 2">
+        <p class="award__big">Silver</p>
         <h3 class="award__name">USACO Silver</h3>
-        <div class="prose"><p>Achieved Silver division standing in the USA Computing Olympiad.</p></div>
-      </article>
-    </div>
-  </section>
-</div>
-
-<!-- ═══════════════ 06 · CONTACT ═══════════════ -->
-<div class="panel">
-  <section class="section contact" id="contact">
-    <div class="section__head" style="max-width: none">
-      <h2 class="contact__title">Let's build something</h2>
-      <p class="contact__sub">Open to <b>engineering internships</b>, research collaborations, and
-        challenging problems worth working through.</p>
-    </div>
-
-    <div class="contact__links">
-      <a class="contact__link" href="mailto:aggarw.vyom@gmail.com">
-        <span class="contact__k">Email</span>
-        <span class="contact__v">aggarw.vyom@gmail.com</span>
-      </a>
-      <a class="contact__link" href="https://www.linkedin.com/in/vyom-aggarwal/" target="_blank" rel="noopener">
-        <span class="contact__k">LinkedIn</span>
-        <span class="contact__v">/in/vyom-aggarwal</span>
-      </a>
-      <a class="contact__link" href="tel:+12094063179">
-        <span class="contact__k">Phone</span>
-        <span class="contact__v">(209) 406-3179</span>
-      </a>
-      <a class="contact__link" href="https://github.com/vyom-aggarwal" target="_blank" rel="noopener">
-        <span class="contact__k">GitHub</span>
-        <span class="contact__v">github.com/vyom-aggarwal</span>
-      </a>
-    </div>
-
-    <p class="contact__mark" aria-hidden="true">VA</p>
-  </section>
-</div>
-
-<p class="colophon">
-  <span>Vyom Aggarwal</span>
-  <span>Aerospace Engineer</span>
-</p>
+        <p class="award__result mono">2026 · 2nd contest</p>
+        <p class="award__desc">Achieved Silver division standing in the USA Computing Olympiad.</p>
+      </li>
+    </ul>
+  </div>
+</section>
 
 </main>
+
+<!-- ═══════════════ 06 · CONTACT ═══════════════ -->
+<footer class="foot" id="contact">
+  <div class="wrap">
+    <header class="sec__head">
+      <p class="mono"><i>[06]</i> Next</p>
+      <p class="mono dim">Open to internships &amp; collaborations</p>
+    </header>
+
+    <div class="foot__grid">
+      <div class="foot__cta">
+        <h2 class="foot__title">Got a hard problem worth working through? <a class="foot__mail" href="mailto:aggarw.vyom@gmail.com">Let's build something.</a></h2>
+      </div>
+
+      <div class="foot__cols">
+        <nav aria-label="Site">
+          <p class="mono dim">Site</p>
+          <ul>
+            <li><a href="#profile">About</a></li>
+            <li><a href="#research">Research</a></li>
+            <li><a href="#method">Method</a></li>
+            <li><a href="#work">Work</a></li>
+            <li><a href="#awards">Awards</a></li>
+          </ul>
+        </nav>
+        <nav aria-label="Elsewhere">
+          <p class="mono dim">Elsewhere</p>
+          <ul>
+            <li><a href="https://github.com/vyom-aggarwal" target="_blank" rel="noopener">GitHub <span aria-hidden="true">↗</span></a></li>
+            <li><a href="https://www.linkedin.com/in/vyom-aggarwal/" target="_blank" rel="noopener">LinkedIn <span aria-hidden="true">↗</span></a></li>
+          </ul>
+        </nav>
+        <div>
+          <p class="mono dim">Contact</p>
+          <ul>
+            <li><a href="mailto:aggarw.vyom@gmail.com">aggarw.vyom@gmail.com</a></li>
+            <li><a href="tel:+12094063179">(209) 406-3179</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="foot__mark">
+      <p class="foot__word" aria-hidden="true" data-fit><span>Vyom Aggarwal.</span></p>
+      <div class="specbox mono" role="group" aria-label="This site">
+        <div><p>Cookies</p><p class="specbox__n">0</p></div>
+        <div><p>Trackers</p><p class="specbox__n">0</p></div>
+        <div><p>Frameworks</p><p class="specbox__n">0</p></div>
+        <p class="specbox__foot"><span>Static HTML · CSS · JS</span><span>Rev. 2026</span></p>
+      </div>
+    </div>
+
+    <div class="foot__bar mono">
+      <span>© 2026 Vyom Aggarwal · Aerospace Engineer</span>
+      <span class="dim foot__built">Press <kbd>G</kbd> for the grid · <kbd data-cmdk-key>⌘K</kbd> for everything else</span>
+      <a href="#overview">Back to top ↑</a>
+    </div>
+  </div>
+</footer>
 
 <script type="application/ld+json">
 {
@@ -902,8 +1018,8 @@
 }
 </script>
 
-<script type="module" src="assets/js/hero.js?v=ade0bd71"></script>
-<script type="module" src="assets/js/projects.js?v=ade0bd71"></script>
-<script type="module" src="assets/js/sections.js?v=ade0bd71"></script>
+<script type="module" src="assets/js/hero.js?v=39b3c8e2"></script>
+<script type="module" src="assets/js/projects.js?v=39b3c8e2"></script>
+<script type="module" src="assets/js/sections.js?v=39b3c8e2"></script>
 </body>
 </html>

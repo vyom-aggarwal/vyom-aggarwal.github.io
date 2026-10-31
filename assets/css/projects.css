@@ -1,273 +1,108 @@
 /* ═══════════════════════════════════════════════════════════
-   PROJECTS — the launcher and the two project overlays.
+   PROJECTS — the two write-up overlays.
 
-   A card is a door, not a summary: title, one line of framing,
-   three stat chips, a state label. Everything else lives behind
-   it, in the dialog, in the HTML, where a crawler can still
-   reach it.
+   The mechanics are unchanged from v2 and projects.js depends
+   on them: the step panes are absolutely stacked and the active
+   one is in flow, .is-measuring lays a pane out hidden so its
+   height can be read, and project B (.proj--flow) scrolls as one
+   page. Only the skin is new: paper (or ink) for the write-up,
+   an instrument screen for the simulation.
    ═══════════════════════════════════════════════════════════ */
 
-.u-anchor { display: block; height: 0; }
-
-/* ═══ the launcher ═════════════════════════════════════ */
-.launcher {
-  display: grid; gap: var(--s-4);
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.pcard {
-  display: flex; flex-direction: column; width: 100%; height: 100%;
-  padding: 0; overflow: hidden; cursor: pointer; text-align: left;
-  background: var(--panel);
-  border: 1px solid var(--hair);
-  border-radius: var(--r-card);
-  transition: border-color var(--dur) var(--ease),
-              transform var(--dur) var(--ease),
-              box-shadow var(--dur) var(--ease);
-}
-/* Focus gets exactly what hover gets, plus the ring. A keyboard
-   visitor should not be the poor relation. */
-.pcard:hover,
-.pcard:focus-visible {
-  border-color: var(--signal-line);
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-lift);
-}
-.pcard:focus-visible { outline: 2px solid var(--limb); outline-offset: 3px; }
-
-.pcard__stage {
-  position: relative; display: block;
-  aspect-ratio: 16 / 10; background: var(--window);
-  border-bottom: 1px solid var(--hair);
-}
-.pcard__poster, .pcard__canvas {
-  position: absolute; inset: 0; width: 100%; height: 100%;
-  object-fit: cover;
-}
-.pcard__canvas { opacity: 0; transition: opacity 0.45s var(--ease); }
-.pcard__canvas.is-live { opacity: 1; }
-
-.pcard__meta {
-  display: flex; flex-direction: column; gap: 10px;
-  padding: var(--s-5);
-}
-.pcard__state {
-  display: inline-flex; align-items: center; gap: 8px;
-  font-family: var(--font-mono); font-size: var(--fs-micro);
-  text-transform: uppercase; letter-spacing: var(--track-wide);
-  color: var(--ink-3);
-}
-.pcard__state i {
-  width: 6px; height: 6px; border-radius: 50%; background: var(--signal);
-  box-shadow: 0 0 0 3px var(--signal-soft);
-}
-.pcard__title {
-  font-size: var(--fs-h3); font-weight: var(--wt-display);
-  letter-spacing: var(--track-tight); color: var(--ink);
-}
-.pcard__line { color: var(--ink-2); font-size: var(--fs-sm); line-height: 1.55; }
-.pcard__chips { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 4px; }
-.pcard__chips b {
-  padding: 5px 10px; border-radius: var(--r-pill);
-  border: 1px solid var(--hair); background: var(--raised);
-  font-family: var(--font-mono); font-weight: 400;
-  font-size: var(--fs-micro); letter-spacing: var(--track-mono);
-  color: var(--ink-3);
-}
-.pcard:hover .pcard__chips b,
-.pcard:focus-visible .pcard__chips b { border-color: var(--signal-line); color: var(--ink-2); }
-
-/* ═══ the overlay ══════════════════════════════════════ */
 .proj {
-  width: min(1180px, calc(100vw - var(--s-5)));
+  width: min(1180px, calc(100vw - 32px));
   max-width: none;
-  max-height: calc(100svh - var(--s-5));
-  padding: 0; border: 0; overflow: hidden;
-  background: var(--panel);
-  border-radius: var(--r-panel);
-  box-shadow: 0 60px 140px -40px rgb(0 0 0 / 0.9);
+  max-height: calc(100svh - 32px);
+  padding: 0; border: 1px solid var(--hair-2); overflow: hidden;
+  background: var(--surface);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow);
   color: var(--ink-2);
 }
 .proj::backdrop {
-  /* the Earth stays faintly visible behind it */
-  background: rgb(0 0 0 / 0.72);
-  -webkit-backdrop-filter: blur(12px);
-          backdrop-filter: blur(12px);
+  background: var(--scrim);
+  -webkit-backdrop-filter: blur(10px);
+          backdrop-filter: blur(10px);
 }
 .proj:not([open]) { display: none; }
 
 @media (prefers-reduced-motion: no-preference) {
-  .proj[open] { animation: proj-in 0.28s var(--ease); }
-  .proj[open]::backdrop { animation: fade-in 0.28s var(--ease); }
+  .proj[open] { animation: proj-in 0.4s var(--ease); }
+  .proj[open]::backdrop { animation: fade-in 0.4s var(--ease); }
 }
-@keyframes proj-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@keyframes proj-in { from { opacity: 0; transform: translateY(16px) scale(0.99); } to { opacity: 1; transform: none; } }
 @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
-/* Under reduced motion it simply appears. No scale, no slide. */
 
-.proj__inner {
-  display: flex; flex-direction: column;
-  max-height: calc(100svh - var(--s-5));
-}
+.proj__inner { display: flex; flex-direction: column; max-height: calc(100svh - 32px); }
 
 .proj__head {
   position: relative; flex: none;
-  padding: var(--s-6) var(--s-6) var(--s-5);
+  padding: var(--s-5) var(--s-5) var(--s-4);
+  padding-right: calc(var(--s-5) + 60px);
   border-bottom: 1px solid var(--hair);
-  padding-right: calc(var(--s-6) + 60px);
 }
 .proj__eyebrow {
   font-family: var(--font-mono); font-size: var(--fs-micro);
   text-transform: uppercase; letter-spacing: var(--track-wide);
-  color: var(--signal); margin-bottom: var(--s-3);
+  color: var(--accent); margin-bottom: 10px;
 }
 .proj__title {
-  font-size: var(--fs-h3); letter-spacing: var(--track-tight);
-  color: var(--ink); max-width: 46ch;
+  font-size: clamp(1.5rem, 1.1rem + 1.4vw, 2.375rem); line-height: 1.08;
+  letter-spacing: -0.035em; max-width: 30ch;
 }
-.proj__lede {
-  margin-top: var(--s-3); color: var(--ink-2);
-  font-size: var(--fs-sm); line-height: 1.6; max-width: var(--measure);
-}
-.proj__lede em { font-style: normal; color: var(--signal); }
+.proj__lede { margin-top: 12px; color: var(--ink-2); font-size: var(--fs-sm); line-height: 1.6; max-width: var(--measure); }
+.proj__lede em { color: var(--accent); }
 
 .proj__close {
-  position: absolute; top: var(--s-5); right: var(--s-5);
-  width: 44px; height: 44px;              /* the minimum target, exactly */
-  display: grid; place-items: center; cursor: pointer;
-  border-radius: var(--r-pill);
-  border: 1px solid var(--hair); background: var(--raised);
-  color: var(--ink-2);
-  transition: color var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease);
+  position: absolute; top: var(--s-4); right: var(--s-4);
+  width: 44px; height: 44px;
+  display: grid; place-items: center;
+  border-radius: 50%; border: 1px solid var(--hair-2);
+  background: var(--surface); color: var(--ink);
+  transition: border-color var(--dur-fast) var(--ease), transform var(--dur) var(--ease);
 }
-.proj__close:hover { color: var(--ink); border-color: var(--hair-2); }
-.proj__close svg { width: 17px; height: 17px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+.proj__close:hover { border-color: var(--ink); transform: rotate(90deg); }
+.proj__close svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.6; }
 
 .proj__body {
   flex: 1 1 auto; min-height: 0;
-  padding: var(--s-6);
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
+  padding: var(--s-5);
+  overflow-y: auto; -webkit-overflow-scrolling: touch;
 }
 
-/* ═══ the in-dialog simulation ═════════════════════════
-   One live context per open dialog, torn down on close, so the
-   page never holds the hero and both projects at once. */
+/* ═══ the simulation screen ════════════════════════════ */
 .proj__stage {
-  position: relative; overflow: hidden;
-  /* flex: none, or a long body squashes the stage to a strip */
-  flex: none;
-  height: clamp(190px, 26vh, 300px);
-  background: var(--window);
+  position: relative; overflow: hidden; flex: none;
+  height: clamp(200px, 28vh, 320px);
   border-bottom: 1px solid var(--hair);
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 32px 32px;
 }
 .proj__canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
 
 .simhud {
-  position: absolute; left: var(--s-5); bottom: var(--s-4);
-  display: flex; align-items: center; flex-wrap: wrap; gap: 8px var(--s-3);
-  padding: 9px 14px; border-radius: var(--r-pill);
-  background: rgb(12 16 23 / 0.82);
-  border: 1px solid var(--hair);
+  position: absolute; left: 16px; bottom: 14px;
+  display: flex; align-items: center; flex-wrap: wrap; gap: 6px 14px;
+  padding: 8px 14px; border-radius: var(--r-pill);
+  background: rgb(8 9 11 / 0.84); border: 1px solid var(--hair-2);
   font-family: var(--font-mono); font-size: var(--fs-mono);
   letter-spacing: var(--track-mono); color: var(--ink-3);
 }
 .simhud b { color: var(--ink); font-weight: 500; }
-.simhud__dot {
-  width: 7px; height: 7px; border-radius: 50%; background: var(--signal);
-  box-shadow: 0 0 0 3px var(--signal-soft);
-}
-.simhud[data-tone='bad'] .simhud__dot { background: #E0674A; box-shadow: 0 0 0 3px rgb(224 103 74 / .18); }
-.simhud[data-tone='warn'] .simhud__dot { background: var(--limb); box-shadow: 0 0 0 3px rgb(143 224 245 / .18); }
+.simhud__dot { width: 7px; height: 7px; border-radius: 50%; background: var(--signal); box-shadow: 0 0 0 3px rgb(74 158 224 / 0.18); }
+.simhud[data-tone='bad'] .simhud__dot { background: #FF7A45; box-shadow: 0 0 0 3px rgb(255 122 69 / 0.2); }
+.simhud[data-tone='warn'] .simhud__dot { background: var(--limb); box-shadow: 0 0 0 3px rgb(143 224 245 / 0.18); }
 .simhud__v { font-variant-numeric: tabular-nums; }
-.simhud--top { top: var(--s-4); bottom: auto; }
+.simhud--top { top: 14px; bottom: auto; }
 
-@media (prefers-reduced-motion: reduce) { .proj__stage, .simctl { display: none; } }
-
-/* ═══ the stepper ══════════════════════════════════════ */
-.stepper { flex: none; padding: var(--s-5) var(--s-6) 0; }
-.stepper__bar {
-  display: flex; align-items: baseline; gap: var(--s-4);
-  margin-bottom: var(--s-4);
-}
-.stepper__pos {
-  font-family: var(--font-mono); font-size: var(--fs-mono);
-  letter-spacing: var(--track-wide); color: var(--ink-3);
-}
-.stepper__pos b { color: var(--signal); font-weight: 500; }
-.stepper__name { color: var(--ink); font-weight: 600; }
-.stepper__ctl { margin-left: auto; display: flex; gap: 8px; }
-.stepper__ctl button {
-  width: 44px; height: 44px; display: grid; place-items: center;
-  border-radius: var(--r-pill); cursor: pointer;
-  border: 1px solid var(--hair); background: var(--raised); color: var(--ink-2);
-}
-.stepper__ctl button:hover { color: var(--ink); border-color: var(--hair-2); }
-.stepper__ctl svg { width: 16px; height: 16px; fill: currentColor; }
-
-/* One control, two states. The trial plays from wherever the slider
-   sits; pressing it at the end starts over. */
-.stepper__play[data-playing] { color: var(--signal); border-color: var(--signal-line); }
-.stepper__play .i-pause,
-.stepper__play[data-playing] .i-play { display: none; }
-.stepper__play[data-playing] .i-pause { display: block; }
-
-/* A real range input, styled. Dragging it, clicking a tick and
-   pressing play all drive the same value. */
-.stepper__range {
-  -webkit-appearance: none; appearance: none;
-  display: block; width: 100%; height: 26px; margin: 0;
-  background: transparent; cursor: grab;
-}
-.stepper__range:active { cursor: grabbing; }
-.stepper__range::-webkit-slider-runnable-track {
-  height: 2px; background: var(--hair-2); border-radius: 2px;
-}
-.stepper__range::-moz-range-track {
-  height: 2px; background: var(--hair-2); border-radius: 2px;
-}
-.stepper__range::-webkit-slider-thumb {
-  -webkit-appearance: none; appearance: none;
-  width: 18px; height: 18px; margin-top: -8px;
-  border-radius: 50%; background: var(--signal);
-  border: 3px solid var(--panel);
-  box-shadow: 0 0 0 1px var(--signal);
-}
-.stepper__range::-moz-range-thumb {
-  width: 18px; height: 18px; border-radius: 50%;
-  background: var(--signal); border: 3px solid var(--panel);
-  box-shadow: 0 0 0 1px var(--signal);
-}
-.stepper__range:focus-visible { outline: 2px solid var(--limb); outline-offset: 4px; border-radius: 4px; }
-
-.stepper__ticks {
-  display: grid; grid-template-columns: repeat(6, 1fr);
-  gap: 4px; margin-top: 6px;
-}
-.stepper__ticks button {
-  width: 100%; padding: 6px 2px; cursor: pointer; text-align: center;
-  font-family: var(--font-mono); font-size: var(--fs-micro);
-  letter-spacing: var(--track-mono); color: var(--ink-3);
-  border-radius: 6px;
-}
-.stepper__ticks button:hover { color: var(--ink-2); }
-.stepper__ticks button[aria-current='true'] { color: var(--signal); }
-
-/* The same strip drives project B's stage. It is a stepper with one
-   continuous control and no steps, so it reuses the stepper's pieces and
-   only tightens them: the strip is chrome, and whatever it takes the
-   scrolling body below loses. */
-.simctl { padding-top: var(--s-4); padding-bottom: var(--s-3); border-bottom: 1px solid var(--hair); }
-.simctl .stepper__bar { margin-bottom: var(--s-2); }
-.simctl .stepper__pos output { font-variant-numeric: tabular-nums; color: var(--ink); }
-.simctl .stepper__name { font-weight: 400; color: var(--ink-2); font-size: var(--fs-sm); }
-
-/* the key sits in the stage's free corner rather than taking a row */
 .simkey {
-  position: absolute; left: var(--s-5); bottom: var(--s-3);
-  display: flex; flex-wrap: wrap; gap: 4px var(--s-3);
-  max-width: calc(100% - var(--s-6));
+  position: absolute; left: 16px; bottom: 12px;
+  display: flex; flex-wrap: wrap; gap: 4px 16px;
+  max-width: calc(100% - 32px);
   padding: 6px 12px; border-radius: var(--r-pill);
-  background: rgb(12 16 23 / 0.82); border: 1px solid var(--hair);
+  background: rgb(8 9 11 / 0.84); border: 1px solid var(--hair-2);
   font-family: var(--font-mono); font-size: var(--fs-micro);
   letter-spacing: var(--track-mono); color: var(--ink-3);
 }
@@ -276,144 +111,189 @@
 .simkey [data-k='burn']::before { border-top: 4px solid var(--limb); border-radius: 2px; }
 .simkey [data-k='dash']::before { border-top: 2px dashed var(--ink-3); }
 
-/* ═══ the step panes ═══════════════════════════════════
-   The pane's height is measured from the tallest step when the
-   dialog opens, so dragging the slider never makes the dialog
-   jump. A step taller than the space available scrolls inside
-   the pane rather than losing anything. */
+@media (prefers-reduced-motion: reduce) { .proj__stage, .simctl { display: none; } }
+
+/* ═══ the stepper ══════════════════════════════════════ */
+.stepper { flex: none; padding: var(--s-4) var(--s-5) 0; }
+.stepper__bar { display: flex; align-items: center; gap: var(--s-3); margin-bottom: 10px; }
+.stepper__pos { font-family: var(--font-mono); font-size: var(--fs-mono); letter-spacing: var(--track-wide); color: var(--ink-3); }
+.stepper__pos b { color: var(--accent); font-weight: 500; }
+.stepper__name { color: var(--ink); font-weight: 500; }
+.stepper__ctl { margin-left: auto; display: flex; gap: 8px; }
+.stepper__ctl button {
+  width: 44px; height: 44px; display: grid; place-items: center;
+  border-radius: 50%; border: 1px solid var(--hair-2); color: var(--ink);
+  transition: border-color var(--dur-fast) var(--ease), background-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
+}
+.stepper__ctl button:hover { border-color: var(--ink); }
+.stepper__ctl svg { width: 15px; height: 15px; fill: currentColor; }
+.stepper__play[data-playing] { background: var(--btn-bg); border-color: var(--btn-bg); color: var(--btn-ink); }
+.stepper__play .i-pause,
+.stepper__play[data-playing] .i-play { display: none; }
+.stepper__play[data-playing] .i-pause { display: block; }
+
+.stepper__range {
+  -webkit-appearance: none; appearance: none;
+  display: block; width: 100%; height: 26px; margin: 0;
+  background: transparent; cursor: grab;
+}
+.stepper__range:active { cursor: grabbing; }
+.stepper__range::-webkit-slider-runnable-track { height: 2px; background: var(--hair-2); border-radius: 2px; }
+.stepper__range::-moz-range-track { height: 2px; background: var(--hair-2); border-radius: 2px; }
+.stepper__range::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 18px; height: 18px; margin-top: -8px;
+  border-radius: 50%; background: var(--accent);
+  border: 4px solid var(--surface); box-shadow: 0 0 0 1px var(--accent);
+}
+.stepper__range::-moz-range-thumb {
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--accent); border: 4px solid var(--surface); box-shadow: 0 0 0 1px var(--accent);
+}
+.stepper__range:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 4px; }
+
+.stepper__ticks { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; margin-top: 4px; }
+.stepper__ticks button {
+  width: 100%; padding: 6px 2px; text-align: center;
+  font-family: var(--font-mono); font-size: var(--fs-micro);
+  letter-spacing: var(--track-mono); color: var(--ink-3);
+  border-radius: var(--r-sm);
+}
+.stepper__ticks button:hover { color: var(--ink); }
+.stepper__ticks button[aria-current='true'] { color: var(--accent); }
+
+.simctl { padding-top: var(--s-3); padding-bottom: 12px; border-bottom: 1px solid var(--hair); }
+.simctl .stepper__bar { margin-bottom: 6px; }
+.simctl .stepper__pos output { font-variant-numeric: tabular-nums; color: var(--ink); }
+.simctl .stepper__name { font-weight: 400; color: var(--ink-2); font-size: var(--fs-sm); }
+
+/* ═══ the step panes ═══════════════════════════════════ */
 .steps { position: relative; }
 .step {
   position: absolute; inset: 0; overflow-y: auto;
-  padding: var(--s-5) var(--s-6) var(--s-6);
+  padding: var(--s-4) var(--s-5) var(--s-5);
   opacity: 0; visibility: hidden;
   transition: opacity var(--dur) var(--ease);
 }
 .step.is-active { opacity: 1; visibility: visible; position: relative; }
-/* laid out in the flow but not shown, purely so its own height can be
-   read back when the tallest step is measured */
-.step.is-measuring {
-  position: static; visibility: hidden; opacity: 0;
-  height: auto; overflow: visible;
-}
+.step.is-measuring { position: static; visibility: hidden; opacity: 0; height: auto; overflow: visible; }
 @media (prefers-reduced-motion: reduce) { .step { transition: none; } }
 
-.step .beat__no {
-  font-family: var(--font-mono); font-size: var(--fs-mono);
-  letter-spacing: var(--track-wide); color: var(--signal);
-  margin-bottom: var(--s-3);
+.beat__no {
+  font-family: var(--font-mono); font-size: var(--fs-micro);
+  text-transform: uppercase; letter-spacing: var(--track-wide);
+  color: var(--accent); margin-bottom: 10px;
 }
-.step .beat__title {
-  font-size: var(--fs-h3); color: var(--ink); margin-bottom: var(--s-3);
-  letter-spacing: var(--track-tight);
-}
-.step .beat__title em { font-style: normal; color: var(--signal); }
-.step .beat__body { color: var(--ink-2); font-size: var(--fs-sm); line-height: 1.7; max-width: var(--measure); }
-.step .beat__body b { color: var(--ink); font-weight: 600; }
-.step .beat__meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: var(--s-4); }
-.step .beat__meta span {
+.beat__title { font-size: var(--fs-h3); line-height: 1.12; letter-spacing: -0.03em; margin-bottom: 12px; max-width: 30ch; }
+.beat__title em { color: var(--accent); }
+.beat__body { color: var(--ink-2); font-size: var(--fs-sm); line-height: 1.7; max-width: var(--measure); }
+.beat__body b { color: var(--ink); font-weight: 500; }
+.beat__meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: var(--s-3); }
+.beat__meta span {
   padding: 5px 10px; border-radius: var(--r-pill);
-  border: 1px solid var(--hair); background: var(--raised);
-  font-family: var(--font-mono); font-size: var(--fs-micro); color: var(--ink-3);
+  border: 1px solid var(--hair-2);
+  font-family: var(--font-mono); font-size: var(--fs-micro); color: var(--ink-2);
 }
-.step .beat__note {
-  margin-top: var(--s-4); padding-left: 12px;
-  border-left: 2px solid var(--signal);
-  font-size: var(--fs-sm); color: var(--ink-3); max-width: var(--measure);
+.beat__note {
+  margin-top: var(--s-3); padding-left: 12px;
+  border-left: 2px solid var(--accent);
+  font-size: var(--fs-sm); line-height: 1.65; color: var(--ink-3); max-width: var(--measure);
 }
-.step .card { margin-top: var(--s-5); }
-.step .tablewrap { margin-top: var(--s-5); }
-.step .repo { margin-top: var(--s-5); }
-.step__pair {
-  display: grid; gap: var(--s-4); margin-top: var(--s-5);
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-}
+.step .card, .step .tablewrap, .step .repo { margin-top: var(--s-4); }
+.step__pair { display: grid; gap: var(--s-3); margin-top: var(--s-4); grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
 .step__pair .card { margin-top: 0; }
 
-/* Prose inside the overlay body needs a measure and needs air between
-   paragraphs; without both, the panel reads as one slab. */
+.proj .card { background: var(--bg); }
+
 .proj__body .beat__body,
-.proj__body .beat__note { max-width: var(--measure); }
-.proj__body .beat__body,
-.proj__body .beat__note { margin-top: var(--s-4); }
+.proj__body .beat__note { margin-top: var(--s-3); }
 .proj__body > :first-child { margin-top: 0; }
+.proj__body .tablewrap, .proj__body .card, .proj__body .repo { margin-top: var(--s-4); }
 
-/* the same left rule the step notes carry */
-.proj__body .beat__note {
-  padding-left: 12px; border-left: 2px solid var(--signal);
-  font-size: var(--fs-sm); line-height: 1.7; color: var(--ink-3);
+/* ═══ tables, checklists, repository links ═════════════ */
+.tablewrap { overflow-x: auto; border: 1px solid var(--hair); border-radius: var(--r); }
+.rtable {
+  width: 100%; border-collapse: collapse;
+  font-family: var(--font-mono); font-size: var(--fs-mono); letter-spacing: var(--track-mono);
+  background: var(--bg);
 }
-.proj__body .beat__body { font-size: var(--fs-sm); line-height: 1.7; }
-.proj__body .beat__body b { color: var(--ink); font-weight: 600; }
-.proj__body .repo { margin-top: var(--s-5); }
-
-.proj__body .tablewrap { margin-top: var(--s-4); }
-.proj__body .card { margin-top: var(--s-4); }
-
-/* the engine table's first column is a description, so it wraps; the
-   figures to its right stay on one line */
+.rtable caption { text-align: left; padding: 14px 16px 10px; color: var(--ink-3); font-size: var(--fs-micro); line-height: 1.6; background: var(--bg); }
+.rtable th, .rtable td { padding: 11px 16px; text-align: right; white-space: nowrap; }
+.rtable th:first-child, .rtable td:first-child { text-align: left; }
+.rtable thead th {
+  /* not uppercased: the heads carry Δv, and an uppercase v is a different symbol */
+  color: var(--ink-3); font-weight: 400;
+  font-size: var(--fs-micro); letter-spacing: var(--track-mono);
+  border-bottom: 1px solid var(--hair-2);
+}
+.rtable tbody td { color: var(--ink-2); border-bottom: 1px solid var(--hair); }
+.rtable tbody tr:nth-child(even) td { background: var(--zebra); }
+.rtable tbody tr:last-child td { border-bottom: 0; }
+.rtable td b { color: var(--ink); font-weight: 500; }
+.rtable tr[data-power] td:first-child { box-shadow: inset 3px 0 0 var(--accent); color: var(--ink); }
 .proj .rtable--engines td:first-child { white-space: normal; min-width: 22ch; line-height: 1.5; }
 
-/* ═══ a dialog that scrolls as one page ═══════════════════
-   Project A keeps its stage and stepper fixed and scrolls only its step
-   pane. Project B's stage is a picture to play with and then leave, and
-   fixed chrome of header, stage and controls leaves a short window about
-   eighty pixels of text. So here the whole panel scrolls, and the close
-   button stays put on top of it. */
+.checklist { font-family: var(--font-mono); font-size: var(--fs-mono); letter-spacing: var(--track-mono); }
+.checklist li { display: flex; align-items: flex-start; gap: 11px; padding: 7px 0; color: var(--ink-3); }
+.checklist i { flex: none; width: 12px; height: 12px; margin-top: 3px; border-radius: 3px; border: 1px solid var(--hair-2); }
+.checklist [data-state='done'] { color: var(--ink-2); }
+.checklist [data-state='done'] i { background: var(--accent); border-color: var(--accent); }
+.checklist [data-state='partial'] i { background: linear-gradient(135deg, var(--accent) 50%, transparent 50%); border-color: var(--accent-line); }
+
+.repo {
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px var(--s-4);
+  padding: 18px 20px; border-radius: var(--r);
+  background: var(--bg); border: 1px solid var(--hair-2);
+  transition: border-color var(--dur-fast) var(--ease);
+}
+.repo:hover { border-color: var(--accent); }
+.repo__k { font-size: var(--fs-sm); color: var(--ink-3); }
+.repo__v { font-family: var(--font-mono); font-size: var(--fs-mono); color: var(--accent); overflow-wrap: anywhere; }
+.repo__v::after { content: ' ↗'; }
+
+/* ═══ project B: one page that scrolls ═════════════════ */
 .proj--flow .proj__inner { overflow-y: auto; -webkit-overflow-scrolling: touch; }
 .proj--flow .proj__body { flex: none; overflow: visible; }
 .proj--flow .proj__close {
   position: sticky; top: var(--s-4); right: auto; align-self: flex-end; flex: none; z-index: 3;
-  margin: var(--s-4) var(--s-5) calc(-44px - var(--s-4)) 0;
-}
-@media (max-width: 860px) {
-  .proj--flow .proj__close { top: var(--s-4); margin-right: var(--s-4); }
+  margin: var(--s-4) var(--s-4) calc(-44px - var(--s-4)) 0;
 }
 
-/* ═══ project B: findings, not a sequence ═════════════ */
-.inv { display: grid; gap: var(--s-4); }
-.inv__item {
-  background: var(--raised); border: 1px solid var(--hair);
-  border-radius: var(--r-card); padding: var(--s-5);
-}
+.inv { display: grid; gap: var(--s-3); grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.inv__item { background: var(--bg); border: 1px solid var(--hair); border-radius: var(--r); padding: var(--s-4); }
 .inv__no {
   font-family: var(--font-mono); font-size: var(--fs-micro);
   text-transform: uppercase; letter-spacing: var(--track-wide);
-  color: var(--signal); margin-bottom: var(--s-3);
+  color: var(--accent); margin-bottom: 10px;
 }
-.inv__title { font-size: var(--fs-body); color: var(--ink); margin-bottom: var(--s-3); font-weight: 600; }
-.inv__body { color: var(--ink-2); font-size: var(--fs-sm); line-height: 1.7; max-width: var(--measure); }
-.inv__body b { color: var(--ink); font-weight: 600; }
-.inv__body + .inv__body { margin-top: var(--s-3); }
+.inv__title { font-size: 1.0625rem; color: var(--ink); margin-bottom: 10px; font-weight: 500; letter-spacing: -0.015em; }
+.inv__body { color: var(--ink-2); font-size: var(--fs-sm); line-height: 1.7; }
+.inv__body b { color: var(--ink); font-weight: 500; }
+.inv__body + .inv__body { margin-top: 10px; }
 
 .proj__sub {
-  margin-top: var(--s-7); margin-bottom: var(--s-4);
-  font-size: var(--fs-h3); color: var(--ink); letter-spacing: var(--track-tight);
+  margin-top: var(--s-6); margin-bottom: var(--s-3);
+  font-size: var(--fs-h3); letter-spacing: -0.03em;
 }
-.proj__sub em { font-style: normal; color: var(--signal); }
+.proj__sub em { color: var(--accent); }
 
 .unverified { border-top: 1px solid var(--hair); }
 .unverified li {
-  padding: var(--s-4) 0; border-bottom: 1px solid var(--hair);
-  color: var(--ink-2); font-size: var(--fs-sm); line-height: 1.7;
-  max-width: var(--measure);
+  padding: var(--s-3) 0; border-bottom: 1px solid var(--hair);
+  color: var(--ink-2); font-size: var(--fs-sm); line-height: 1.7; max-width: var(--measure);
 }
-.unverified b { color: var(--ink); font-weight: 600; display: block; margin-bottom: 4px; }
-
-/* ═══ no JavaScript ════════════════════════════════════
-   The dialogs are the only place this content exists, so without
-   JS they are shown inline rather than hidden. A crawler that
-   ignores scripts still reads every word. */
-.nojs-note { display: none; }
+.unverified b { color: var(--ink); font-weight: 500; display: block; margin-bottom: 4px; }
 
 /* ═══ narrow ═══════════════════════════════════════════ */
 @media (max-width: 860px) {
-  .launcher { grid-template-columns: 1fr; }
-  .proj { width: 100vw; max-height: 100svh; border-radius: 0; }
+  .proj { width: 100vw; max-height: 100svh; border-radius: 0; border: 0; }
   .proj__inner { max-height: 100svh; }
-  .proj__head, .stepper, .step, .proj__body { padding-left: var(--s-4); padding-right: var(--s-4); }
-  .proj__head { padding-right: calc(var(--s-4) + 56px); }
-  .proj__close { top: var(--s-4); right: var(--s-4); }
-  .stepper__ticks { display: none; }   /* six labels do not fit; the range and the buttons remain */
-  .simctl .stepper__ticks { display: grid; }   /* except here: 0.01 to 1000 is short */
-  .simhud__v--wide, .simkey { display: none; }   /* the strip below says the same, and the stage is small */
+  .proj__head, .stepper, .step, .proj__body { padding-left: var(--s-3); padding-right: var(--s-3); }
+  .proj__head { padding-right: calc(var(--s-3) + 56px); }
+  .proj__close { top: var(--s-3); right: var(--s-3); }
+  .proj--flow .proj__close { top: var(--s-3); margin-right: var(--s-3); }
+  .stepper__ticks { display: none; }
+  .simctl .stepper__ticks { display: grid; }
+  .simhud__v--wide, .simkey { display: none; }
+  .inv { grid-template-columns: 1fr; }
 }

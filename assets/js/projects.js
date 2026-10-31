@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════
-   projects.js — the launcher, the two overlays, and the stepper.
+   projects.js — the two overlays and the stepper.
 
    Everything the dialogs contain is already in the HTML. This file
    only hides it, shows it, and keeps the URL honest about which
@@ -10,44 +10,15 @@
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const STEP_NAMES = ['Premise', 'Apparatus', 'Injection', 'Method', 'Measurement', 'Finding'];
 
-/* ── card models, stood up only when a card is engaged ────── */
-const models = new WeakMap();
-let cardModule = null;
-
-function wakeCard(cardEl, on) {
-  const canvas = cardEl.querySelector('.pcard__canvas');
-  if (!canvas || reduced || matchMedia('(hover: none)').matches) return;
-
-  const existing = models.get(canvas);
-  if (existing) { existing.setActive(on); return; }
-  if (!on) return;
-
-  models.set(canvas, { setActive() {} });      /* claim the slot, once */
-  (cardModule || (cardModule = import('./cards.js?v=ade0bd71')))
-    .then(({ initCardModel }) => {
-      const rig = initCardModel(canvas, canvas.dataset.model);
-      if (!rig) return;
-      models.set(canvas, rig);
-      rig.setActive(true);
-      canvas.classList.add('is-live');
-      /* The poster is transparent-backed, so leaving it under a live
-         canvas shows a second, static copy of the model through the
-         gaps and the animation reads as a ghost. Drop it. */
-      const poster = cardEl.querySelector('.pcard__poster');
-      if (poster) setTimeout(() => { poster.hidden = true; }, 450);
-    })
-    .catch(() => { /* the poster is already correct */ });
-}
-
 /* ═══ the in-dialog simulations ════════════════════════════
    One live context at a time. It is created when a dialog opens
    and stopped when it closes, so the hero, the cards and the
    overlays never all hold a WebGL context at once. */
 const SIM_PHASES = [
   { at: 0.00, status: 'Nominal gait',        detail: 'base policy · healthy',       tone: 'ok' },
-  { at: 0.38, status: 'Fault injected',      detail: 'joint_lock · random joint',   tone: 'bad' },
+  { at: 0.40, status: 'Fault injected',      detail: 'joint_lock · step 200',       tone: 'bad' },
   { at: 0.52, status: 'Residual engaged',    detail: 'correcting around the fault', tone: 'warn' },
-  { at: 0.67, status: 'Speed held 2 s', detail: 'scored: recovered',           tone: 'ok' },
+  { at: 0.67, status: 'Correcting',          detail: 'schematic · not a measured trial', tone: 'ok' },
 ];
 
 const sims = new Map();
@@ -61,8 +32,8 @@ function startSim(slug, d) {
 
   const kind = canvas.dataset.sim;
   const load = kind === 'fault'
-    ? import('./rig.js?v=ade0bd71').then(({ initRig }) => initRig(canvas, { reducedMotion: reduced }))
-    : import('./flyby.js?v=ade0bd71').then(({ initFlyby }) => initFlyby(canvas, d, { reducedMotion: reduced }));
+    ? import('./demos.js?v=39b3c8e2').then(({ initQuadruped }) => initQuadruped(canvas, { reducedMotion: reduced }))
+    : import('./flyby.js?v=39b3c8e2').then(({ initFlyby }) => initFlyby(canvas, d, { reducedMotion: reduced }));
 
   load.then((rig) => {
     sims.set(slug, rig);
@@ -213,13 +184,7 @@ for (const [slug, d] of dialogs) {
 }
 
 document.querySelectorAll('[data-open]').forEach((btn) => {
-  const slug = btn.dataset.open;
-  btn.addEventListener('click', () => open(slug));
-  btn.addEventListener('pointerenter', () => wakeCard(btn, true));
-  btn.addEventListener('pointerleave', () => wakeCard(btn, false));
-  /* focus gets the same treatment as hover, deliberately */
-  btn.addEventListener('focus', () => wakeCard(btn, true));
-  btn.addEventListener('blur', () => wakeCard(btn, false));
+  btn.addEventListener('click', () => open(btn.dataset.open));
 });
 
 /* ═══ the stepper ══════════════════════════════════════════ */
