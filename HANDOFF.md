@@ -46,7 +46,7 @@ does not exist. The headline carries the direction instead.
 ## 3. Current state
 
 Working and verified in a browser: the hero scene, the two project overlays and
-their simulations, the stepper, the role filter, deep links, focus management,
+their simulations, the stepper, deep links, focus management,
 scroll locking and restoration, and the no-JavaScript path.
 
 Measured, most recently before the hero became the Earth scene:

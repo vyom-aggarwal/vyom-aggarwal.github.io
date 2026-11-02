@@ -35,7 +35,7 @@ assets/js/          hero      page chrome: theme, menu, ruler, ⌘K, G grid, ent
                     cursor    the custom cursor (point, lagging ring, hover states)
                     terrain   the hero's potential-field map (raw WebGL)
                     demos     the two research demos in 3D: the quadruped, the flyby
-                    sections  experience filter and the pinned research slides
+                    sections  the pinned research slides
                     projects · flyby   the write-up dialogs and the 2D flyby explorer
                     oberth.js   the Oberth atlas's flyby simulator, vendored
                     three.module.min.js   vendored, MIT

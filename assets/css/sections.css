@@ -239,19 +239,6 @@ html:not(.js) .demo { display: none; }
 }
 
 /* ═══ 04 · experience ════════════════════════════════════ */
-.filters { display: flex; flex-wrap: wrap; gap: 6px; }
-.filter {
-  display: inline-flex; align-items: center; gap: 8px;
-  min-height: 32px; padding: 0 13px;
-  border: 1px solid var(--hair-2); border-radius: var(--r-pill);
-  font-size: 0.8125rem; color: var(--ink-2);
-  transition: border-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease), background-color var(--dur-fast) var(--ease);
-}
-.filter em { font-family: var(--font-mono); font-size: 0.625rem; color: var(--ink-3); }
-.filter:hover { border-color: var(--ink); color: var(--ink); }
-.filter[aria-pressed='true'] { background: var(--btn-bg); border-color: var(--btn-bg); color: var(--btn-ink); }
-.filter[aria-pressed='true'] em { color: inherit; opacity: 0.7; }
-
 .roles { border-top: 1px solid var(--hair-2); }
 .role {
   position: relative;
@@ -272,8 +259,6 @@ html:not(.js) .demo { display: none; }
 .role__date { display: inline-flex; align-items: center; gap: 8px; color: var(--ink-3); white-space: nowrap; }
 .role__desc { margin-top: 8px; color: var(--ink-2); font-size: var(--fs-sm); line-height: 1.6; }
 @media (hover: hover) { .role:hover .role__org { transform: translateX(10px); } }
-.role.is-hidden { display: none; }
-.roles__empty { padding: var(--s-5) 0; color: var(--ink-3); }
 @media (max-width: 1000px) {
   .role__org, .role__info { grid-column: 2 / -1; }
 }
