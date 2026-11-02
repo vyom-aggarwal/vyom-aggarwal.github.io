@@ -31,7 +31,7 @@ index.html          The whole page. Every word of both project write-ups is in
 404.html
 
 assets/css/         tokens · base · hero · sections · projects
-assets/js/          hero      page chrome: theme, menu, ruler, ⌘K, G grid, entrances
+assets/js/          hero      page chrome: theme, menu, ruler, ⌘K, entrances
                     cursor    the custom cursor (point, lagging ring, hover states)
                     terrain   the hero's potential-field map (raw WebGL)
                     demos     the two research demos in 3D: the quadruped, the flyby
@@ -84,8 +84,7 @@ The hero sits on a potential field drawn as contour lines (`terrain.js`). The
 pointer is a softened point mass that bends the equipotentials; a click drops a
 labelled mass that fades. It is decorative and aria-hidden, and without WebGL
 the hero is just its type. Once per session the hero is shown as its own
-wireframe for a moment (the compile intro). ⌘K / Ctrl K opens a command menu;
-G toggles a 12-column grid.
+wireframe for a moment (the compile intro). ⌘K / Ctrl K opens a command menu.
 
 The research section pins each project for three screens of scroll and plays
 its live 3D demo through three states. The quadruped is a schematic of the

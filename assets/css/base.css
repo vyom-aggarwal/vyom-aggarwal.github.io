@@ -326,13 +326,3 @@ html:not(.js) .ruler { display: none; }
 .cmdk__empty { padding: 18px 12px; color: var(--ink-3); font-size: var(--fs-sm); }
 .cmdk__foot { display: flex; gap: 18px; padding: 10px 16px; border-top: 1px solid var(--hair); }
 .cmdk__esc { color: var(--ink-3); }
-
-/* ── the grid overlay, on G ───────────────────────────────── */
-.gridlay {
-  position: fixed; inset: 0; z-index: 90; pointer-events: none;
-  opacity: 0; transition: opacity var(--dur) var(--ease);
-}
-.gridlay.is-on { opacity: 1; }
-.gridlay__cols { height: 100%; display: grid; grid-template-columns: repeat(12, 1fr); gap: clamp(12px, 1.6vw, 24px); }
-.gridlay__cols i { background: var(--accent-soft); border-inline: 1px solid var(--accent-line); }
-@media (max-width: 700px) { .gridlay__cols { grid-template-columns: repeat(4, 1fr); } .gridlay__cols i:nth-child(n + 5) { display: none; } }

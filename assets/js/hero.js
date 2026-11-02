@@ -4,12 +4,12 @@
    The theme toggle, the bar (menu, current section, the ruler),
    the potential field and its readout, the compile intro, the
    entrances, the manifesto fill, the magnetic buttons, the ⌘K
-   menu, the G grid, the footer wordmark, and the cursor. All of it
+   menu, the footer wordmark, and the cursor. All of it
    is enhancement: with this file removed the page renders, reads
    and navigates.
    ═══════════════════════════════════════════════════════════ */
 
-import { initCursor } from './cursor.js?v=10796e80';
+import { initCursor } from './cursor.js?v=b883e0b3';
 
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const finePointer = matchMedia('(hover: hover) and (pointer: fine)').matches;
@@ -110,7 +110,7 @@ const toggleTheme = (() => {
   };
 
   const boot = () => {
-    import('./terrain.js?v=10796e80')
+    import('./terrain.js?v=b883e0b3')
       .then(({ initTerrain }) => initTerrain(canvas, { reducedMotion, onRead }))
       .catch(() => { /* the hero is the type on the sheet without it */ });
   };
@@ -230,18 +230,6 @@ const toggleTheme = (() => {
   });
 })();
 
-/* ── the grid, on G ──────────────────────────────────────── */
-const toggleGrid = (() => {
-  const lay = document.querySelector('.gridlay');
-  const flip = () => lay?.classList.toggle('is-on');
-  addEventListener('keydown', (e) => {
-    if (e.key.toLowerCase() !== 'g' || e.metaKey || e.ctrlKey || e.altKey) return;
-    if (e.target.closest('input, textarea, [contenteditable]') || document.querySelector('dialog[open]')) return;
-    flip();
-  });
-  return flip;
-})();
-
 /* ── the command menu ──────────────────────────────────────
    ⌘K / Ctrl K anywhere. Every command is something already on the
    page, so the menu is a shortcut, never the only way. */
@@ -270,7 +258,6 @@ const toggleGrid = (() => {
     { group: 'Actions', label: 'Copy email address', hint: 'aggarw.vyom@gmail.com', run: () => navigator.clipboard?.writeText('aggarw.vyom@gmail.com') },
     { group: 'Actions', label: 'Write an email', hint: 'mailto', run: href('mailto:aggarw.vyom@gmail.com') },
     { group: 'Actions', label: 'Toggle light / dark', hint: 'theme', run: toggleTheme },
-    { group: 'Actions', label: 'Toggle the layout grid', hint: 'G', run: toggleGrid },
     { group: 'Elsewhere', label: 'GitHub', hint: '↗', run: href('https://github.com/vyom-aggarwal', true) },
     { group: 'Elsewhere', label: 'LinkedIn', hint: '↗', run: href('https://www.linkedin.com/in/vyom-aggarwal/', true) },
   ];
