@@ -73,7 +73,7 @@ for (const a of document.querySelectorAll('a[href^="#"]')) {
   /* ── the demos, stood up once, when the section is close ── */
   const demos = new Map();
   let loading = null;
-  const load = () => loading || (loading = import('./demos.js?v=39b3c8e2').then((mod) => {
+  const load = () => loading || (loading = import('./demos.js?v=10796e80').then((mod) => {
     for (const s of slides) {
       const canvas = s.querySelector('[data-demo]');
       if (!canvas) continue;

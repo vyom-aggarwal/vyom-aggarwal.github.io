@@ -33,7 +33,12 @@ def digest(paths):
     h = hashlib.sha256()
     for p in sorted(paths):
         h.update(p.name.encode())
-        h.update(p.read_bytes())
+        data = p.read_bytes()
+        # the modules carry stamps themselves; hashing those would make
+        # every run produce a new stamp from the last one
+        if p.suffix in (".js", ".css"):
+            data = re.sub(rb"\?v=[0-9a-f]+", b"", data)
+        h.update(data)
     return h.hexdigest()[:8]
 
 
@@ -60,6 +65,26 @@ def main():
         )
     html_path.write_text(html, encoding="utf-8", newline="")
     changed.append("index.html")
+
+    # ── favicons: browsers cache these hardest of all, so a new mark
+    #    never shows up in the tab unless its URL changes too ──
+    icons = [ROOT / "assets" / "favicon.svg", IMG / "favicon-32.png", IMG / "apple-touch-icon.png"]
+    for page in ("index.html", "404.html"):
+        path = ROOT / page
+        text = path.read_text(encoding="utf-8")
+        before = text
+        for icon in icons:
+            text, _ = sub(
+                text,
+                r"(assets/(?:img/)?%s)(\?v=[0-9a-f]+)?\"" % re.escape(icon.name),
+                r'\1?v=%s"' % digest([icon]),
+            )
+        if page == "index.html":
+            html = text
+        if text != before:
+            path.write_text(text, encoding="utf-8", newline="")
+            if page not in changed:
+                changed.append(page)
 
     # ── modules: both static and dynamic imports of sibling files ──
     for js in JS.glob("*.js"):
