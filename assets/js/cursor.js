@@ -9,12 +9,12 @@
    pointerover rather than bound per element, so anything added later
    is covered without registering it:
 
-     hot    links, buttons, tabs, inputs, magnetic targets
+     hot    links, buttons, tabs, menu options, inputs, magnetic targets
             → grows to 52px, turns the site's blue, rotates 45° into a diamond
-     cold   live simulations ([data-machine])
+     cold   live simulations ([data-machine]) and experience rows
             → keeps its size, takes a softer blue
-     text   paragraphs, list items, cells, headings
-            → collapses to a 2px caret bar, and the point hides
+     text   paragraphs, list items, cells, section headings, outside the
+            command menu → collapses to a 2px caret bar, and the point hides
      down   while a button is held → shrinks to 26px
      out    the pointer left the window → both fade
 
@@ -33,9 +33,13 @@
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
 const canHover = matchMedia('(hover: hover)');
 
-const HOT = "a, button, summary, [role='tab'], [data-magnet], input, select, textarea";
-const COLD = '[data-machine]';
-const TEXT = 'p, li, td, h1, h2, h3, blockquote';
+const HOT = "a, button, summary, [role='tab'], [role='option'], [data-magnet], input, select, textarea";
+const COLD = '[data-machine], .role';
+/* no h1: the page's h1s are display type (the headline, the 404),
+   looked at rather than read */
+const TEXT = 'p, li, td, h2, h3, blockquote';
+/* made of list items, but a list of choices, not of text */
+const NOT_TEXT = '.cmdk';
 
 export function initCursor() {
   if (!canHover.matches || reduced.matches) return;
@@ -103,7 +107,7 @@ export function initCursor() {
     if (!(el instanceof Element)) return;
     const hot = el.closest(HOT);
     const cold = el.closest(COLD);
-    const text = !hot && el.closest(TEXT);
+    const text = !hot && !cold && el.closest(TEXT) && !el.closest(NOT_TEXT);
     ring.classList.toggle('is-hot', Boolean(hot));
     ring.classList.toggle('is-cold', Boolean(cold));
     ring.classList.toggle('is-text', Boolean(text));

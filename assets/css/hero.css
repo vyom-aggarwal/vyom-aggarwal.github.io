@@ -52,8 +52,7 @@
   color: var(--ink);
   font-feature-settings: 'ss01', 'kern';
 }
-/* the headline's box hugs its text, so the cursor reads the map beside
-   it as map, not as text */
+/* the headline's box hugs its text */
 .hero__title { width: fit-content; max-width: 100%; }
 .hero__title .line { display: block; width: fit-content; overflow: hidden; padding-bottom: 0.07em; margin-bottom: -0.07em; }
 .hero__title .line > span { display: block; }
